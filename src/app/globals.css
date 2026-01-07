@@ -3265,13 +3265,13 @@ body.lang-th .target-price {
 /* iPhone SE / Mini (320px - 414px) */
 @media (max-width: 414px) {
   .app-wrapper {
-    padding: var(--space-2);
-    padding-bottom: 90px;
+    padding: 8px;
+    padding-bottom: 80px;
   }
   
   .bento-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-2);
+    gap: 8px;
   }
   
   .col-span-2, .col-span-3 {
@@ -3279,12 +3279,12 @@ body.lang-th .target-price {
   }
   
   .card {
-    padding: var(--space-3);
+    padding: var(--space-4);
     border-radius: var(--radius-md);
   }
   
   .card-title {
-    font-size: 10px;
+    font-size: 11px;
   }
   
   /* Header */
@@ -3487,12 +3487,17 @@ body.lang-th .target-price {
 /* Extra small phones */
 @media (max-width: 375px) {
   .app-wrapper {
-    padding: var(--space-2);
-    padding-bottom: 85px;
+    padding: 6px;
+    padding-bottom: 80px;
+  }
+  
+  .bento-grid {
+    gap: 6px;
   }
   
   .card {
-    padding: var(--space-2);
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
   }
   
   .brand h1 {
@@ -3502,5 +3507,39 @@ body.lang-th .target-price {
   .header-controls .btn {
     padding: 6px 10px;
     font-size: 11px;
+  }
+}
+
+/* All mobile devices - maximize content */
+@media (max-width: 480px) {
+  .app-wrapper {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  
+  .card {
+    border-radius: var(--radius-md);
+  }
+  
+  /* Larger touch targets */
+  .btn, button {
+    min-height: 44px;
+  }
+  
+  /* Bigger text for readability */
+  .wl-symbol {
+    font-size: 15px;
+  }
+  
+  .wl-price {
+    font-size: 16px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .indicator-value {
+    font-size: 13px;
   }
 }
