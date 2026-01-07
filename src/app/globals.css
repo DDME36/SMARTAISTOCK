@@ -352,9 +352,11 @@ body.lang-th .target-price {
 .bottom-nav {
   position: fixed;
   bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(15, 20, 30, 0.9);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  background: rgba(15, 20, 30, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: 8px;
@@ -3263,13 +3265,13 @@ body.lang-th .target-price {
 /* iPhone SE / Mini (320px - 414px) */
 @media (max-width: 414px) {
   .app-wrapper {
-    padding: var(--space-3);
-    padding-bottom: 100px;
+    padding: var(--space-2);
+    padding-bottom: 90px;
   }
   
   .bento-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
   
   .col-span-2, .col-span-3 {
@@ -3288,12 +3290,17 @@ body.lang-th .target-price {
   /* Header */
   .app-header {
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
     align-items: flex-start;
+    margin-bottom: var(--space-3);
   }
   
   .header-controls {
     width: 100%;
+  }
+  
+  .brand h1 {
+    font-size: var(--text-xl);
   }
   
   .header-controls .btn {
@@ -3464,13 +3471,36 @@ body.lang-th .target-price {
   }
 }
 
-/* Safe area for notched iPhones */
+/* Safe area for notched iPhones (Safari) */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .app-wrapper {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
   }
   
   .bottom-nav {
-    bottom: calc(16px + env(safe-area-inset-bottom));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 375px) {
+  .app-wrapper {
+    padding: var(--space-2);
+    padding-bottom: 85px;
+  }
+  
+  .card {
+    padding: var(--space-2);
+  }
+  
+  .brand h1 {
+    font-size: var(--text-lg);
+  }
+  
+  .header-controls .btn {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 }
