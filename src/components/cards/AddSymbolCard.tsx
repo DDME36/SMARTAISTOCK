@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Plus, Loader2, AlertCircle, Search } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -35,6 +36,90 @@ const POPULAR_SYMBOLS = [
   { symbol: 'DOGE-USD', name: 'Dogecoin' },
 ]
 
+interface DropdownPosition {
+  top: number
+  left: number
+  width: number
+}
+
+// Dropdown Portal Component
+function SuggestionsDropdown({ 
+  suggestions, 
+  selectedIndex, 
+  onSelect, 
+  position,
+  onClose 
+}: {
+  suggestions: typeof POPULAR_SYMBOLS
+  selectedIndex: number
+  onSelect: (symbol: string) => void
+  position: DropdownPosition
+  onClose: () => void
+}) {
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        onClose()
+      }
+    }
+    const handleScroll = () => onClose()
+    
+    document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll, true)
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div 
+      ref={dropdownRef}
+      className="suggestions-dropdown"
+      style={{
+        position: 'fixed',
+        top: position.top,
+        left: position.left,
+        width: position.width,
+        zIndex: 9999,
+      }}
+    >
+      {suggestions.map((s, idx) => {
+        const logoUrl = `https://assets.parqet.com/logos/symbol/${s.symbol}?format=png`
+        return (
+          <div
+            key={s.symbol}
+            className={`suggestion-item ${idx === selectedIndex ? 'selected' : ''}`}
+            onClick={() => onSelect(s.symbol)}
+          >
+            <div className="suggestion-logo-wrap">
+              <img 
+                src={logoUrl} 
+                alt={s.symbol}
+                className="suggestion-logo"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement
+                  if (fallback) fallback.style.display = 'flex'
+                }}
+              />
+              <div className="suggestion-logo-fallback">
+                {s.symbol.substring(0, 2)}
+              </div>
+            </div>
+            <span className="suggestion-symbol">{s.symbol}</span>
+            <span className="suggestion-name">{s.name}</span>
+          </div>
+        )
+      })}
+    </div>,
+    document.body
+  )
+}
+
 export default function AddSymbolCard() {
   const { watchlist, addSymbol, showToast } = useStore()
   const { t } = useTranslation()
@@ -46,9 +131,14 @@ export default function AddSymbolCard() {
   const [suggestions, setSuggestions] = useState<typeof POPULAR_SYMBOLS>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
-  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 })
+  const [dropdownPos, setDropdownPos] = useState<DropdownPosition>({ top: 0, left: 0, width: 0 })
+  const [mounted, setMounted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
-  const suggestionsRef = useRef<HTMLDivElement>(null)
+
+  // Client-side only
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Filter suggestions based on input
   useEffect(() => {
@@ -58,55 +148,25 @@ export default function AddSymbolCard() {
         !watchlist.includes(s.symbol)
       ).slice(0, 5)
       setSuggestions(filtered)
-      setShowSuggestions(filtered.length > 0)
+      
+      // Update position and show
+      if (filtered.length > 0 && inputRef.current) {
+        const rect = inputRef.current.getBoundingClientRect()
+        setDropdownPos({
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width
+        })
+        setShowSuggestions(true)
+      } else {
+        setShowSuggestions(false)
+      }
     } else {
       setSuggestions([])
       setShowSuggestions(false)
     }
     setSelectedIndex(-1)
   }, [input, watchlist])
-
-  // Update dropdown position
-  const updateDropdownPosition = () => {
-    if (inputRef.current) {
-      const rect = inputRef.current.getBoundingClientRect()
-      setDropdownPos({
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: rect.width
-      })
-    }
-  }
-
-  // Track position on scroll/resize
-  useEffect(() => {
-    if (!showSuggestions) return
-    
-    updateDropdownPosition()
-    
-    const handleScroll = () => updateDropdownPosition()
-    const handleResize = () => updateDropdownPosition()
-    
-    window.addEventListener('scroll', handleScroll, true)
-    window.addEventListener('resize', handleResize)
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true)
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [showSuggestions])
-
-  // Close suggestions on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node) &&
-          inputRef.current && !inputRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   const handleAdd = async (symbolToAdd?: string) => {
     const symbol = (symbolToAdd || input).toUpperCase().trim()
@@ -127,8 +187,6 @@ export default function AddSymbolCard() {
     }
     
     setLoading(true)
-    
-    // Small delay for UX
     await new Promise(r => setTimeout(r, 500))
     
     const result = await validateSymbol(symbol)
@@ -169,6 +227,18 @@ export default function AddSymbolCard() {
     }
   }
 
+  const handleFocus = () => {
+    if (input.length >= 1 && suggestions.length > 0 && inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect()
+      setDropdownPos({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width
+      })
+      setShowSuggestions(true)
+    }
+  }
+
   const getErrorIcon = () => {
     switch (errorType) {
       case 'not_found':
@@ -181,7 +251,7 @@ export default function AddSymbolCard() {
   }
 
   return (
-    <article className={`card ${showSuggestions ? 'has-dropdown' : ''}`}>
+    <article className="card">
       <div className="card-title">{t('add_symbol')}</div>
       
       <div className="add-input-wrapper">
@@ -197,52 +267,21 @@ export default function AddSymbolCard() {
             setErrorType('')
           }}
           onKeyDown={handleKeyDown}
-          onFocus={() => input.length >= 1 && suggestions.length > 0 && setShowSuggestions(true)}
+          onFocus={handleFocus}
         />
         <Plus className="input-icon" size={18} />
-        
-        {/* Auto-complete suggestions - Fixed position */}
-        {showSuggestions && (
-          <div 
-            className="suggestions-dropdown" 
-            ref={suggestionsRef}
-            style={{
-              top: dropdownPos.top,
-              left: dropdownPos.left,
-              width: dropdownPos.width,
-            }}
-          >
-            {suggestions.map((s, idx) => {
-              const logoUrl = `https://assets.parqet.com/logos/symbol/${s.symbol}?format=png`
-              return (
-                <div
-                  key={s.symbol}
-                  className={`suggestion-item ${idx === selectedIndex ? 'selected' : ''}`}
-                  onClick={() => handleAdd(s.symbol)}
-                >
-                  <div className="suggestion-logo-wrap">
-                    <img 
-                      src={logoUrl} 
-                      alt={s.symbol}
-                      className="suggestion-logo"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none'
-                        const fallback = e.currentTarget.nextElementSibling as HTMLElement
-                        if (fallback) fallback.style.display = 'flex'
-                      }}
-                    />
-                    <div className="suggestion-logo-fallback">
-                      {s.symbol.substring(0, 2)}
-                    </div>
-                  </div>
-                  <span className="suggestion-symbol">{s.symbol}</span>
-                  <span className="suggestion-name">{s.name}</span>
-                </div>
-              )
-            })}
-          </div>
-        )}
       </div>
+
+      {/* Portal dropdown */}
+      {mounted && showSuggestions && suggestions.length > 0 && (
+        <SuggestionsDropdown
+          suggestions={suggestions}
+          selectedIndex={selectedIndex}
+          onSelect={handleAdd}
+          position={dropdownPos}
+          onClose={() => setShowSuggestions(false)}
+        />
+      )}
       
       <button 
         className={`btn btn-primary ${loading ? 'processing' : ''}`}
@@ -259,24 +298,18 @@ export default function AddSymbolCard() {
         )}
       </button>
       
-      {/* Error Message */}
       {error && (
         <div className="add-error">
           {getErrorIcon()}
           <span>{error}</span>
           {errorType === 'not_found' && (
-            <div className="error-hint">
-              {t('try_symbols')}
-            </div>
+            <div className="error-hint">{t('try_symbols')}</div>
           )}
         </div>
       )}
       
-      {/* Empty state hint */}
       {!error && watchlist.length === 0 && (
-        <div className="add-hint">
-          💡 {t('add_hint')}
-        </div>
+        <div className="add-hint">💡 {t('add_hint')}</div>
       )}
     </article>
   )
