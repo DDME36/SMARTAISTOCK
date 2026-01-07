@@ -4,73 +4,43 @@ import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 
 export default function SignalsCard() {
-  const { watchlist, smcData } = useStore()
+  const { watchlist, smcData, onDemandSMC } = useStore()
   const { t, language } = useTranslation()
 
   // Function to translate alert messages
   const translateMessage = (message: string): string => {
     if (language === 'en') return message
     
-    // Bullish BOS
-    if (message.includes('Bullish BOS: Price broke above')) {
-      const price = message.match(/[\d.]+$/)?.[0] || ''
-      return `${t('alert_bullish_bos')} ${price}`
+    // Order Block entries
+    if (message.includes('Discount Zone') || message.includes('Bullish OB')) {
+      return 'ราคาเข้าโซน Discount (Bullish OB)'
+    }
+    if (message.includes('Premium Zone') || message.includes('Bearish OB')) {
+      return 'ราคาเข้าโซน Premium (Bearish OB)'
     }
     
-    // Bearish BOS
-    if (message.includes('Bearish BOS: Price broke below')) {
-      const price = message.match(/[\d.]+$/)?.[0] || ''
-      return `${t('alert_bearish_bos')} ${price}`
+    // BOS
+    if (message.includes('Bullish BOS') || message.toLowerCase().includes('bullish bos')) {
+      return 'ยืนยัน Bullish BOS'
+    }
+    if (message.includes('Bearish BOS') || message.toLowerCase().includes('bearish bos')) {
+      return 'ยืนยัน Bearish BOS'
     }
     
-    // Premium Zone
-    if (message.includes('Premium Zone')) {
-      return t('alert_premium_zone')
-    }
-    
-    // Discount Zone
-    if (message.includes('Discount Zone')) {
-      return t('alert_discount_zone')
-    }
-    
-    // FVG BUY
-    if (message.includes('FVG BUY at')) {
-      const match = message.match(/\$([0-9.]+)\s*\(([0-9.]+)%/)
-      if (match) {
-        return `${t('alert_fvg_buy')} $${match[1]} (${match[2]}% ${t('alert_away')})`
-      }
-    }
-    
-    // FVG SELL
-    if (message.includes('FVG SELL at')) {
-      const match = message.match(/\$([0-9.]+)\s*\(([0-9.]+)%/)
-      if (match) {
-        return `${t('alert_fvg_sell')} $${match[1]} (${match[2]}% ${t('alert_away')})`
-      }
-    }
-    
-    // BUY Zone / SELL Zone
-    if (message.includes('BUY Zone')) {
-      const match = message.match(/\$([0-9.]+)\s*\(([0-9.]+)%/)
-      if (match) {
-        return `โซนซื้อ ที่ $${match[1]} (${match[2]}% ${t('alert_away')})`
-      }
-    }
-    
-    if (message.includes('SELL Zone')) {
-      const match = message.match(/\$([0-9.]+)\s*\(([0-9.]+)%/)
-      if (match) {
-        return `โซนขาย ที่ $${match[1]} (${match[2]}% ${t('alert_away')})`
-      }
+    // Approaching
+    if (message.includes('Approaching')) {
+      if (message.includes('bullish')) return 'ใกล้ถึงโซน Bullish OB'
+      if (message.includes('bearish')) return 'ใกล้ถึงโซน Bearish OB'
     }
     
     return message
   }
 
-  // Collect all alerts from watchlist stocks
+  // Collect all alerts from watchlist stocks (pre-calculated + on-demand)
   const alerts: { symbol: string; message: string; signal: string }[] = []
   
   for (const symbol of watchlist) {
+    // Check pre-calculated data first
     const stock = smcData?.stocks?.[symbol]
     if (stock?.alerts?.length) {
       for (const alert of stock.alerts) {
@@ -78,6 +48,18 @@ export default function SignalsCard() {
           symbol,
           message: alert.message,
           signal: alert.signal
+        })
+      }
+    }
+    
+    // Check on-demand data
+    const onDemand = onDemandSMC[symbol]
+    if (onDemand?.alerts?.length) {
+      for (const alert of onDemand.alerts) {
+        alerts.push({
+          symbol,
+          message: alert.message,
+          signal: alert.type === 'entry' ? 'BUY' : 'INFO'
         })
       }
     }

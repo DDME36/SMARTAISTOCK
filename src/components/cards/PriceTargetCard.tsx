@@ -6,10 +6,10 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { formatPrice } from '@/lib/utils'
 
 export default function PriceTargetCard() {
-  const { watchlist, smcData } = useStore()
+  const { watchlist, smcData, onDemandSMC } = useStore()
   const { t } = useTranslation()
 
-  // Find nearest targets across all watchlist
+  // Find nearest targets across all watchlist (pre-calculated + on-demand)
   const targets: Array<{
     symbol: string
     type: 'BUY' | 'SELL'
@@ -19,27 +19,59 @@ export default function PriceTargetCard() {
   }> = []
 
   for (const symbol of watchlist) {
+    // Check pre-calculated data
     const stock = smcData?.stocks?.[symbol]
-    if (!stock) continue
-
-    if (stock.nearest_buy_zone) {
-      targets.push({
-        symbol,
-        type: 'BUY',
-        price: stock.nearest_buy_zone.mid,
-        distance: stock.nearest_buy_zone.distance,
-        distancePct: stock.nearest_buy_zone.distance_pct
-      })
+    if (stock) {
+      if (stock.nearest_buy_zone) {
+        targets.push({
+          symbol,
+          type: 'BUY',
+          price: stock.nearest_buy_zone.mid,
+          distance: stock.nearest_buy_zone.distance,
+          distancePct: stock.nearest_buy_zone.distance_pct
+        })
+      }
+      if (stock.nearest_sell_zone) {
+        targets.push({
+          symbol,
+          type: 'SELL',
+          price: stock.nearest_sell_zone.mid,
+          distance: stock.nearest_sell_zone.distance,
+          distancePct: stock.nearest_sell_zone.distance_pct
+        })
+      }
     }
-
-    if (stock.nearest_sell_zone) {
-      targets.push({
-        symbol,
-        type: 'SELL',
-        price: stock.nearest_sell_zone.mid,
-        distance: stock.nearest_sell_zone.distance,
-        distancePct: stock.nearest_sell_zone.distance_pct
-      })
+    
+    // Check on-demand data
+    const onDemand = onDemandSMC[symbol]
+    if (onDemand && !stock) {
+      const currentPrice = onDemand.current_price
+      
+      // Support as buy zone
+      if (onDemand.support && currentPrice) {
+        const distance = currentPrice - onDemand.support
+        const distancePct = Math.abs((distance / currentPrice) * 100)
+        targets.push({
+          symbol,
+          type: 'BUY',
+          price: onDemand.support,
+          distance,
+          distancePct: Math.round(distancePct * 10) / 10
+        })
+      }
+      
+      // Resistance as sell zone
+      if (onDemand.resistance && currentPrice) {
+        const distance = onDemand.resistance - currentPrice
+        const distancePct = Math.abs((distance / currentPrice) * 100)
+        targets.push({
+          symbol,
+          type: 'SELL',
+          price: onDemand.resistance,
+          distance,
+          distancePct: Math.round(distancePct * 10) / 10
+        })
+      }
     }
   }
 
