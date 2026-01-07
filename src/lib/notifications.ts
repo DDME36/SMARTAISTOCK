@@ -76,39 +76,47 @@ export async function checkAndNotifyAlerts(
 ): Promise<Set<string>> {
   if (!smcData || typeof smcData !== 'object' || !('stocks' in smcData)) return notifiedAlerts
 
-  const data = smcData as { stocks: Record<string, { alerts?: Array<{ message: string; signal: string; type?: string }> }> }
+  const data = smcData as { 
+    stocks: Record<string, { 
+      alerts?: Array<{ 
+        message: string
+        signal: string
+        type?: string
+        priority?: string
+        distance_pct?: number
+        ob_type?: string
+        ob_high?: number
+        ob_low?: number
+      }>,
+      order_blocks?: Array<{ type: string; signal: string; mid: number; distance_pct: number; in_zone?: boolean; high: number; low: number }>,
+      current_price?: number
+    }> 
+  }
   const stocks = data.stocks
   const newNotified = new Set(notifiedAlerts)
 
   for (const symbol of watchlist) {
     const stock = stocks[symbol]
-    if (!stock?.alerts?.length) continue
+    if (!stock?.alerts) continue
 
     for (const alert of stock.alerts) {
-      // ONLY notify for Order Block entries (Discount Zone / Premium Zone)
-      const isOrderBlockEntry = 
-        alert.message?.toLowerCase().includes('order block') ||
-        alert.message?.toLowerCase().includes('discount zone') ||
-        alert.message?.toLowerCase().includes('premium zone') ||
-        alert.message?.toLowerCase().includes('bullish ob') ||
-        alert.message?.toLowerCase().includes('bearish ob') ||
-        alert.type === 'entry'
+      // ONLY notify for Order Block ENTRY alerts (price is IN the zone)
+      const isOBEntry = alert.type?.startsWith('ob_entry_')
       
-      if (!isOrderBlockEntry) continue
+      if (!isOBEntry) continue
       
-      const alertKey = `${symbol}-${alert.message}`
-      
-      // Skip if already notified
+      const alertKey = `${symbol}-${alert.type}-${alert.ob_high}-${alert.ob_low}`
       if (notifiedAlerts.has(alertKey)) continue
-
-      // Show notification
+      
+      // Bullish OB = BUY zone (สีเขียว/ฟ้า), Bearish OB = SELL zone (สีแดง)
       const emoji = alert.signal === 'BUY' ? '🟢' : '🔴'
+      
       await showLocalNotification(
-        `${emoji} ${symbol} Alert`,
+        `${emoji} ${symbol} เข้าโซน Order Block!`,
         alert.message,
         { tag: alertKey }
       )
-
+      
       newNotified.add(alertKey)
     }
   }

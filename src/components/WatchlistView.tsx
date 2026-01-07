@@ -303,7 +303,7 @@ export default function WatchlistView() {
                       )}
                       {change === undefined && hasAnalysis && (
                         <span className={`wl-view-trend-badge ${trend}`}>
-                          {trend === 'bullish' ? 'BULLISH' : trend === 'bearish' ? 'BEARISH' : 'NEUTRAL'}
+                          {trend === 'bullish' ? t('bullish') : trend === 'bearish' ? t('bearish') : t('neutral_trend')}
                         </span>
                       )}
                     </div>

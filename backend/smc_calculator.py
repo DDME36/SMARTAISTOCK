@@ -356,10 +356,71 @@ class SMCCalculator:
         
         # Sort by distance and add rank
         obs.sort(key=lambda x: x['distance'])
-        for i, ob in enumerate(obs):
-            ob['rank'] = i + 1
         
-        return obs[:max_blocks]
+        # Filter overlapping Order Blocks (merge OBs that are too close)
+        filtered_obs = self._filter_overlapping_obs(obs, price)
+        
+        for i, ob in enumerate(filtered_obs):
+            ob['rank'] = i + 1
+            # Check if price is currently IN the order block zone
+            ob['in_zone'] = ob['low'] <= price <= ob['high']
+        
+        return filtered_obs[:max_blocks]
+    
+    def _filter_overlapping_obs(self, obs: List[Dict], price: float, threshold_pct: float = 3.0) -> List[Dict]:
+        """
+        Filter overlapping Order Blocks - keep only the strongest one in each zone
+        OBs within threshold_pct of each other are considered overlapping
+        """
+        if len(obs) <= 1:
+            return obs
+        
+        # Separate by type
+        bullish_obs = [ob for ob in obs if ob['type'] == 'bullish']
+        bearish_obs = [ob for ob in obs if ob['type'] == 'bearish']
+        
+        def filter_by_type(obs_list: List[Dict]) -> List[Dict]:
+            if len(obs_list) <= 1:
+                return obs_list
+            
+            filtered = []
+            used = set()
+            
+            for i, ob1 in enumerate(obs_list):
+                if i in used:
+                    continue
+                
+                # Find all OBs that overlap with this one
+                overlapping = [ob1]
+                for j, ob2 in enumerate(obs_list[i+1:], i+1):
+                    if j in used:
+                        continue
+                    
+                    # Check if OBs overlap (zones intersect or are very close)
+                    overlap = (ob1['low'] <= ob2['high'] and ob2['low'] <= ob1['high']) or \
+                              abs(ob1['mid'] - ob2['mid']) / price * 100 < threshold_pct
+                    
+                    if overlap:
+                        overlapping.append(ob2)
+                        used.add(j)
+                
+                # Keep the strongest OB from overlapping group
+                strength_order = {'strong': 0, 'moderate': 1, 'weak': 2}
+                best_ob = min(overlapping, key=lambda x: (strength_order.get(x['strength'], 2), x['distance']))
+                filtered.append(best_ob)
+                used.add(i)
+            
+            return filtered
+        
+        # Filter each type separately
+        filtered_bullish = filter_by_type(bullish_obs)
+        filtered_bearish = filter_by_type(bearish_obs)
+        
+        # Combine and sort by distance
+        result = filtered_bullish + filtered_bearish
+        result.sort(key=lambda x: x['distance'])
+        
+        return result
     
     def _calc_ob_strength(self, ob_idx: int, swing_idx: int, ob_type: str) -> str:
         """Calculate Order Block strength based on the move after it"""
@@ -727,13 +788,38 @@ class SMCCalculator:
         alerts = []
         price = self.df['Close'].iloc[-1]
         
-        # Order Block alerts (within 3%)
+        # Order Block alerts - PRIORITY: Price IN zone > Very close > Approaching
         for ob in order_blocks:
-            if ob['distance_pct'] <= 3.0:
+            # Check if price is IN the Order Block zone (highest priority)
+            if ob.get('in_zone', False) or (ob['low'] <= price <= ob['high']):
+                action_th = 'ซื้อ' if ob['type'] == 'bullish' else 'ขาย'
+                alerts.append({
+                    'type': f"ob_entry_{ob['type']}",
+                    'signal': ob['signal'],
+                    'priority': 'critical',
+                    'message': f"🎯 ราคาเข้าโซน {ob['signal']} Order Block! (${ob['low']:.2f}-${ob['high']:.2f}) - สัญญาณ{action_th}",
+                    'level': ob['mid'],
+                    'distance_pct': 0,
+                    'ob_type': ob['type'],
+                    'ob_high': ob['high'],
+                    'ob_low': ob['low']
+                })
+            # Very close to OB (within 1.5%)
+            elif ob['distance_pct'] <= 1.5:
+                alerts.append({
+                    'type': f"ob_near_{ob['type']}",
+                    'signal': ob['signal'],
+                    'priority': 'high',
+                    'message': f"⚠️ ใกล้โซน {ob['signal']} #{ob['rank']} ที่ ${ob['mid']:.2f} ({ob['distance_pct']:.1f}% away)",
+                    'level': ob['mid'],
+                    'distance_pct': ob['distance_pct']
+                })
+            # Approaching OB (within 3%)
+            elif ob['distance_pct'] <= 3.0:
                 alerts.append({
                     'type': ob['type'],
                     'signal': ob['signal'],
-                    'priority': 'high' if ob['distance_pct'] <= 1.5 else 'medium',
+                    'priority': 'medium',
                     'message': f"{ob['signal']} Zone #{ob['rank']} at ${ob['mid']:.2f} ({ob['distance_pct']:.1f}% away)",
                     'level': ob['mid'],
                     'distance_pct': ob['distance_pct']
