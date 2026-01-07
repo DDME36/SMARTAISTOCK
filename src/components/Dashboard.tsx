@@ -82,8 +82,12 @@ function SMCUpdateInfo() {
     }
   }
   
-  // Format last update time
-  const timeStr = generatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  // Format last update time - convert to local timezone
+  const timeStr = generatedAt.toLocaleTimeString('th-TH', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  })
   
   // Format diff
   let diffText = ''

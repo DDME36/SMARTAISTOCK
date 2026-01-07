@@ -44,17 +44,21 @@ export default function Home() {
     setTheme(currentTheme)
     document.body.className = currentTheme
     
-    // Register Service Worker for PWA
-    registerServiceWorker()
+    // Register Service Worker for PWA (skip on Safari to avoid issues)
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    if (!isSafari) {
+      registerServiceWorker()
+    }
     
-    // Fetch SMC data with timeout
+    // Fetch SMC data with timeout and cache bust
     const fetchData = async () => {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000) // 8s timeout
         
         const res = await fetch('/data/smc_data.json?t=' + Date.now(), {
-          signal: controller.signal
+          signal: controller.signal,
+          cache: 'no-store' // Force fresh data
         })
         clearTimeout(timeoutId)
         
@@ -63,20 +67,19 @@ export default function Home() {
           setSmcData(data)
         }
       } catch (e) {
-        console.log('SMC data not available (this is normal if backend not run yet)')
+        console.log('SMC data fetch error:', e)
       } finally {
-        // Always stop loading after 2 seconds max
         setIsLoading(false)
       }
     }
     
     // Set max loading time
-    const maxLoadTimer = setTimeout(() => setIsLoading(false), 2000)
+    const maxLoadTimer = setTimeout(() => setIsLoading(false), 3000)
     
     fetchData()
     
-    // Refresh every 5 minutes
-    const interval = setInterval(fetchData, 300000)
+    // Refresh every 2 minutes
+    const interval = setInterval(fetchData, 120000)
     
     // Update theme every hour
     const themeInterval = setInterval(() => {
