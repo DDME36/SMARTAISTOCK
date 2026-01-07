@@ -67,6 +67,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add public/data/ backend/data/
           git diff --staged --quiet || git commit -m "📊 Update SMC data $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git pull --rebase origin main || true
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
