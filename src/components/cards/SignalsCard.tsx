@@ -11,26 +11,73 @@ export default function SignalsCard() {
   const translateMessage = (message: string): string => {
     if (language === 'en') return message
     
-    // Order Block entries
-    if (message.includes('Discount Zone') || message.includes('Bullish OB')) {
-      return 'ราคาเข้าโซน Discount (Bullish OB)'
+    // CHoCH (Change of Character)
+    if (message.includes('Bullish CHoCH')) {
+      return 'Bullish CHoCH: อาจกลับตัวเป็นขาขึ้น'
     }
-    if (message.includes('Premium Zone') || message.includes('Bearish OB')) {
-      return 'ราคาเข้าโซน Premium (Bearish OB)'
+    if (message.includes('Bearish CHoCH')) {
+      return 'Bearish CHoCH: อาจกลับตัวเป็นขาลง'
     }
     
-    // BOS
-    if (message.includes('Bullish BOS') || message.toLowerCase().includes('bullish bos')) {
-      return 'ยืนยัน Bullish BOS'
+    // BOS (Break of Structure)
+    if (message.includes('Bullish BOS')) {
+      const match = message.match(/above ([\d.]+)/)
+      if (match) return `Bullish BOS: ราคาทะลุขึ้นเหนือ ${match[1]}`
+      return 'Bullish BOS: ยืนยันแนวโน้มขาขึ้น'
     }
-    if (message.includes('Bearish BOS') || message.toLowerCase().includes('bearish bos')) {
-      return 'ยืนยัน Bearish BOS'
+    if (message.includes('Bearish BOS')) {
+      const match = message.match(/below ([\d.]+)/)
+      if (match) return `Bearish BOS: ราคาทะลุลงต่ำกว่า ${match[1]}`
+      return 'Bearish BOS: ยืนยันแนวโน้มขาลง'
+    }
+    
+    // FVG (Fair Value Gap)
+    if (message.includes('FVG BUY') || message.includes('FVG SELL')) {
+      const match = message.match(/\$([\d.]+).*\(([\d.]+)% away\)/)
+      if (match) {
+        const type = message.includes('BUY') ? 'ซื้อ' : 'ขาย'
+        return `FVG ${type} ที่ $${match[1]} (ห่าง ${match[2]}%)`
+      }
+    }
+    
+    // Zone alerts
+    if (message.includes('Discount Zone')) {
+      return 'ราคาอยู่ในโซน Discount - มองหาจุดซื้อ'
+    }
+    if (message.includes('Premium Zone')) {
+      return 'ราคาอยู่ในโซน Premium - มองหาจุดขาย'
+    }
+    
+    // Order Block entries
+    if (message.includes('Bullish OB')) {
+      return 'ราคาเข้าโซน Bullish OB'
+    }
+    if (message.includes('Bearish OB')) {
+      return 'ราคาเข้าโซน Bearish OB'
     }
     
     // Approaching
     if (message.includes('Approaching')) {
       if (message.includes('bullish')) return 'ใกล้ถึงโซน Bullish OB'
       if (message.includes('bearish')) return 'ใกล้ถึงโซน Bearish OB'
+    }
+    
+    // Liquidity
+    if (message.includes('Equal Highs')) {
+      const match = message.match(/\$([\d.]+)/)
+      if (match) return `Equal Highs ที่ $${match[1]} - สภาพคล่องด้านบน`
+    }
+    if (message.includes('Equal Lows')) {
+      const match = message.match(/\$([\d.]+)/)
+      if (match) return `Equal Lows ที่ $${match[1]} - สภาพคล่องด้านล่าง`
+    }
+    
+    // RSI
+    if (message.includes('OVERSOLD')) {
+      return 'RSI Oversold - อาจเด้งกลับ'
+    }
+    if (message.includes('OVERBOUGHT')) {
+      return 'RSI Overbought - อาจปรับฐาน'
     }
     
     return message

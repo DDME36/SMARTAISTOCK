@@ -5,15 +5,16 @@ export async function GET() {
   try {
     const githubRawUrl = 'https://raw.githubusercontent.com/DDME36/SMARTAISTOCK/main/public/data/smc_data.json'
     
-    const res = await fetch(githubRawUrl, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    // Add timestamp to bypass any caching
+    const res = await fetch(`${githubRawUrl}?t=${Date.now()}`, {
+      cache: 'no-store',
       headers: {
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
       }
     })
     
     if (!res.ok) {
-      // Fallback to local file
       return NextResponse.json({ error: 'Failed to fetch from GitHub' }, { status: 500 })
     }
     
@@ -21,7 +22,8 @@ export async function GET() {
     
     return NextResponse.json(data, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300'
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
       }
     })
   } catch (error) {
@@ -29,3 +31,6 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 })
   }
 }
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
