@@ -32,8 +32,9 @@ interface AppState {
   toast: { message: string; visible: boolean }
   
   // Actions
-  addSymbol: (symbol: string) => void
-  removeSymbol: (symbol: string) => void
+  setWatchlist: (watchlist: string[]) => void
+  addSymbol: (symbol: string) => Promise<void>
+  removeSymbol: (symbol: string) => Promise<void>
   setSmcData: (data: SMCData) => void
   setLanguage: (lang: Language) => void
   setTheme: (theme: Theme) => void
@@ -57,18 +58,58 @@ export const useStore = create<AppState>()(
       toast: { message: '', visible: false },
       
       // Actions
-      addSymbol: (symbol) => {
+      setWatchlist: (watchlist) => set({ watchlist }),
+      
+      addSymbol: async (symbol) => {
         const { watchlist } = get()
         const upperSymbol = symbol.toUpperCase()
-        if (!watchlist.includes(upperSymbol)) {
-          set({ watchlist: [...watchlist, upperSymbol] })
-          // Auto-fetch SMC for new symbol
-          get().fetchOnDemandSMC(upperSymbol)
+        if (watchlist.includes(upperSymbol)) return
+        
+        // Optimistic update
+        set({ watchlist: [...watchlist, upperSymbol] })
+        
+        // Sync to database
+        try {
+          const res = await fetch('/api/user/watchlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symbol: upperSymbol })
+          })
+          if (res.ok) {
+            const data = await res.json()
+            set({ watchlist: data.watchlist })
+          }
+        } catch {
+          // Revert on error
+          set({ watchlist })
         }
+        
+        // Auto-fetch SMC for new symbol
+        get().fetchOnDemandSMC(upperSymbol)
       },
       
-      removeSymbol: (symbol) => {
-        set({ watchlist: get().watchlist.filter(s => s !== symbol) })
+      removeSymbol: async (symbol) => {
+        const { watchlist } = get()
+        const upperSymbol = symbol.toUpperCase()
+        
+        // Optimistic update
+        set({ watchlist: watchlist.filter(s => s !== upperSymbol) })
+        
+        // Sync to database
+        try {
+          const res = await fetch('/api/user/watchlist', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symbol: upperSymbol })
+          })
+          if (res.ok) {
+            const data = await res.json()
+            set({ watchlist: data.watchlist })
+          }
+        } catch {
+          // Revert on error
+          set({ watchlist })
+        }
       },
       
       setSmcData: (data) => set({ smcData: data }),
@@ -118,7 +159,6 @@ export const useStore = create<AppState>()(
     {
       name: 'blockhunter-storage',
       partialize: (state) => ({
-        watchlist: state.watchlist,
         language: state.language
       })
     }

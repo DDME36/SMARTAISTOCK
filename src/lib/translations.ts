@@ -153,7 +153,25 @@ export const translations: Record<Language, Record<string, string>> = {
     stocks: "stocks",
     of: "of",
     no_watchlist: "No watchlist",
-    add_stocks_dashboard: "Add stocks from the dashboard"
+    add_stocks_dashboard: "Add stocks from the dashboard",
+    
+    // Auth
+    "auth.subtitle": "Smart Money Concept Analysis",
+    "auth.login": "Login",
+    "auth.register": "Register",
+    "auth.username": "Username",
+    "auth.usernamePlaceholder": "Enter username",
+    "auth.password": "Password",
+    "auth.passwordPlaceholder": "Enter password",
+    "auth.confirmPassword": "Confirm Password",
+    "auth.confirmPasswordPlaceholder": "Enter password again",
+    "auth.passwordMismatch": "Passwords do not match",
+    "auth.loginButton": "Sign In",
+    "auth.registerButton": "Create Account",
+    "auth.noAccount": "Don't have an account? ",
+    "auth.hasAccount": "Already have an account? ",
+    "auth.logout": "Logout",
+    "auth.welcome": "Welcome"
   },
   th: {
     // Header
@@ -307,6 +325,24 @@ export const translations: Record<Language, Record<string, string>> = {
     stocks: "หุ้น",
     of: "จาก",
     no_watchlist: "ไม่มีรายการหุ้น",
-    add_stocks_dashboard: "เพิ่มหุ้นจากหน้าหลัก"
+    add_stocks_dashboard: "เพิ่มหุ้นจากหน้าหลัก",
+    
+    // Auth
+    "auth.subtitle": "วิเคราะห์ Smart Money Concept",
+    "auth.login": "เข้าสู่ระบบ",
+    "auth.register": "สมัครสมาชิก",
+    "auth.username": "ชื่อผู้ใช้",
+    "auth.usernamePlaceholder": "ใส่ชื่อผู้ใช้",
+    "auth.password": "รหัสผ่าน",
+    "auth.passwordPlaceholder": "ใส่รหัสผ่าน",
+    "auth.confirmPassword": "ยืนยันรหัสผ่าน",
+    "auth.confirmPasswordPlaceholder": "ใส่รหัสผ่านอีกครั้ง",
+    "auth.passwordMismatch": "รหัสผ่านไม่ตรงกัน",
+    "auth.loginButton": "เข้าสู่ระบบ",
+    "auth.registerButton": "สร้างบัญชี",
+    "auth.noAccount": "ยังไม่มีบัญชี? ",
+    "auth.hasAccount": "มีบัญชีแล้ว? ",
+    "auth.logout": "ออกจากระบบ",
+    "auth.welcome": "ยินดีต้อนรับ"
   }
 }

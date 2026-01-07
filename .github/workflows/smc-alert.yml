@@ -10,17 +10,12 @@ on:
   # Manual trigger
   workflow_dispatch:
     inputs:
-      watchlist:
-        description: 'Comma-separated stock symbols'
-        required: false
-        default: 'AAPL,TSLA,NVDA,AMD,GOOGL'
       interval:
         description: 'Timeframe (1m, 5m, 15m, 30m, 1h, 1d, 1wk)'
         required: false
         default: '1h'
 
 env:
-  WATCHLIST: ${{ github.event.inputs.watchlist || 'AAPL,TSLA,NVDA,AMD,GOOGL' }}
   INTERVAL: ${{ github.event.inputs.interval || '1h' }}
 
 jobs:
@@ -46,12 +41,15 @@ jobs:
           mkdir -p backend/data
           mkdir -p public/data
       
-      - name: Run SMC Analysis
+      - name: Run SMC Analysis (from Database)
         working-directory: backend
         run: python run_analysis.py
         env:
-          WATCHLIST: ${{ env.WATCHLIST }}
           INTERVAL: ${{ env.INTERVAL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_API_KEY }}
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -85,4 +83,3 @@ jobs:
           retention-days: 7
 
       # Vercel will auto-deploy when data is pushed to main branch
-      # No additional deployment step needed if Vercel is connected to this repo

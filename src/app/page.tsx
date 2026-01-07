@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useStore } from '@/store/useStore'
+import { useAuthStore } from '@/store/useAuthStore'
 import { getThemeByTime } from '@/lib/utils'
 import { registerServiceWorker, checkAndNotifyAlerts } from '@/lib/notifications'
 import Header from '@/components/Header'
@@ -15,6 +16,7 @@ import PWAInstallBanner from '@/components/PWAInstallBanner'
 import ConnectionStatus from '@/components/ConnectionStatus'
 import LoadingScreen from '@/components/LoadingScreen'
 import NoDataBanner from '@/components/NoDataBanner'
+import AuthScreen from '@/components/AuthScreen'
 
 // Page transition wrapper component
 function PageTransition({ children, viewKey }: { children: React.ReactNode; viewKey: string }) {
@@ -35,8 +37,14 @@ function PageTransition({ children, viewKey }: { children: React.ReactNode; view
 
 export default function Home() {
   const { activeView, theme, setTheme, setSmcData, watchlist, smcData, language } = useStore()
+  const { isAuthenticated, isLoading: authLoading, checkAuth } = useAuthStore()
   const notifiedAlertsRef = useRef<Set<string>>(new Set())
   const [isLoading, setIsLoading] = useState(true)
+
+  // Check auth on mount
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
 
   useEffect(() => {
     // Set theme based on time
@@ -117,8 +125,13 @@ export default function Home() {
   }, [smcData, watchlist])
 
   // Show loading screen on first load
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return <LoadingScreen />
+  }
+
+  // Show auth screen if not logged in
+  if (!isAuthenticated) {
+    return <AuthScreen />
   }
 
   return (

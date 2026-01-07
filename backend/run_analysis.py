@@ -22,11 +22,48 @@ from send_notification import NotificationSender
 
 
 def load_watchlist() -> tuple[List[str], str]:
-    """Load watchlist from various sources"""
+    """Load watchlist from database API or fallback sources"""
     watchlist = []
-    interval = '1h'
+    interval = os.environ.get('INTERVAL', '1h')
     
-    # Priority: Next.js public > backend data > environment
+    # Try to fetch from database API first
+    api_base = os.environ.get('API_BASE_URL', '')
+    api_key = os.environ.get('INTERNAL_API_KEY', '')
+    
+    if api_base and api_key:
+        try:
+            import requests
+            res = requests.get(
+                f'{api_base}/api/data/symbols',
+                headers={'x-api-key': api_key},
+                timeout=10
+            )
+            if res.ok:
+                data = res.json()
+                watchlist = data.get('symbols', [])
+                if watchlist:
+                    print(f"✓ Loaded {len(watchlist)} symbols from database")
+                    return watchlist, interval
+        except Exception as e:
+            print(f"⚠️ Could not fetch from API: {e}")
+    
+    # Fallback: Try Turso direct connection
+    turso_url = os.environ.get('TURSO_DATABASE_URL', '')
+    turso_token = os.environ.get('TURSO_AUTH_TOKEN', '')
+    
+    if turso_url and turso_token:
+        try:
+            import libsql_experimental as libsql
+            conn = libsql.connect(turso_url, auth_token=turso_token)
+            result = conn.execute('SELECT DISTINCT symbol FROM user_watchlist').fetchall()
+            watchlist = [row[0] for row in result]
+            if watchlist:
+                print(f"✓ Loaded {len(watchlist)} symbols from Turso DB")
+                return watchlist, interval
+        except Exception as e:
+            print(f"⚠️ Could not connect to Turso: {e}")
+    
+    # Fallback: Local files
     paths = [
         '../public/data/watchlist.json',
         'data/watchlist.json'
@@ -37,18 +74,22 @@ def load_watchlist() -> tuple[List[str], str]:
             with open(path, 'r') as f:
                 data = json.load(f)
                 watchlist = data.get('symbols', [])
-                interval = data.get('interval', '1h')
+                interval = data.get('interval', interval)
                 if watchlist:
                     print(f"✓ Loaded watchlist from {path}")
-                    break
+                    return watchlist, interval
         except:
             continue
     
-    if not watchlist:
-        wl_env = os.environ.get('WATCHLIST', 'AAPL,TSLA,NVDA,GOOGL,MSFT')
-        watchlist = [x.strip().upper() for x in wl_env.split(',')]
-        interval = os.environ.get('INTERVAL', '1h')
+    # Final fallback: Environment variable
+    wl_env = os.environ.get('WATCHLIST', '')
+    if wl_env:
+        watchlist = [x.strip().upper() for x in wl_env.split(',') if x.strip()]
         print(f"✓ Using environment watchlist")
+    
+    if not watchlist:
+        print("⚠️ No watchlist found - using defaults")
+        watchlist = ['AAPL', 'TSLA', 'NVDA', 'GOOGL', 'MSFT']
     
     return watchlist, interval
 
