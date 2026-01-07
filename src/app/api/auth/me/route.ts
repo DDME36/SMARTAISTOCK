@@ -28,6 +28,13 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Get user error:', error)
-    return NextResponse.json({ user: null })
+    return NextResponse.json({ 
+      user: null,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    })
   }
+}
+
+export async function POST() {
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
 }
