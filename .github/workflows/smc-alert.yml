@@ -1,0 +1,88 @@
+name: SMC Stock Alert
+
+on:
+  # รันทุก 15 นาที ช่วงตลาดเปิด (9:30 AM - 4:00 PM ET = 14:30 - 21:00 UTC)
+  schedule:
+    - cron: '30,45 14 * * 1-5'  # 9:30, 9:45 AM ET
+    - cron: '0,15,30,45 15-20 * * 1-5'  # 10:00 AM - 3:45 PM ET
+    - cron: '0 21 * * 1-5'  # 4:00 PM ET (market close)
+  
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      watchlist:
+        description: 'Comma-separated stock symbols'
+        required: false
+        default: 'AAPL,TSLA,NVDA,AMD,GOOGL'
+      interval:
+        description: 'Timeframe (1m, 5m, 15m, 30m, 1h, 1d, 1wk)'
+        required: false
+        default: '1h'
+
+env:
+  WATCHLIST: ${{ github.event.inputs.watchlist || 'AAPL,TSLA,NVDA,AMD,GOOGL' }}
+  INTERVAL: ${{ github.event.inputs.interval || '1h' }}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+      
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+      
+      - name: Create data directories
+        run: |
+          mkdir -p backend/data
+          mkdir -p public/data
+      
+      - name: Run SMC Analysis
+        working-directory: backend
+        run: python run_analysis.py
+        env:
+          WATCHLIST: ${{ env.WATCHLIST }}
+          INTERVAL: ${{ env.INTERVAL }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      
+      - name: Check for alerts
+        id: check_alerts
+        run: |
+          if python -c "import json; data=json.load(open('public/data/smc_data.json')); alerts=[a for s in data['stocks'].values() for a in s.get('alerts',[])]; exit(0 if alerts else 1)"; then
+            echo "has_alerts=true" >> $GITHUB_OUTPUT
+            echo "📢 Alerts found!"
+          else
+            echo "has_alerts=false" >> $GITHUB_OUTPUT
+            echo "✅ No alerts"
+          fi
+      
+      - name: Commit and push data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/ backend/data/
+          git diff --staged --quiet || git commit -m "📊 Update SMC data $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smc-data
+          path: public/data/smc_data.json
+          retention-days: 7
+
+      # Vercel will auto-deploy when data is pushed to main branch
+      # No additional deployment step needed if Vercel is connected to this repo
