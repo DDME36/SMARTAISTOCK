@@ -3,6 +3,14 @@
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 
+interface Alert {
+  symbol: string
+  message: string
+  signal: string
+  type?: string
+  priority?: string
+}
+
 export default function SignalsCard() {
   const { watchlist, smcData, onDemandSMC } = useStore()
   const { t, language } = useTranslation()
@@ -10,6 +18,11 @@ export default function SignalsCard() {
   // Function to translate alert messages
   const translateMessage = (message: string): string => {
     if (language === 'en') return message
+    
+    // Order Block Entry (highest priority)
+    if (message.includes('ราคาเข้าโซน') && message.includes('Order Block')) {
+      return message // Already in Thai
+    }
     
     // CHoCH (Change of Character)
     if (message.includes('Bullish CHoCH')) {
@@ -36,7 +49,7 @@ export default function SignalsCard() {
       const match = message.match(/\$([\d.]+).*\(([\d.]+)% away\)/)
       if (match) {
         const type = message.includes('BUY') ? 'ซื้อ' : 'ขาย'
-        return `FVG ${type} ที่ $${match[1]} (ห่าง ${match[2]}%)`
+        return `FVG ${type} ที่ ${match[1]} (ห่าง ${match[2]}%)`
       }
     }
     
@@ -48,12 +61,27 @@ export default function SignalsCard() {
       return 'ราคาอยู่ในโซน Premium - มองหาจุดขาย'
     }
     
+    // Near Order Block
+    if (message.includes('ใกล้โซน')) {
+      return message // Already in Thai
+    }
+    
     // Order Block entries
     if (message.includes('Bullish OB')) {
-      return 'ราคาเข้าโซน Bullish OB'
+      return 'ราคาเข้าโซน Bullish OB - สัญญาณซื้อ'
     }
     if (message.includes('Bearish OB')) {
-      return 'ราคาเข้าโซน Bearish OB'
+      return 'ราคาเข้าโซน Bearish OB - สัญญาณขาย'
+    }
+    
+    // BUY/SELL Zone
+    if (message.includes('BUY Zone')) {
+      const match = message.match(/\$([\d.]+).*\(([\d.]+)% away\)/)
+      if (match) return `โซนซื้อ ที่ $${match[1]} (ห่าง ${match[2]}%)`
+    }
+    if (message.includes('SELL Zone')) {
+      const match = message.match(/\$([\d.]+).*\(([\d.]+)% away\)/)
+      if (match) return `โซนขาย ที่ $${match[1]} (ห่าง ${match[2]}%)`
     }
     
     // Approaching
@@ -65,11 +93,11 @@ export default function SignalsCard() {
     // Liquidity
     if (message.includes('Equal Highs')) {
       const match = message.match(/\$([\d.]+)/)
-      if (match) return `Equal Highs ที่ $${match[1]} - สภาพคล่องด้านบน`
+      if (match) return `Equal Highs ที่ ${match[1]} - สภาพคล่องด้านบน`
     }
     if (message.includes('Equal Lows')) {
       const match = message.match(/\$([\d.]+)/)
-      if (match) return `Equal Lows ที่ $${match[1]} - สภาพคล่องด้านล่าง`
+      if (match) return `Equal Lows ที่ ${match[1]} - สภาพคล่องด้านล่าง`
     }
     
     // RSI
@@ -83,55 +111,90 @@ export default function SignalsCard() {
     return message
   }
 
-  // Collect all alerts from watchlist stocks (pre-calculated + on-demand)
-  const alerts: { symbol: string; message: string; signal: string }[] = []
+  // Check if alert is critical (OB entry)
+  const isCriticalAlert = (alert: Alert): boolean => {
+    return alert.type?.startsWith('ob_entry_') || 
+           alert.priority === 'critical' ||
+           alert.message?.includes('ราคาเข้าโซน')
+  }
+
+  // Collect all alerts from watchlist stocks
+  const alerts: Alert[] = []
   
   for (const symbol of watchlist) {
-    // Check pre-calculated data first
     const stock = smcData?.stocks?.[symbol]
     if (stock?.alerts?.length) {
       for (const alert of stock.alerts) {
         alerts.push({
           symbol,
           message: alert.message,
-          signal: alert.signal
+          signal: alert.signal,
+          type: alert.type,
+          priority: alert.priority
         })
       }
     }
     
-    // Check on-demand data
     const onDemand = onDemandSMC[symbol]
     if (onDemand?.alerts?.length) {
       for (const alert of onDemand.alerts) {
         alerts.push({
           symbol,
           message: alert.message,
-          signal: alert.type === 'entry' ? 'BUY' : 'INFO'
+          signal: alert.type === 'entry' ? 'BUY' : 'INFO',
+          type: alert.type
         })
       }
     }
   }
 
+  // Sort: critical alerts first
+  alerts.sort((a, b) => {
+    if (isCriticalAlert(a) && !isCriticalAlert(b)) return -1
+    if (!isCriticalAlert(a) && isCriticalAlert(b)) return 1
+    return 0
+  })
+
   return (
     <article className="card">
       <div className="card-title">{t('recent_signals')}</div>
       
-      <div style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {alerts.length === 0 ? (
-          <div style={{ padding: 20, textAlign: 'center', opacity: 0.5 }}>
+          <div style={{ padding: 20, textAlign: 'center', opacity: 0.5, fontSize: 12 }}>
             {t('no_signals')}
           </div>
         ) : (
-          alerts.slice(0, 5).map((alert, i) => (
-            <div key={i} style={{ padding: 8, borderBottom: '1px solid var(--glass-border)' }}>
-              <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
-                {alert.symbol}
-              </span>
-              <span style={{ fontSize: 12, color: 'var(--text-secondary)', marginLeft: 8 }}>
-                {translateMessage(alert.message)}
-              </span>
-            </div>
-          ))
+          alerts.slice(0, 6).map((alert, i) => {
+            const isCritical = isCriticalAlert(alert)
+            const isSell = alert.signal === 'SELL'
+            
+            if (isCritical) {
+              return (
+                <div key={i} className={`ob-entry-alert ${isSell ? 'sell' : ''}`}>
+                  <span className="ob-entry-icon">{isSell ? '🔴' : '🟢'}</span>
+                  <div className="ob-entry-text">
+                    <div className="ob-entry-title">{alert.symbol}</div>
+                    <div className="ob-entry-subtitle">{translateMessage(alert.message)}</div>
+                  </div>
+                  <span className={`signal-badge-critical ${isSell ? 'sell' : ''}`}>
+                    {isSell ? 'SELL' : 'BUY'}
+                  </span>
+                </div>
+              )
+            }
+            
+            return (
+              <div key={i} style={{ padding: 8, borderBottom: '1px solid var(--glass-border)' }}>
+                <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
+                  {alert.symbol}
+                </span>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)', marginLeft: 8 }}>
+                  {translateMessage(alert.message)}
+                </span>
+              </div>
+            )
+          })
         )}
       </div>
     </article>

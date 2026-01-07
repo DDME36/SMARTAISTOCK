@@ -18,6 +18,11 @@ export interface Alert {
   high?: number
   low?: number
   distance_pct?: number
+  priority?: 'critical' | 'high' | 'medium' | 'low'
+  level?: number
+  ob_type?: string
+  ob_high?: number
+  ob_low?: number
 }
 
 export interface StockData {

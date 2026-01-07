@@ -3976,3 +3976,162 @@ body.lang-th .target-price {
     font-size: var(--text-xl);
   }
 }
+
+
+/* ===== Auto-complete Suggestions ===== */
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: rgba(15, 20, 30, 0.98);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.suggestion-symbol {
+  font-family: var(--font-mono);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  min-width: 70px;
+}
+
+.suggestion-name {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Visual Hierarchy for Important Signals ===== */
+.signal-critical {
+  animation: pulse-glow 2s ease-in-out infinite;
+  border-left: 3px solid var(--accent-success) !important;
+}
+
+.signal-critical.sell {
+  border-left-color: var(--accent-danger) !important;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(39, 215, 150, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(39, 215, 150, 0.6);
+  }
+}
+
+.signal-critical.sell {
+  animation: pulse-glow-sell 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow-sell {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 79, 94, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 79, 94, 0.6);
+  }
+}
+
+/* Signal badge with emphasis */
+.signal-badge-critical {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, rgba(39, 215, 150, 0.2), rgba(39, 215, 150, 0.1));
+  border: 1px solid rgba(39, 215, 150, 0.4);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-success);
+  animation: badge-pulse 1.5s ease-in-out infinite;
+}
+
+.signal-badge-critical.sell {
+  background: linear-gradient(135deg, rgba(255, 79, 94, 0.2), rgba(255, 79, 94, 0.1));
+  border-color: rgba(255, 79, 94, 0.4);
+  color: var(--accent-danger);
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Order Block Entry Alert */
+.ob-entry-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: linear-gradient(135deg, rgba(39, 215, 150, 0.15), rgba(39, 215, 150, 0.05));
+  border: 1px solid rgba(39, 215, 150, 0.3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  animation: slide-in-highlight 0.3s ease;
+}
+
+.ob-entry-alert.sell {
+  background: linear-gradient(135deg, rgba(255, 79, 94, 0.15), rgba(255, 79, 94, 0.05));
+  border-color: rgba(255, 79, 94, 0.3);
+}
+
+@keyframes slide-in-highlight {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ob-entry-icon {
+  font-size: 20px;
+  animation: bounce-icon 1s ease infinite;
+}
+
+@keyframes bounce-icon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.ob-entry-text {
+  flex: 1;
+}
+
+.ob-entry-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.ob-entry-subtitle {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
