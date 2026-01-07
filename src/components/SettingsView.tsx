@@ -1,13 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield } from 'lucide-react'
+import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User } from 'lucide-react'
 import { useStore } from '@/store/useStore'
+import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { requestNotificationPermission } from '@/lib/notifications'
 
 export default function SettingsView() {
   const { watchlist, language, setLanguage, showToast } = useStore()
+  const { user, logout } = useAuthStore()
   const { t } = useTranslation()
   
   const [notificationStatus, setNotificationStatus] = useState<'granted' | 'denied' | 'default'>('default')
@@ -82,8 +84,32 @@ export default function SettingsView() {
     }
   }
 
+  const handleLogout = async () => {
+    await logout()
+    showToast('👋 ' + t('auth.logout'))
+  }
+
   return (
     <main className="settings-page">
+      {/* Account Section */}
+      {user && (
+        <div className="settings-card">
+          <div className="settings-card-header">
+            <User size={20} />
+            <div>
+              <h3>{t('auth.welcome')}, {user.username}</h3>
+              <p>Account</p>
+            </div>
+          </div>
+          <div className="settings-actions">
+            <button className="action-btn danger" onClick={handleLogout}>
+              <LogOut size={18} />
+              <span>{t('auth.logout')}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Language Section */}
       <div className="settings-card">
         <div className="settings-card-header">
