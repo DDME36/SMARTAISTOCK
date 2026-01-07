@@ -58,16 +58,26 @@ export default function Home() {
       registerServiceWorker()
     }
     
-    // Fetch SMC data with timeout and cache bust
+    // Fetch SMC data - try API first (gets latest from GitHub), fallback to static
     const fetchData = async () => {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 8000) // 8s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000)
         
-        const res = await fetch('/data/smc_data.json?t=' + Date.now(), {
+        // Try API endpoint first (fetches from GitHub raw)
+        let res = await fetch('/api/smc-data', {
           signal: controller.signal,
-          cache: 'no-store' // Force fresh data
+          cache: 'no-store'
         })
+        
+        // Fallback to static file if API fails
+        if (!res.ok) {
+          res = await fetch('/data/smc_data.json?t=' + Date.now(), {
+            signal: controller.signal,
+            cache: 'no-store'
+          })
+        }
+        
         clearTimeout(timeoutId)
         
         if (res.ok) {
@@ -76,6 +86,14 @@ export default function Home() {
         }
       } catch (e) {
         console.log('SMC data fetch error:', e)
+        // Try static file as last resort
+        try {
+          const res = await fetch('/data/smc_data.json')
+          if (res.ok) {
+            const data = await res.json()
+            setSmcData(data)
+          }
+        } catch {}
       } finally {
         setIsLoading(false)
       }
