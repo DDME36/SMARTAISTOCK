@@ -52,6 +52,8 @@ export default function AddSymbolCard() {
   
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const touchStartY = useRef<number>(0)
+  const isTouchMove = useRef<boolean>(false)
 
   useEffect(() => {
     setMounted(true)
@@ -195,8 +197,13 @@ export default function AddSymbolCard() {
         width: dropdownPos.width,
         zIndex: 9999,
       }}
-      onTouchStart={(e) => e.stopPropagation()}
-      onTouchMove={(e) => e.stopPropagation()}
+      onTouchStart={(e) => {
+        touchStartY.current = e.touches[0].clientY
+        isTouchMove.current = false
+      }}
+      onTouchMove={() => {
+        isTouchMove.current = true
+      }}
     >
       {suggestions.map((s, idx) => {
         const logoUrl = `https://assets.parqet.com/logos/symbol/${s.symbol}?format=png`
@@ -206,8 +213,11 @@ export default function AddSymbolCard() {
             className={`suggestion-item ${idx === selectedIndex ? 'selected' : ''}`}
             onClick={() => handleAdd(s.symbol)}
             onTouchEnd={(e) => {
-              e.preventDefault()
-              handleAdd(s.symbol)
+              // Only select if it was a tap, not a scroll
+              if (!isTouchMove.current) {
+                e.preventDefault()
+                handleAdd(s.symbol)
+              }
             }}
           >
             <div className="suggestion-logo-wrap">
