@@ -1,5 +1,5 @@
 // Service Worker for PWA + Push Notifications
-const CACHE_NAME = 'blockhunter-v1'
+const CACHE_NAME = 'blockhunter-v2'
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon.svg',

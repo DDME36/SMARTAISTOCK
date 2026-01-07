@@ -68,7 +68,7 @@ export async function showLocalNotification(
   } as NotificationOptions)
 }
 
-// Check alerts and show notifications
+// Check alerts and show notifications - ONLY Order Block entries
 export async function checkAndNotifyAlerts(
   watchlist: string[],
   smcData: unknown,
@@ -76,7 +76,7 @@ export async function checkAndNotifyAlerts(
 ): Promise<Set<string>> {
   if (!smcData || typeof smcData !== 'object' || !('stocks' in smcData)) return notifiedAlerts
 
-  const data = smcData as { stocks: Record<string, { alerts?: Array<{ message: string; signal: string }> }> }
+  const data = smcData as { stocks: Record<string, { alerts?: Array<{ message: string; signal: string; type?: string }> }> }
   const stocks = data.stocks
   const newNotified = new Set(notifiedAlerts)
 
@@ -85,6 +85,17 @@ export async function checkAndNotifyAlerts(
     if (!stock?.alerts?.length) continue
 
     for (const alert of stock.alerts) {
+      // ONLY notify for Order Block entries (Discount Zone / Premium Zone)
+      const isOrderBlockEntry = 
+        alert.message?.toLowerCase().includes('order block') ||
+        alert.message?.toLowerCase().includes('discount zone') ||
+        alert.message?.toLowerCase().includes('premium zone') ||
+        alert.message?.toLowerCase().includes('bullish ob') ||
+        alert.message?.toLowerCase().includes('bearish ob') ||
+        alert.type === 'entry'
+      
+      if (!isOrderBlockEntry) continue
+      
       const alertKey = `${symbol}-${alert.message}`
       
       // Skip if already notified
