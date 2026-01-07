@@ -62,27 +62,41 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 8000)
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
         
-        // Try API endpoint first (fetches from GitHub raw)
-        let res = await fetch('/api/smc-data', {
+        // Try API endpoint first (fetches from GitHub raw - bypasses Vercel cache)
+        const apiRes = await fetch('/api/smc-data?t=' + Date.now(), {
           signal: controller.signal,
-          cache: 'no-store'
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
         })
-        
-        // Fallback to static file if API fails
-        if (!res.ok) {
-          res = await fetch('/data/smc_data.json?t=' + Date.now(), {
-            signal: controller.signal,
-            cache: 'no-store'
-          })
-        }
         
         clearTimeout(timeoutId)
         
-        if (res.ok) {
-          const data = await res.json()
-          setSmcData(data)
+        if (apiRes.ok) {
+          const data = await apiRes.json()
+          if (data && data.stocks) {
+            console.log('SMC data loaded from API, generated_at:', data.generated_at)
+            setSmcData(data)
+            return
+          }
+        }
+        
+        // Fallback to static file if API fails
+        console.log('API failed, trying static file...')
+        const staticRes = await fetch('/data/smc_data.json?t=' + Date.now(), {
+          cache: 'no-store'
+        })
+        
+        if (staticRes.ok) {
+          const data = await staticRes.json()
+          if (data && data.stocks) {
+            console.log('SMC data loaded from static, generated_at:', data.generated_at)
+            setSmcData(data)
+          }
         }
       } catch (e) {
         console.log('SMC data fetch error:', e)
