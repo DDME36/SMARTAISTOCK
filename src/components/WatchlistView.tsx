@@ -5,6 +5,7 @@ import { X, TrendingUp, TrendingDown, Minus, Search, SortAsc } from 'lucide-reac
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { formatPrice } from '@/lib/utils'
+import ConfirmDialog from './ConfirmDialog'
 
 type SortType = 'name' | 'price' | 'trend'
 
@@ -46,6 +47,7 @@ export default function WatchlistView() {
   const [sortBy, setSortBy] = useState<SortType>('name')
   const [livePrices, setLivePrices] = useState<Record<string, LivePrice>>({})
   const [loading, setLoading] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const hasFetchedRef = useRef(false)
 
   // Fetch live prices for stocks without SMC data
@@ -97,9 +99,14 @@ export default function WatchlistView() {
   }, [watchlist, smcData])
 
   const handleRemove = (symbol: string) => {
-    if (confirm(`${t('removed')} ${symbol}?`)) {
-      removeSymbol(symbol)
-      showToast(`${t('removed')} ${symbol}`)
+    setDeleteConfirm(symbol)
+  }
+
+  const confirmRemove = () => {
+    if (deleteConfirm) {
+      removeSymbol(deleteConfirm)
+      showToast(`${t('removed')} ${deleteConfirm}`)
+      setDeleteConfirm(null)
     }
   }
 
@@ -320,6 +327,18 @@ export default function WatchlistView() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={!!deleteConfirm}
+        title={t('confirm_delete_symbol')}
+        message={`${deleteConfirm} - ${t('confirm_delete_symbol_desc')}`}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
+        variant="danger"
+        onConfirm={confirmRemove}
+        onCancel={() => setDeleteConfirm(null)}
+      />
     </main>
   )
 }

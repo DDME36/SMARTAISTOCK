@@ -171,7 +171,18 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.noAccount": "Don't have an account? ",
     "auth.hasAccount": "Already have an account? ",
     "auth.logout": "Logout",
-    "auth.welcome": "Welcome"
+    "auth.welcome": "Welcome",
+    
+    // Confirm Dialog
+    cancel: "Cancel",
+    confirm: "Confirm",
+    delete: "Delete",
+    confirm_delete_symbol: "Remove from watchlist?",
+    confirm_delete_symbol_desc: "This will remove the stock from your watchlist.",
+    confirm_clear_title: "Clear All Data?",
+    confirm_clear_desc: "This will delete your watchlist, settings, and all cached data. This action cannot be undone.",
+    confirm_logout_title: "Logout?",
+    confirm_logout_desc: "You will need to login again to access your account."
   },
   th: {
     // Header
@@ -343,6 +354,17 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.noAccount": "ยังไม่มีบัญชี? ",
     "auth.hasAccount": "มีบัญชีแล้ว? ",
     "auth.logout": "ออกจากระบบ",
-    "auth.welcome": "ยินดีต้อนรับ"
+    "auth.welcome": "ยินดีต้อนรับ",
+    
+    // Confirm Dialog
+    cancel: "ยกเลิก",
+    confirm: "ยืนยัน",
+    delete: "ลบ",
+    confirm_delete_symbol: "ลบออกจากรายการ?",
+    confirm_delete_symbol_desc: "หุ้นนี้จะถูกลบออกจากรายการติดตามของคุณ",
+    confirm_clear_title: "ล้างข้อมูลทั้งหมด?",
+    confirm_clear_desc: "การดำเนินการนี้จะลบรายการหุ้น, การตั้งค่า และข้อมูลแคชทั้งหมด ไม่สามารถกู้คืนได้",
+    confirm_logout_title: "ออกจากระบบ?",
+    confirm_logout_desc: "คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อเข้าถึงบัญชีของคุณ"
   }
 }

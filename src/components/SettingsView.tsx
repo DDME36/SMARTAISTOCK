@@ -6,6 +6,7 @@ import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { requestNotificationPermission } from '@/lib/notifications'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function SettingsView() {
   const { watchlist, language, setLanguage, showToast } = useStore()
@@ -14,6 +15,8 @@ export default function SettingsView() {
   
   const [notificationStatus, setNotificationStatus] = useState<'granted' | 'denied' | 'default'>('default')
   const [clearing, setClearing] = useState(false)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -51,8 +54,7 @@ export default function SettingsView() {
   }
 
   const clearAllData = async () => {
-    if (!confirm(t('confirm_clear'))) return
-    
+    setShowClearConfirm(false)
     setClearing(true)
     
     // Clear localStorage
@@ -85,6 +87,7 @@ export default function SettingsView() {
   }
 
   const handleLogout = async () => {
+    setShowLogoutConfirm(false)
     await logout()
     showToast('👋 ' + t('auth.logout'))
   }
@@ -102,7 +105,7 @@ export default function SettingsView() {
             </div>
           </div>
           <div className="settings-actions">
-            <button className="action-btn danger" onClick={handleLogout}>
+            <button className="action-btn danger" onClick={() => setShowLogoutConfirm(true)}>
               <LogOut size={18} />
               <span>{t('auth.logout')}</span>
             </button>
@@ -197,7 +200,7 @@ export default function SettingsView() {
             <RefreshCw size={18} />
             <span>{t('refresh_data')}</span>
           </button>
-          <button className="action-btn danger" onClick={clearAllData} disabled={clearing}>
+          <button className="action-btn danger" onClick={() => setShowClearConfirm(true)} disabled={clearing}>
             <Trash2 size={18} />
             <span>{clearing ? t('clearing') : t('clear_all_data')}</span>
           </button>
@@ -242,6 +245,30 @@ export default function SettingsView() {
           <p className="app-credit">by DOME • @ddme36</p>
         </div>
       </div>
+
+      {/* Clear Data Confirmation */}
+      <ConfirmDialog
+        isOpen={showClearConfirm}
+        title={t('confirm_clear_title')}
+        message={t('confirm_clear_desc')}
+        confirmText={t('clear_all_data')}
+        cancelText={t('cancel')}
+        variant="danger"
+        onConfirm={clearAllData}
+        onCancel={() => setShowClearConfirm(false)}
+      />
+
+      {/* Logout Confirmation */}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title={t('confirm_logout_title')}
+        message={t('confirm_logout_desc')}
+        confirmText={t('auth.logout')}
+        cancelText={t('cancel')}
+        variant="warning"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </main>
   )
 }

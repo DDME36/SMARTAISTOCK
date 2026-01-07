@@ -208,6 +208,11 @@ body.lang-th .target-price {
   transition: transform 0.3s var(--ease-out), border-color 0.3s;
 }
 
+/* Card with dropdown needs visible overflow */
+.card.has-dropdown {
+  overflow: visible;
+}
+
 .card:hover {
   border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
@@ -3979,17 +3984,18 @@ body.lang-th .target-price {
 
 
 /* ===== Auto-complete Suggestions ===== */
+.add-input-wrapper {
+  position: relative;
+}
+
 .suggestions-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+  position: fixed;
   background: rgba(15, 20, 30, 0.98);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   backdrop-filter: blur(20px);
-  z-index: 100;
-  max-height: 200px;
+  z-index: 2000;
+  max-height: 240px;
   overflow-y: auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
@@ -4006,6 +4012,34 @@ body.lang-th .target-price {
 .suggestion-item:hover,
 .suggestion-item.selected {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.suggestion-logo-wrap {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.suggestion-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.suggestion-logo-fallback {
+  display: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-success));
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
 }
 
 .suggestion-symbol {
@@ -4134,4 +4168,189 @@ body.lang-th .target-price {
 .ob-entry-subtitle {
   font-size: var(--text-xs);
   color: var(--text-secondary);
+}
+
+
+/* === Confirm Dialog === */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fade-in 0.2s ease;
+  padding: var(--space-4);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.confirm-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  background: rgba(20, 25, 35, 0.98);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-align: center;
+  animation: scale-in 0.2s ease;
+}
+
+@keyframes scale-in {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.confirm-close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.confirm-close:hover {
+  background: var(--glass-surface);
+  color: var(--text-primary);
+}
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 79, 94, 0.1);
+  color: var(--accent-danger);
+}
+
+.confirm-icon.warning {
+  background: rgba(255, 178, 36, 0.1);
+  color: var(--accent-warning);
+}
+
+.confirm-icon.default {
+  background: rgba(110, 86, 207, 0.1);
+  color: var(--accent-primary);
+}
+
+.confirm-title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.confirm-message {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.confirm-cancel {
+  flex: 1;
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+}
+
+.confirm-btn {
+  flex: 1;
+  background: var(--accent-danger);
+  color: white;
+  border: none;
+}
+
+.confirm-btn.warning {
+  background: var(--accent-warning);
+  color: #000;
+}
+
+.confirm-btn.default {
+  background: var(--accent-primary);
+}
+
+.confirm-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* === Skeleton Loading === */
+.skeleton-text {
+  height: 14px;
+  background: linear-gradient(90deg, var(--glass-surface) 25%, var(--glass-highlight) 50%, var(--glass-surface) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-xs);
+}
+
+.skeleton-text.sm { height: 12px; width: 60%; }
+.skeleton-text.md { height: 16px; width: 80%; }
+.skeleton-text.lg { height: 20px; width: 50%; }
+
+.skeleton-circle {
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--glass-surface) 25%, var(--glass-highlight) 50%, var(--glass-surface) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-box {
+  background: linear-gradient(90deg, var(--glass-surface) 25%, var(--glass-highlight) 50%, var(--glass-surface) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* Skeleton for watchlist item */
+.wl-skeleton-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.wl-skeleton-item:last-child {
+  border-bottom: none;
+}
+
+.wl-skeleton-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.wl-skeleton-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.wl-skeleton-price {
+  width: 60px;
+  height: 20px;
 }

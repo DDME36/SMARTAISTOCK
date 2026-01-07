@@ -46,6 +46,7 @@ export default function AddSymbolCard() {
   const [suggestions, setSuggestions] = useState<typeof POPULAR_SYMBOLS>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 })
   const inputRef = useRef<HTMLInputElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
 
@@ -64,6 +65,36 @@ export default function AddSymbolCard() {
     }
     setSelectedIndex(-1)
   }, [input, watchlist])
+
+  // Update dropdown position
+  const updateDropdownPosition = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect()
+      setDropdownPos({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width
+      })
+    }
+  }
+
+  // Track position on scroll/resize
+  useEffect(() => {
+    if (!showSuggestions) return
+    
+    updateDropdownPosition()
+    
+    const handleScroll = () => updateDropdownPosition()
+    const handleResize = () => updateDropdownPosition()
+    
+    window.addEventListener('scroll', handleScroll, true)
+    window.addEventListener('resize', handleResize)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [showSuggestions])
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -150,7 +181,7 @@ export default function AddSymbolCard() {
   }
 
   return (
-    <article className="card">
+    <article className={`card ${showSuggestions ? 'has-dropdown' : ''}`}>
       <div className="card-title">{t('add_symbol')}</div>
       
       <div className="add-input-wrapper">
@@ -170,19 +201,45 @@ export default function AddSymbolCard() {
         />
         <Plus className="input-icon" size={18} />
         
-        {/* Auto-complete suggestions */}
+        {/* Auto-complete suggestions - Fixed position */}
         {showSuggestions && (
-          <div className="suggestions-dropdown" ref={suggestionsRef}>
-            {suggestions.map((s, idx) => (
-              <div
-                key={s.symbol}
-                className={`suggestion-item ${idx === selectedIndex ? 'selected' : ''}`}
-                onClick={() => handleAdd(s.symbol)}
-              >
-                <span className="suggestion-symbol">{s.symbol}</span>
-                <span className="suggestion-name">{s.name}</span>
-              </div>
-            ))}
+          <div 
+            className="suggestions-dropdown" 
+            ref={suggestionsRef}
+            style={{
+              top: dropdownPos.top,
+              left: dropdownPos.left,
+              width: dropdownPos.width,
+            }}
+          >
+            {suggestions.map((s, idx) => {
+              const logoUrl = `https://assets.parqet.com/logos/symbol/${s.symbol}?format=png`
+              return (
+                <div
+                  key={s.symbol}
+                  className={`suggestion-item ${idx === selectedIndex ? 'selected' : ''}`}
+                  onClick={() => handleAdd(s.symbol)}
+                >
+                  <div className="suggestion-logo-wrap">
+                    <img 
+                      src={logoUrl} 
+                      alt={s.symbol}
+                      className="suggestion-logo"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                        const fallback = e.currentTarget.nextElementSibling as HTMLElement
+                        if (fallback) fallback.style.display = 'flex'
+                      }}
+                    />
+                    <div className="suggestion-logo-fallback">
+                      {s.symbol.substring(0, 2)}
+                    </div>
+                  </div>
+                  <span className="suggestion-symbol">{s.symbol}</span>
+                  <span className="suggestion-name">{s.name}</span>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
