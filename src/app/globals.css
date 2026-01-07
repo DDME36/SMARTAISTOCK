@@ -3994,10 +3994,13 @@ body.lang-th .target-price {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   backdrop-filter: blur(20px);
-  z-index: 2000;
-  max-height: 240px;
+  z-index: 9999;
+  max-height: 280px;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow-x: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .suggestion-item {
@@ -4007,11 +4010,17 @@ body.lang-th .target-price {
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
   transition: background 0.15s ease;
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .suggestion-item:hover,
 .suggestion-item.selected {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-item:active {
+  background: rgba(110, 86, 207, 0.3);
 }
 
 .suggestion-logo-wrap {
