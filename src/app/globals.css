@@ -293,17 +293,21 @@ body.lang-th .target-price {
 
 .add-input {
   width: 100%;
+  height: 48px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--glass-border);
-  padding: var(--space-3) var(--space-4);
-  padding-right: 50px;
+  padding: 0 50px 0 var(--space-4);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: var(--text-base);
+  line-height: 48px;
   text-transform: uppercase;
   outline: none;
   transition: all 0.2s;
+  caret-color: var(--accent-primary);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .add-input:focus { 
