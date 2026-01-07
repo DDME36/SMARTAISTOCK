@@ -33,9 +33,20 @@ export function getThemeByTime(): Theme {
 
 export function isDataStale(generatedAt: string | undefined): { stale: boolean; minutesAgo: number } {
   if (!generatedAt) return { stale: false, minutesAgo: 0 }
-  const dataTime = new Date(generatedAt)
+  
+  // Handle timestamp without timezone - assume UTC
+  let dataTime: Date
+  if (generatedAt.endsWith('Z') || generatedAt.includes('+') || generatedAt.includes('-', 10)) {
+    dataTime = new Date(generatedAt)
+  } else {
+    // No timezone info - assume UTC
+    dataTime = new Date(generatedAt + 'Z')
+  }
+  
   const now = new Date()
   const diffMins = Math.round((now.getTime() - dataTime.getTime()) / (1000 * 60))
+  
+  // Only show stale warning if market is open AND data is older than 60 minutes
   return { stale: isMarketOpen() && diffMins > 60, minutesAgo: diffMins }
 }
 
