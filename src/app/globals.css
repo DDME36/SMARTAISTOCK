@@ -2713,6 +2713,20 @@ body.lang-th .target-price {
   color: var(--accent-primary);
 }
 
+.wl-badge.loading {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.wl-badge .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .wl-meta {
   display: flex;
   align-items: center;
