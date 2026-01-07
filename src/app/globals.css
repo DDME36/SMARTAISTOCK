@@ -2087,16 +2087,96 @@ body.lang-th .target-price {
 }
 
 @media (max-width: 480px) {
+  /* Header - center brand, move buttons */
+  .app-header {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .brand {
+    align-items: center;
+    width: 100%;
+  }
+  
+  .header-controls {
+    display: none; /* Hide on mobile - use bottom nav instead */
+  }
+  
+  /* Sentiment Card - better mobile layout */
   .sentiment-card {
-    min-height: 320px;
+    min-height: auto;
+  }
+  
+  .sentiment-card .card-title {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .sentiment-card .badge {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .sentiment-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .sentiment-visual {
+    order: 1;
+  }
+  
+  .visual-stack {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .ai-robot-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .ai-gauge-container {
+    width: 120px;
+    height: 70px;
+  }
+  
+  .ai-score-number {
+    font-size: 28px;
+  }
+  
+  .sentiment-analysis {
+    order: 2;
+    text-align: center;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 12px;
+  }
+  
+  .analysis-headline {
+    font-size: 16px;
+  }
+  
+  .analysis-text {
+    font-size: 12px;
+    text-align: left;
+  }
+  
+  .analysis-action-btn {
+    width: 100%;
+    justify-content: center;
   }
   
   .sentiment-indicators {
+    order: 3;
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
   
   .indicator-value {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
@@ -3541,5 +3621,37 @@ body.lang-th .target-price {
   
   .indicator-value {
     font-size: 13px;
+  }
+  
+  /* Mobile action buttons in watchlist */
+  .watchlist-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .mobile-actions {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .mobile-action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .mobile-action-btn:active {
+    background: var(--accent-primary);
+    color: white;
+    transform: scale(0.95);
   }
 }
