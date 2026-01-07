@@ -19,7 +19,14 @@ export default function NoDataBanner() {
   const generatedAt = smcData?.generated_at
   let dataAge = ''
   if (generatedAt) {
-    const mins = Math.round((Date.now() - new Date(generatedAt).getTime()) / 60000)
+    // Handle timestamp without timezone - assume UTC
+    let dataTime: Date
+    if (generatedAt.endsWith('Z') || generatedAt.includes('+') || generatedAt.includes('-', 10)) {
+      dataTime = new Date(generatedAt)
+    } else {
+      dataTime = new Date(generatedAt + 'Z')
+    }
+    const mins = Math.round((Date.now() - dataTime.getTime()) / 60000)
     if (mins < 60) dataAge = `${mins}m ago`
     else if (mins < 1440) dataAge = `${Math.round(mins / 60)}h ago`
     else dataAge = `${Math.round(mins / 1440)}d ago`

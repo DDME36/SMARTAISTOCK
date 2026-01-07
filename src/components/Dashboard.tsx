@@ -26,7 +26,16 @@ function SMCUpdateInfo() {
   
   if (!smcData?.generated_at) return null
   
-  const generatedAt = new Date(smcData.generated_at)
+  // Handle timestamp without timezone - assume UTC
+  let generatedAt: Date
+  const genAt = smcData.generated_at
+  if (genAt.endsWith('Z') || genAt.includes('+') || genAt.includes('-', 10)) {
+    generatedAt = new Date(genAt)
+  } else {
+    // No timezone info - assume UTC
+    generatedAt = new Date(genAt + 'Z')
+  }
+  
   const diffMins = Math.round((now.getTime() - generatedAt.getTime()) / 60000)
   
   // Check if market is open (9:30 AM - 4:00 PM ET, Mon-Fri)
