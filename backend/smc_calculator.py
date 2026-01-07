@@ -279,8 +279,10 @@ class SMCCalculator:
         """
         Find Order Blocks - institutional supply/demand zones
         
-        Bullish OB: Last bearish candle before a strong bullish move
-        Bearish OB: Last bullish candle before a strong bearish move
+        Bullish OB: Last bearish candle before a strong bullish move (use candle BODY, not wick)
+        Bearish OB: Last bullish candle before a strong bearish move (use candle BODY, not wick)
+        
+        Based on LuxAlgo Smart Money Concepts methodology
         """
         if self.df is None or len(self.df) < 20:
             return []
@@ -292,7 +294,10 @@ class SMCCalculator:
         closes = self.df['Close'].values
         price = closes[-1]
         
-        # Find Bearish Order Blocks (supply zones)
+        # Calculate ATR for volatility filter (like LuxAlgo)
+        atr = self._calc_atr(highs, lows, closes, 14)
+        
+        # Find Bearish Order Blocks (supply zones) - at swing highs
         for sh in swing_highs:
             idx = sh['index']
             if idx <= 5 or idx >= len(closes) - 1:
@@ -301,19 +306,27 @@ class SMCCalculator:
             # Look for the last bullish candle before the swing high
             for j in range(idx - 1, max(0, idx - 10), -1):
                 if closes[j] > opens[j]:  # Bullish candle
-                    h, l = float(highs[j]), float(lows[j])
-                    mid = (h + l) / 2
+                    # Use BODY for OB zone (not wick) - like LuxAlgo
+                    ob_high = float(max(opens[j], closes[j]))  # Top of body
+                    ob_low = float(min(opens[j], closes[j]))   # Bottom of body
+                    
+                    # Filter out high volatility bars (wick > body)
+                    body_size = abs(closes[j] - opens[j])
+                    wick_size = (highs[j] - max(opens[j], closes[j])) + (min(opens[j], closes[j]) - lows[j])
+                    if wick_size > body_size * 2:
+                        continue  # Skip high volatility candles
                     
                     # Check if OB is still valid (not mitigated)
-                    mitigated = any(closes[k] > h for k in range(j + 1, len(closes)))
+                    mitigated = any(closes[k] > ob_high for k in range(j + 1, len(closes)))
                     
                     if not mitigated:
+                        mid = (ob_high + ob_low) / 2
                         distance = abs(price - mid)
                         obs.append({
                             'type': 'bearish',
                             'signal': 'SELL',
-                            'high': round(h, 2),
-                            'low': round(l, 2),
+                            'high': round(ob_high, 2),
+                            'low': round(ob_low, 2),
                             'mid': round(mid, 2),
                             'distance': round(distance, 2),
                             'distance_pct': round(distance / price * 100, 2),
@@ -323,7 +336,7 @@ class SMCCalculator:
                         })
                     break
         
-        # Find Bullish Order Blocks (demand zones)
+        # Find Bullish Order Blocks (demand zones) - at swing lows
         for sl in swing_lows:
             idx = sl['index']
             if idx <= 5 or idx >= len(closes) - 1:
@@ -332,19 +345,27 @@ class SMCCalculator:
             # Look for the last bearish candle before the swing low
             for j in range(idx - 1, max(0, idx - 10), -1):
                 if closes[j] < opens[j]:  # Bearish candle
-                    h, l = float(highs[j]), float(lows[j])
-                    mid = (h + l) / 2
+                    # Use BODY for OB zone (not wick) - like LuxAlgo
+                    ob_high = float(max(opens[j], closes[j]))  # Top of body
+                    ob_low = float(min(opens[j], closes[j]))   # Bottom of body
+                    
+                    # Filter out high volatility bars
+                    body_size = abs(closes[j] - opens[j])
+                    wick_size = (highs[j] - max(opens[j], closes[j])) + (min(opens[j], closes[j]) - lows[j])
+                    if wick_size > body_size * 2:
+                        continue
                     
                     # Check if OB is still valid (not mitigated)
-                    mitigated = any(closes[k] < l for k in range(j + 1, len(closes)))
+                    mitigated = any(closes[k] < ob_low for k in range(j + 1, len(closes)))
                     
                     if not mitigated:
+                        mid = (ob_high + ob_low) / 2
                         distance = abs(price - mid)
                         obs.append({
                             'type': 'bullish',
                             'signal': 'BUY',
-                            'high': round(h, 2),
-                            'low': round(l, 2),
+                            'high': round(ob_high, 2),
+                            'low': round(ob_low, 2),
                             'mid': round(mid, 2),
                             'distance': round(distance, 2),
                             'distance_pct': round(distance / price * 100, 2),
