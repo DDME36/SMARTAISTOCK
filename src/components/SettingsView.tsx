@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User } from 'lucide-react'
+import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2 } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { requestNotificationPermission } from '@/lib/notifications'
+import { subscribeToPush, isPushSubscribed } from '@/lib/notifications'
 import ConfirmDialog from './ConfirmDialog'
 
 export default function SettingsView() {
@@ -14,6 +14,8 @@ export default function SettingsView() {
   const { t } = useTranslation()
   
   const [notificationStatus, setNotificationStatus] = useState<'granted' | 'denied' | 'default'>('default')
+  const [pushSubscribed, setPushSubscribed] = useState(false)
+  const [subscribing, setSubscribing] = useState(false)
   const [clearing, setClearing] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
@@ -22,19 +24,38 @@ export default function SettingsView() {
     if ('Notification' in window) {
       setNotificationStatus(Notification.permission)
     }
+    // Check if already subscribed to push
+    isPushSubscribed().then(setPushSubscribed)
   }, [])
 
   const handleNotificationToggle = async () => {
-    if (notificationStatus === 'granted') {
+    if (notificationStatus === 'denied') {
       showToast(t('browser_settings_hint'))
       return
     }
+
+    if (pushSubscribed && notificationStatus === 'granted') {
+      showToast(t('browser_settings_hint'))
+      return
+    }
+
+    setSubscribing(true)
     
-    const granted = await requestNotificationPermission()
-    setNotificationStatus(granted ? 'granted' : 'denied')
-    
-    if (granted) {
-      showToast('🔔 ' + t('notifications_enabled'))
+    try {
+      const success = await subscribeToPush()
+      
+      if (success) {
+        setNotificationStatus('granted')
+        setPushSubscribed(true)
+        showToast('🔔 ' + t('notifications_enabled'))
+      } else {
+        showToast('Failed to enable notifications')
+      }
+    } catch (error) {
+      console.error('Notification error:', error)
+      showToast('Failed to enable notifications')
+    } finally {
+      setSubscribing(false)
     }
   }
 
@@ -152,10 +173,16 @@ export default function SettingsView() {
           </div>
         </div>
         <button 
-          className={`notification-toggle ${notificationStatus === 'granted' ? 'enabled' : ''}`}
+          className={`notification-toggle ${notificationStatus === 'granted' && pushSubscribed ? 'enabled' : ''}`}
           onClick={handleNotificationToggle}
+          disabled={subscribing}
         >
-          {notificationStatus === 'granted' ? (
+          {subscribing ? (
+            <>
+              <Loader2 size={18} className="icon-spin" />
+              <span>Subscribing...</span>
+            </>
+          ) : notificationStatus === 'granted' && pushSubscribed ? (
             <>
               <Bell size={18} />
               <span>{t('notifications_enabled')}</span>

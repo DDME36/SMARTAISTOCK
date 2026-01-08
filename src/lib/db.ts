@@ -67,7 +67,20 @@ export async function initDatabase() {
     // Create indexes
     `CREATE INDEX IF NOT EXISTS idx_watchlist_user ON user_watchlist(user_id)`,
     `CREATE INDEX IF NOT EXISTS idx_watchlist_symbol ON user_watchlist(symbol)`,
-    `CREATE INDEX IF NOT EXISTS idx_market_cache_type ON market_data_cache(data_type)`
+    `CREATE INDEX IF NOT EXISTS idx_market_cache_type ON market_data_cache(data_type)`,
+    
+    // Push subscriptions table
+    `CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      endpoint TEXT NOT NULL,
+      subscription_json TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE(user_id, endpoint)
+    )`,
+    
+    `CREATE INDEX IF NOT EXISTS idx_push_user ON push_subscriptions(user_id)`
   ])
 }
 
@@ -208,4 +221,42 @@ export async function getAllWatchedSymbols(): Promise<string[]> {
     sql: 'SELECT DISTINCT symbol FROM user_watchlist'
   })
   return result.rows.map(row => row.symbol as string)
+}
+
+// Push subscription operations
+export async function savePushSubscription(userId: number, subscription: object) {
+  const endpoint = (subscription as { endpoint: string }).endpoint
+  await db.execute({
+    sql: `INSERT OR REPLACE INTO push_subscriptions (user_id, endpoint, subscription_json, updated_at) 
+          VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+    args: [userId, endpoint, JSON.stringify(subscription)]
+  })
+}
+
+export async function removePushSubscription(userId: number, endpoint: string) {
+  await db.execute({
+    sql: 'DELETE FROM push_subscriptions WHERE user_id = ? AND endpoint = ?',
+    args: [userId, endpoint]
+  })
+}
+
+export async function getUserPushSubscriptions(userId: number) {
+  const result = await db.execute({
+    sql: 'SELECT subscription_json FROM push_subscriptions WHERE user_id = ?',
+    args: [userId]
+  })
+  return result.rows.map(row => JSON.parse(row.subscription_json as string))
+}
+
+export async function getAllPushSubscriptions() {
+  const result = await db.execute({
+    sql: `SELECT ps.subscription_json, ps.user_id, u.username
+          FROM push_subscriptions ps
+          JOIN users u ON ps.user_id = u.id`
+  })
+  return result.rows.map(row => ({
+    subscription: JSON.parse(row.subscription_json as string),
+    userId: row.user_id as number,
+    username: row.username as string
+  }))
 }

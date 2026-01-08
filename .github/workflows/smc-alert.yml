@@ -53,13 +53,21 @@ jobs:
       - name: Check for alerts
         id: check_alerts
         run: |
-          if python -c "import json; data=json.load(open('public/data/smc_data.json')); alerts=[a for s in data['stocks'].values() for a in s.get('alerts',[])]; exit(0 if alerts else 1)"; then
+          if python -c "import json; data=json.load(open('public/data/smc_data.json')); alerts=[a for s in data['stocks'].values() for a in s.get('alerts',[]) if a.get('type','').startswith('ob_entry_')]; exit(0 if alerts else 1)"; then
             echo "has_alerts=true" >> $GITHUB_OUTPUT
-            echo "📢 Alerts found!"
+            echo "📢 OB Entry alerts found!"
           else
             echo "has_alerts=false" >> $GITHUB_OUTPUT
-            echo "✅ No alerts"
+            echo "✅ No OB entry alerts"
           fi
+      
+      - name: Send Push Notifications
+        if: steps.check_alerts.outputs.has_alerts == 'true'
+        working-directory: backend
+        run: python send_push.py
+        env:
+          VERCEL_URL: https://smartaistock.vercel.app
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_API_KEY }}
       
       - name: Commit and push data
         run: |
