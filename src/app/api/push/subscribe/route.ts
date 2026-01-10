@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 })
     }
 
-    await savePushSubscription(payload.userId, subscription)
+    await savePushSubscription(payload.id, subscription)
 
     return NextResponse.json({ success: true, message: 'Subscribed to push notifications' })
   } catch (error) {
@@ -58,7 +58,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Endpoint required' }, { status: 400 })
     }
 
-    await removePushSubscription(payload.userId, endpoint)
+    await removePushSubscription(payload.id, endpoint)
 
     return NextResponse.json({ success: true, message: 'Unsubscribed from push notifications' })
   } catch (error) {

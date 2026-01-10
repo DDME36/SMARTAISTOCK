@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getThemeByTime } from '@/lib/utils'
-import { registerServiceWorker, checkAndNotifyAlerts } from '@/lib/notifications'
+import { registerServiceWorker } from '@/lib/notifications'
 import Header from '@/components/Header'
 import Dashboard from '@/components/Dashboard'
 import WatchlistView from '@/components/WatchlistView'
@@ -38,7 +38,6 @@ function PageTransition({ children, viewKey }: { children: React.ReactNode; view
 export default function Home() {
   const { activeView, theme, setTheme, setSmcData, watchlist, smcData, language } = useStore()
   const { isAuthenticated, isLoading: authLoading, checkAuth } = useAuthStore()
-  const notifiedAlertsRef = useRef<Set<string>>(new Set())
   const [isLoading, setIsLoading] = useState(true)
 
   // Check auth on mount
@@ -140,21 +139,6 @@ export default function Home() {
     document.body.className = `${theme} lang-${language}`
     document.documentElement.lang = language
   }, [theme, language])
-
-  // Check for alerts and notify
-  useEffect(() => {
-    if (!smcData || watchlist.length === 0) return
-
-    const checkAlerts = async () => {
-      notifiedAlertsRef.current = await checkAndNotifyAlerts(
-        watchlist,
-        smcData,
-        notifiedAlertsRef.current
-      )
-    }
-
-    checkAlerts()
-  }, [smcData, watchlist])
 
   // Show loading screen on first load
   if (authLoading || isLoading) {
