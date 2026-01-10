@@ -230,17 +230,21 @@ export default function SettingsView() {
             <Info size={14} /> {t('browser_settings_hint')}
           </p>
         )}
-        {notificationStatus === 'granted' && (
-          <button 
-            className="action-btn" 
-            onClick={handleTestNotification}
-            disabled={testing}
-            style={{ marginTop: 12 }}
-          >
-            {testing ? <Loader2 size={18} className="icon-spin" /> : <Send size={18} />}
-            <span>{testing ? 'Sending...' : 'Test Notification'}</span>
-          </button>
-        )}
+        
+        {/* Test Notification Button - always show for debugging */}
+        <button 
+          className="action-btn" 
+          onClick={handleTestNotification}
+          disabled={testing}
+          style={{ marginTop: 12 }}
+        >
+          {testing ? <Loader2 size={18} className="icon-spin" /> : <Send size={18} />}
+          <span>{testing ? 'Sending...' : `Test Notification (${notificationStatus})`}</span>
+        </button>
+        
+        <p className="settings-hint" style={{ marginTop: 8 }}>
+          <Info size={14} /> iOS: ต้อง Add to Home Screen ก่อนถึงจะรับ push ได้
+        </p>
       </div>
 
       {/* Data Management */}
