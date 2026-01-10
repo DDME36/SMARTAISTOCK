@@ -2,13 +2,25 @@
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 
+// Helper: Promise with timeout
+function withTimeout<T>(promise: Promise<T>, ms: number, errorMsg: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => 
+      setTimeout(() => reject(new Error(errorMsg)), ms)
+    )
+  ])
+}
+
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
+    console.log('Service Worker not supported')
     return null
   }
 
   try {
     const registration = await navigator.serviceWorker.register('/sw.js')
+    console.log('SW registered:', registration.scope)
     return registration
   } catch (error) {
     console.error('SW registration failed:', error)
@@ -36,44 +48,96 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
 // Subscribe to push notifications
 export async function subscribeToPush(): Promise<boolean> {
+  console.log('subscribeToPush called, VAPID_KEY:', VAPID_PUBLIC_KEY ? 'exists' : 'missing')
+  
   if (!VAPID_PUBLIC_KEY) {
     console.log('VAPID key not configured')
     return false
   }
 
   try {
-    // Request permission first
-    if (!('Notification' in window)) return false
+    // Check support
+    if (!('Notification' in window)) {
+      console.log('Notification API not supported')
+      return false
+    }
     
-    if (Notification.permission === 'denied') return false
+    if (!('serviceWorker' in navigator)) {
+      console.log('Service Worker not supported')
+      return false
+    }
+    
+    if (!('PushManager' in window)) {
+      console.log('Push API not supported')
+      return false
+    }
+
+    // Request permission first
+    if (Notification.permission === 'denied') {
+      console.log('Notifications denied')
+      return false
+    }
     
     if (Notification.permission !== 'granted') {
+      console.log('Requesting permission...')
       const permission = await Notification.requestPermission()
+      console.log('Permission result:', permission)
       if (permission !== 'granted') return false
     }
 
-    const registration = await navigator.serviceWorker.ready
+    // Register SW first if needed
+    let registration = await navigator.serviceWorker.getRegistration()
+    if (!registration) {
+      console.log('Registering service worker...')
+      registration = await withTimeout(
+        navigator.serviceWorker.register('/sw.js'),
+        5000,
+        'Service worker registration timeout'
+      )
+    }
+    
+    // Wait for SW to be ready with timeout
+    console.log('Waiting for SW ready...')
+    registration = await withTimeout(
+      navigator.serviceWorker.ready,
+      5000,
+      'Service worker ready timeout'
+    )
+    console.log('SW ready')
     
     // Check if already subscribed
     let subscription = await registration.pushManager.getSubscription()
+    console.log('Existing subscription:', subscription ? 'yes' : 'no')
     
     if (!subscription) {
       // Subscribe to push
+      console.log('Creating new subscription...')
       const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: applicationServerKey as BufferSource
-      })
+      subscription = await withTimeout(
+        registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: applicationServerKey as BufferSource
+        }),
+        10000,
+        'Push subscription timeout'
+      )
+      console.log('Subscription created')
     }
 
     // Send subscription to server (uses cookie auth)
-    const response = await fetch('/api/push/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ subscription })
-    })
+    console.log('Sending to server...')
+    const response = await withTimeout(
+      fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ subscription })
+      }),
+      10000,
+      'Server request timeout'
+    )
 
+    console.log('Server response:', response.status)
     return response.ok
   } catch (error) {
     console.error('Push subscription failed:', error)
@@ -84,7 +148,11 @@ export async function subscribeToPush(): Promise<boolean> {
 // Unsubscribe from push notifications
 export async function unsubscribeFromPush(): Promise<boolean> {
   try {
-    const registration = await navigator.serviceWorker.ready
+    const registration = await withTimeout(
+      navigator.serviceWorker.ready,
+      5000,
+      'SW ready timeout'
+    )
     const subscription = await registration.pushManager.getSubscription()
     
     if (subscription) {
@@ -114,7 +182,11 @@ export async function isPushSubscribed(): Promise<boolean> {
   }
 
   try {
-    const registration = await navigator.serviceWorker.ready
+    const registration = await withTimeout(
+      navigator.serviceWorker.ready,
+      3000,
+      'SW ready timeout'
+    )
     const subscription = await registration.pushManager.getSubscription()
     return !!subscription
   } catch {
@@ -147,37 +219,85 @@ export async function showLocalNotification(
   const hasPermission = Notification.permission === 'granted'
   if (!hasPermission) return
 
-  const registration = await navigator.serviceWorker.ready
+  try {
+    const registration = await withTimeout(
+      navigator.serviceWorker.ready,
+      3000,
+      'SW ready timeout'
+    )
 
-  await registration.showNotification(title, {
-    body,
-    icon: '/icon.svg',
-    badge: '/favicon.svg',
-    tag: 'smc-alert',
-    renotify: true,
-    ...options
-  } as NotificationOptions)
+    await registration.showNotification(title, {
+      body,
+      icon: '/icon.svg',
+      badge: '/favicon.svg',
+      tag: 'smc-alert',
+      renotify: true,
+      ...options
+    } as NotificationOptions)
+  } catch (error) {
+    console.error('showLocalNotification failed:', error)
+  }
 }
 
-// Test notification - sends a test push
+// Test notification - try multiple methods
 export async function testNotification(): Promise<boolean> {
+  console.log('testNotification called')
+  
   try {
-    // First try local notification via service worker
-    if ('serviceWorker' in navigator && 'Notification' in window) {
-      if (Notification.permission === 'granted') {
-        const registration = await navigator.serviceWorker.ready
+    // Check permission
+    if (!('Notification' in window)) {
+      console.log('Notification API not supported')
+      return false
+    }
+    
+    if (Notification.permission !== 'granted') {
+      console.log('Permission not granted:', Notification.permission)
+      return false
+    }
+
+    // Method 1: Try via Service Worker (works in PWA)
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await withTimeout(
+          navigator.serviceWorker.ready,
+          3000,
+          'SW timeout'
+        )
         
         await registration.showNotification('🔔 Test Notification', {
           body: 'Push notifications are working! You will receive alerts when stocks enter Order Block zones.',
           icon: '/icon.svg',
           badge: '/favicon.svg',
-          tag: 'test-notification',
+          tag: 'test-notification-' + Date.now(),
           vibrate: [200, 100, 200]
         } as NotificationOptions)
         
+        console.log('Notification sent via SW')
         return true
+      } catch (swError) {
+        console.log('SW notification failed:', swError)
       }
     }
+
+    // Method 2: Fallback to basic Notification API
+    try {
+      const notification = new Notification('🔔 Test Notification', {
+        body: 'Push notifications are working!',
+        icon: '/icon.svg',
+        tag: 'test-basic-' + Date.now()
+      })
+      
+      notification.onclick = () => {
+        window.focus()
+        notification.close()
+      }
+      
+      console.log('Notification sent via basic API')
+      return true
+    } catch (basicError) {
+      console.log('Basic notification failed:', basicError)
+    }
+
     return false
   } catch (error) {
     console.error('Test notification failed:', error)
