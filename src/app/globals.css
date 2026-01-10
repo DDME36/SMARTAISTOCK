@@ -4414,6 +4414,65 @@ body.lang-th .target-price {
   letter-spacing: 0.5px;
 }
 
+/* Preset Buttons */
+.alert-settings-card .preset-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.alert-settings-card .preset-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.alert-settings-card .preset-btn:hover {
+  background: var(--glass-highlight);
+  border-color: var(--accent-primary);
+}
+
+.alert-settings-card .preset-btn.active {
+  background: rgba(110, 86, 207, 0.15);
+  border-color: var(--accent-primary);
+}
+
+.alert-settings-card .preset-btn svg {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.alert-settings-card .preset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alert-settings-card .preset-name {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.alert-settings-card .preset-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* Toggle Row with Info */
+.alert-settings-card .toggle-row-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
 .alert-settings-card .toggle-row {
   display: flex;
   align-items: center;
@@ -4421,21 +4480,35 @@ body.lang-th .target-price {
   padding: var(--space-3) 0;
   cursor: pointer;
   position: relative;
+  flex: 1;
 }
 
-.alert-settings-card .toggle-row:not(:last-child) {
+.alert-settings-card .toggle-row-wrapper:not(:last-child) {
   border-bottom: 1px solid var(--glass-border);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 .alert-settings-card .toggle-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-3);
 }
 
-.alert-settings-card .toggle-info span {
+.alert-settings-card .toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alert-settings-card .toggle-label {
   font-size: var(--text-base);
   color: var(--text-primary);
+}
+
+.alert-settings-card .toggle-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
 }
 
 .alert-settings-card .toggle-info .icon-buy {
@@ -4448,6 +4521,36 @@ body.lang-th .target-price {
 
 .alert-settings-card .toggle-info .icon-critical {
   color: var(--accent-warning);
+}
+
+.alert-settings-card .info-btn {
+  padding: var(--space-2);
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-3);
+}
+
+.alert-settings-card .info-btn:hover {
+  background: var(--glass-highlight);
+  color: var(--accent-primary);
+}
+
+.alert-settings-card .info-box {
+  background: rgba(110, 86, 207, 0.1);
+  border: 1px solid rgba(110, 86, 207, 0.2);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.alert-settings-card .info-box p {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
 }
 
 .alert-settings-card .toggle-row input[type="checkbox"] {
