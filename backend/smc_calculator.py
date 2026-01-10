@@ -1050,7 +1050,7 @@ class SMCCalculator:
     
     def generate_alerts(self, order_blocks: List[Dict], fvgs: List[Dict], 
                         structure: Dict, zones: Dict, liquidity: Dict) -> List[Dict]:
-        """Generate actionable alerts based on analysis"""
+        """Generate actionable alerts based on analysis (English messages - frontend will translate)"""
         alerts = []
         price = self.df['Close'].iloc[-1]
         
@@ -1058,17 +1058,20 @@ class SMCCalculator:
         for ob in order_blocks:
             # Check if price is IN the Order Block zone (highest priority)
             if ob.get('in_zone', False) or (ob['low'] <= price <= ob['high']):
-                action_th = 'ซื้อ' if ob['type'] == 'bullish' else 'ขาย'
+                action = 'Buy' if ob['type'] == 'bullish' else 'Sell'
                 alerts.append({
                     'type': f"ob_entry_{ob['type']}",
                     'signal': ob['signal'],
                     'priority': 'critical',
-                    'message': f"🎯 ราคาเข้าโซน {ob['signal']} Order Block! (${ob['low']:.2f}-${ob['high']:.2f}) - สัญญาณ{action_th}",
+                    'message': f"🎯 Price entered {ob['signal']} Order Block! (${ob['low']:.2f}-${ob['high']:.2f}) - {action} signal",
                     'level': ob['mid'],
                     'distance_pct': 0,
                     'ob_type': ob['type'],
                     'ob_high': ob['high'],
-                    'ob_low': ob['low']
+                    'ob_low': ob['low'],
+                    'quality_score': ob.get('quality_score', 50),
+                    'volume_confirmed': ob.get('volume', {}).get('confirmed', False),
+                    'trend_aligned': ob.get('trend_aligned', False)
                 })
             # Very close to OB (within 1.5%)
             elif ob['distance_pct'] <= 1.5:
@@ -1076,7 +1079,7 @@ class SMCCalculator:
                     'type': f"ob_near_{ob['type']}",
                     'signal': ob['signal'],
                     'priority': 'high',
-                    'message': f"⚠️ ใกล้โซน {ob['signal']} #{ob['rank']} ที่ ${ob['mid']:.2f} ({ob['distance_pct']:.1f}% away)",
+                    'message': f"⚠️ Near {ob['signal']} Zone #{ob['rank']} at ${ob['mid']:.2f} ({ob['distance_pct']:.1f}% away)",
                     'level': ob['mid'],
                     'distance_pct': ob['distance_pct']
                 })
