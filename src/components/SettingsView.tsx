@@ -30,27 +30,47 @@ export default function SettingsView() {
   }, [])
 
   const handleNotificationToggle = async () => {
+    // If denied, tell user to go to settings
     if (notificationStatus === 'denied') {
       showToast(t('browser_settings_hint'))
       return
     }
 
+    // If already fully set up, just show success
     if (pushSubscribed && notificationStatus === 'granted') {
-      showToast(t('browser_settings_hint'))
+      showToast('🔔 ' + t('notifications_enabled'))
       return
     }
 
     setSubscribing(true)
     
     try {
+      // Request permission if not granted yet
+      if (notificationStatus !== 'granted') {
+        const permission = await Notification.requestPermission()
+        setNotificationStatus(permission)
+        
+        if (permission === 'denied') {
+          showToast(t('browser_settings_hint'))
+          return
+        }
+        
+        if (permission !== 'granted') {
+          showToast('Permission not granted')
+          return
+        }
+      }
+      
+      // Permission granted - try to subscribe
       const success = await subscribeToPush()
       
       if (success) {
-        setNotificationStatus('granted')
         setPushSubscribed(true)
         showToast('🔔 ' + t('notifications_enabled'))
       } else {
-        showToast('Failed to enable notifications')
+        // Even if server subscribe fails, local notifications still work
+        setPushSubscribed(false)
+        showToast('🔔 Local notifications enabled (server sync failed)')
       }
     } catch (error) {
       console.error('Notification error:', error)
