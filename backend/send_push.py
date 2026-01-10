@@ -27,17 +27,25 @@ def send_push_notifications():
     
     for symbol, data in stocks.items():
         stock_alerts = data.get('alerts', [])
+        order_blocks = data.get('order_blocks', [])
         
         for alert in stock_alerts:
             # Only send for OB entry alerts
             if alert.get('type', '').startswith('ob_entry_'):
+                # Find matching OB for quality data
+                ob_data = next((ob for ob in order_blocks if ob.get('in_zone')), None)
+                
                 alerts.append({
                     'symbol': symbol,
                     'type': alert.get('type'),
                     'message': alert.get('message'),
                     'signal': alert.get('signal'),
                     'ob_high': alert.get('ob_high'),
-                    'ob_low': alert.get('ob_low')
+                    'ob_low': alert.get('ob_low'),
+                    # NEW: Quality data for filtering
+                    'quality_score': ob_data.get('quality_score', 50) if ob_data else 50,
+                    'volume_confirmed': ob_data.get('volume', {}).get('confirmed', False) if ob_data else False,
+                    'trend_aligned': ob_data.get('trend_aligned', False) if ob_data else False
                 })
     
     if not alerts:

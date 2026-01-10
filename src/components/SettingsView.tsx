@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { subscribeToPush, isPushSubscribed } from '@/lib/notifications'
 import ConfirmDialog from './ConfirmDialog'
+import AlertSettingsCard from './AlertSettingsCard'
 
 export default function SettingsView() {
   const { watchlist, language, setLanguage, showToast } = useStore()
@@ -233,6 +234,11 @@ export default function SettingsView() {
           </p>
         )}
       </div>
+
+      {/* Alert Settings - Show when notifications enabled */}
+      {notificationStatus === 'granted' && pushSubscribed && (
+        <AlertSettingsCard />
+      )}
 
       {/* Data Management */}
       <div className="settings-card">

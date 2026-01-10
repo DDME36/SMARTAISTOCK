@@ -80,7 +80,23 @@ export async function initDatabase() {
       UNIQUE(user_id, endpoint)
     )`,
     
-    `CREATE INDEX IF NOT EXISTS idx_push_user ON push_subscriptions(user_id)`
+    `CREATE INDEX IF NOT EXISTS idx_push_user ON push_subscriptions(user_id)`,
+    
+    // Alert settings table (NEW)
+    `CREATE TABLE IF NOT EXISTS alert_settings (
+      user_id INTEGER PRIMARY KEY,
+      alert_buy_zone INTEGER DEFAULT 1,
+      alert_sell_zone INTEGER DEFAULT 1,
+      alert_ob_entry INTEGER DEFAULT 1,
+      alert_fvg INTEGER DEFAULT 0,
+      alert_bos INTEGER DEFAULT 0,
+      alert_choch INTEGER DEFAULT 1,
+      min_quality_score INTEGER DEFAULT 50,
+      volume_confirmed_only INTEGER DEFAULT 0,
+      trend_aligned_only INTEGER DEFAULT 0,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )`
   ])
 }
 
@@ -259,4 +275,75 @@ export async function getAllPushSubscriptions() {
     userId: row.user_id as number,
     username: row.username as string
   }))
+}
+
+// Alert Settings operations
+export interface AlertSettings {
+  alert_buy_zone: boolean
+  alert_sell_zone: boolean
+  alert_ob_entry: boolean
+  alert_fvg: boolean
+  alert_bos: boolean
+  alert_choch: boolean
+  min_quality_score: number
+  volume_confirmed_only: boolean
+  trend_aligned_only: boolean
+}
+
+export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
+  alert_buy_zone: true,
+  alert_sell_zone: true,
+  alert_ob_entry: true,
+  alert_fvg: false,
+  alert_bos: false,
+  alert_choch: true,
+  min_quality_score: 50,
+  volume_confirmed_only: false,
+  trend_aligned_only: false
+}
+
+export async function getAlertSettings(userId: number): Promise<AlertSettings> {
+  const result = await db.execute({
+    sql: 'SELECT * FROM alert_settings WHERE user_id = ?',
+    args: [userId]
+  })
+  
+  if (result.rows.length === 0) {
+    return DEFAULT_ALERT_SETTINGS
+  }
+  
+  const row = result.rows[0]
+  return {
+    alert_buy_zone: Boolean(row.alert_buy_zone),
+    alert_sell_zone: Boolean(row.alert_sell_zone),
+    alert_ob_entry: Boolean(row.alert_ob_entry),
+    alert_fvg: Boolean(row.alert_fvg),
+    alert_bos: Boolean(row.alert_bos),
+    alert_choch: Boolean(row.alert_choch),
+    min_quality_score: row.min_quality_score as number,
+    volume_confirmed_only: Boolean(row.volume_confirmed_only),
+    trend_aligned_only: Boolean(row.trend_aligned_only)
+  }
+}
+
+export async function saveAlertSettings(userId: number, settings: AlertSettings) {
+  await db.execute({
+    sql: `INSERT OR REPLACE INTO alert_settings 
+          (user_id, alert_buy_zone, alert_sell_zone, alert_ob_entry, alert_fvg, 
+           alert_bos, alert_choch, min_quality_score, volume_confirmed_only, 
+           trend_aligned_only, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+    args: [
+      userId,
+      settings.alert_buy_zone ? 1 : 0,
+      settings.alert_sell_zone ? 1 : 0,
+      settings.alert_ob_entry ? 1 : 0,
+      settings.alert_fvg ? 1 : 0,
+      settings.alert_bos ? 1 : 0,
+      settings.alert_choch ? 1 : 0,
+      settings.min_quality_score,
+      settings.volume_confirmed_only ? 1 : 0,
+      settings.trend_aligned_only ? 1 : 0
+    ]
+  })
 }

@@ -188,7 +188,34 @@ export const translations: Record<Language, Record<string, string>> = {
     test_notification_title: "🔔 Test Notification",
     test_notification_body: "Push notifications are working! You will receive alerts when stocks enter Order Block zones.",
     notification_enabled_success: "Notifications enabled successfully!",
-    notification_subscribed_hint: "You will receive alerts when stocks in your watchlist enter Order Block zones"
+    notification_subscribed_hint: "You will receive alerts when stocks in your watchlist enter Order Block zones",
+    
+    // Alert Settings
+    alert_settings: "Alert Settings",
+    alert_types: "Alert Types",
+    alert_buy_zone: "Buy Zone Alerts",
+    alert_sell_zone: "Sell Zone Alerts",
+    alert_ob_entry: "Order Block Entry (Critical)",
+    alert_fvg: "Fair Value Gap Alerts",
+    alert_bos: "Break of Structure",
+    alert_choch: "Change of Character",
+    quality_filters: "Quality Filters",
+    volume_confirmed_only: "Volume Confirmed Only",
+    trend_aligned_only: "Trend Aligned Only",
+    min_quality_score: "Minimum Quality Score",
+    settings_saved: "Settings saved",
+    failed_save: "Failed to save",
+    saving: "Saving...",
+    
+    // EMA & Volume
+    ema_trend: "EMA Trend",
+    volume: "Volume",
+    volume_high: "High Volume",
+    volume_low: "Low Volume",
+    volume_normal: "Normal Volume",
+    trend_aligned: "Trend Aligned",
+    counter_trend: "Counter Trend",
+    quality_score: "Quality Score"
   },
   th: {
     // Header
@@ -377,6 +404,33 @@ export const translations: Record<Language, Record<string, string>> = {
     test_notification_title: "🔔 ทดสอบการแจ้งเตือน",
     test_notification_body: "การแจ้งเตือนใช้งานได้แล้ว! คุณจะได้รับแจ้งเตือนเมื่อหุ้นเข้าโซน Order Block",
     notification_enabled_success: "เปิดการแจ้งเตือนสำเร็จ!",
-    notification_subscribed_hint: "คุณจะได้รับแจ้งเตือนเมื่อหุ้นในรายการติดตามเข้าโซน Order Block"
+    notification_subscribed_hint: "คุณจะได้รับแจ้งเตือนเมื่อหุ้นในรายการติดตามเข้าโซน Order Block",
+    
+    // Alert Settings
+    alert_settings: "ตั้งค่าการแจ้งเตือน",
+    alert_types: "ประเภทการแจ้งเตือน",
+    alert_buy_zone: "แจ้งเตือนโซนซื้อ",
+    alert_sell_zone: "แจ้งเตือนโซนขาย",
+    alert_ob_entry: "เข้า Order Block (สำคัญ)",
+    alert_fvg: "แจ้งเตือน Fair Value Gap",
+    alert_bos: "Break of Structure",
+    alert_choch: "Change of Character",
+    quality_filters: "ตัวกรองคุณภาพ",
+    volume_confirmed_only: "เฉพาะที่ Volume ยืนยัน",
+    trend_aligned_only: "เฉพาะที่ตามเทรนด์",
+    min_quality_score: "คะแนนคุณภาพขั้นต่ำ",
+    settings_saved: "บันทึกการตั้งค่าแล้ว",
+    failed_save: "บันทึกไม่สำเร็จ",
+    saving: "กำลังบันทึก...",
+    
+    // EMA & Volume
+    ema_trend: "เทรนด์ EMA",
+    volume: "ปริมาณซื้อขาย",
+    volume_high: "Volume สูง",
+    volume_low: "Volume ต่ำ",
+    volume_normal: "Volume ปกติ",
+    trend_aligned: "ตามเทรนด์",
+    counter_trend: "สวนเทรนด์",
+    quality_score: "คะแนนคุณภาพ"
   }
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import webpush from 'web-push'
-import { getAllPushSubscriptions, getUserWatchlist, initDatabase } from '@/lib/db'
+import { getAllPushSubscriptions, getUserWatchlist, getAlertSettings, initDatabase } from '@/lib/db'
 
 // Configure web-push
 const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
@@ -21,6 +21,9 @@ interface Alert {
   signal: string
   ob_high?: number
   ob_low?: number
+  quality_score?: number
+  volume_confirmed?: boolean
+  trend_aligned?: boolean
 }
 
 export async function POST(request: NextRequest) {
@@ -52,15 +55,38 @@ export async function POST(request: NextRequest) {
 
     let sent = 0
     let failed = 0
+    let filtered = 0
 
     for (const { subscription, userId } of subscriptions) {
-      // Get user's watchlist
+      // Get user's watchlist and alert settings
       const watchlist = await getUserWatchlist(userId)
+      const settings = await getAlertSettings(userId)
       
       // Filter alerts for this user's watchlist
-      const userAlerts = alerts.filter(alert => watchlist.includes(alert.symbol))
+      let userAlerts = alerts.filter(alert => watchlist.includes(alert.symbol))
       
-      if (userAlerts.length === 0) continue
+      // Apply user's alert settings filters
+      userAlerts = userAlerts.filter(alert => {
+        // Filter by alert type
+        if (alert.type.includes('ob_entry') && !settings.alert_ob_entry) return false
+        if (alert.signal === 'BUY' && !settings.alert_buy_zone) return false
+        if (alert.signal === 'SELL' && !settings.alert_sell_zone) return false
+        if (alert.type.includes('fvg') && !settings.alert_fvg) return false
+        if (alert.type.includes('bos') && !settings.alert_bos) return false
+        if (alert.type.includes('choch') && !settings.alert_choch) return false
+        
+        // Filter by quality
+        if (settings.volume_confirmed_only && !alert.volume_confirmed) return false
+        if (settings.trend_aligned_only && !alert.trend_aligned) return false
+        if (alert.quality_score && alert.quality_score < settings.min_quality_score) return false
+        
+        return true
+      })
+      
+      if (userAlerts.length === 0) {
+        filtered++
+        continue
+      }
 
       // Send notification for each alert
       for (const alert of userAlerts) {
@@ -97,6 +123,7 @@ export async function POST(request: NextRequest) {
       success: true, 
       sent, 
       failed,
+      filtered,
       totalSubscriptions: subscriptions.length 
     })
   } catch (error) {

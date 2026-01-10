@@ -275,12 +275,16 @@ class SMCCalculator:
     # ==================== Order Blocks ====================
     
     def find_order_blocks(self, swing_highs: List[Dict], swing_lows: List[Dict], 
-                          max_blocks: int = 10) -> List[Dict]:
+                          max_blocks: int = 10, use_volume_filter: bool = True,
+                          use_ema_filter: bool = True) -> List[Dict]:
         """
         Find Order Blocks - institutional supply/demand zones
         
         Bullish OB: Last bearish candle before a strong bullish move (use candle BODY, not wick)
         Bearish OB: Last bullish candle before a strong bearish move (use candle BODY, not wick)
+        
+        NEW: Volume Confirmation - OBs with high volume are stronger
+        NEW: EMA Trend Filter - Filter OBs that go against the main trend
         
         Based on LuxAlgo Smart Money Concepts methodology
         """
@@ -292,10 +296,23 @@ class SMCCalculator:
         highs = self.df['High'].values
         lows = self.df['Low'].values
         closes = self.df['Close'].values
+        volumes = self.df['Volume'].values
         price = closes[-1]
         
         # Calculate ATR for volatility filter (like LuxAlgo)
         atr = self._calc_atr(highs, lows, closes, 14)
+        
+        # Calculate EMA for trend filter
+        ema20 = self._calc_ema(closes, 20)
+        ema50 = self._calc_ema(closes, 50)
+        ema200 = self._calc_ema(closes, 200) if len(closes) >= 200 else self._calc_ema(closes, len(closes))
+        
+        # Determine main trend from EMA
+        ema_bullish = price > ema50 and ema20 > ema50
+        ema_bearish = price < ema50 and ema20 < ema50
+        
+        # Calculate average volume for comparison
+        avg_volume = np.mean(volumes[-20:]) if len(volumes) >= 20 else np.mean(volumes)
         
         # Find Bearish Order Blocks (supply zones) - at swing highs
         for sh in swing_highs:
@@ -322,6 +339,23 @@ class SMCCalculator:
                     if not mitigated:
                         mid = (ob_high + ob_low) / 2
                         distance = abs(price - mid)
+                        
+                        # Volume confirmation
+                        ob_volume = volumes[j]
+                        vol_ratio = ob_volume / avg_volume if avg_volume > 0 else 1.0
+                        vol_confirmed = vol_ratio > 1.2
+                        
+                        # EMA trend filter - Bearish OB is stronger when trend is bearish
+                        trend_aligned = ema_bearish or not use_ema_filter
+                        
+                        # Calculate quality score
+                        quality_score = self._calc_ob_quality(
+                            ob_type='bearish',
+                            vol_ratio=vol_ratio,
+                            trend_aligned=trend_aligned,
+                            strength=self._calc_ob_strength(j, idx, 'bearish')
+                        )
+                        
                         obs.append({
                             'type': 'bearish',
                             'signal': 'SELL',
@@ -332,7 +366,17 @@ class SMCCalculator:
                             'distance_pct': round(distance / price * 100, 2),
                             'strength': self._calc_ob_strength(j, idx, 'bearish'),
                             'date': str(self.df['Date'].iloc[j]),
-                            'mitigated': False
+                            'mitigated': False,
+                            # NEW: Volume data
+                            'volume': {
+                                'value': int(ob_volume),
+                                'ratio': round(vol_ratio, 2),
+                                'confirmed': vol_confirmed,
+                                'signal': 'STRONG' if vol_ratio > 2.0 else 'MODERATE' if vol_ratio > 1.2 else 'WEAK'
+                            },
+                            # NEW: Trend alignment
+                            'trend_aligned': trend_aligned,
+                            'quality_score': quality_score
                         })
                     break
         
@@ -361,6 +405,23 @@ class SMCCalculator:
                     if not mitigated:
                         mid = (ob_high + ob_low) / 2
                         distance = abs(price - mid)
+                        
+                        # Volume confirmation
+                        ob_volume = volumes[j]
+                        vol_ratio = ob_volume / avg_volume if avg_volume > 0 else 1.0
+                        vol_confirmed = vol_ratio > 1.2
+                        
+                        # EMA trend filter - Bullish OB is stronger when trend is bullish
+                        trend_aligned = ema_bullish or not use_ema_filter
+                        
+                        # Calculate quality score
+                        quality_score = self._calc_ob_quality(
+                            ob_type='bullish',
+                            vol_ratio=vol_ratio,
+                            trend_aligned=trend_aligned,
+                            strength=self._calc_ob_strength(j, idx, 'bullish')
+                        )
+                        
                         obs.append({
                             'type': 'bullish',
                             'signal': 'BUY',
@@ -371,12 +432,22 @@ class SMCCalculator:
                             'distance_pct': round(distance / price * 100, 2),
                             'strength': self._calc_ob_strength(j, idx, 'bullish'),
                             'date': str(self.df['Date'].iloc[j]),
-                            'mitigated': False
+                            'mitigated': False,
+                            # NEW: Volume data
+                            'volume': {
+                                'value': int(ob_volume),
+                                'ratio': round(vol_ratio, 2),
+                                'confirmed': vol_confirmed,
+                                'signal': 'STRONG' if vol_ratio > 2.0 else 'MODERATE' if vol_ratio > 1.2 else 'WEAK'
+                            },
+                            # NEW: Trend alignment
+                            'trend_aligned': trend_aligned,
+                            'quality_score': quality_score
                         })
                     break
         
-        # Sort by distance and add rank
-        obs.sort(key=lambda x: x['distance'])
+        # Sort by quality score (higher is better), then by distance
+        obs.sort(key=lambda x: (-x['quality_score'], x['distance']))
         
         # Filter overlapping Order Blocks (merge OBs that are too close)
         filtered_obs = self._filter_overlapping_obs(obs, price)
@@ -387,6 +458,43 @@ class SMCCalculator:
             ob['in_zone'] = ob['low'] <= price <= ob['high']
         
         return filtered_obs[:max_blocks]
+    
+    def _calc_ob_quality(self, ob_type: str, vol_ratio: float, trend_aligned: bool, strength: str) -> int:
+        """
+        Calculate Order Block quality score (0-100)
+        
+        Factors:
+        - Volume confirmation (40 points max)
+        - Trend alignment (30 points max)
+        - OB strength (30 points max)
+        """
+        score = 0
+        
+        # Volume score (0-40)
+        if vol_ratio > 2.0:
+            score += 40
+        elif vol_ratio > 1.5:
+            score += 30
+        elif vol_ratio > 1.2:
+            score += 20
+        elif vol_ratio > 0.8:
+            score += 10
+        
+        # Trend alignment score (0-30)
+        if trend_aligned:
+            score += 30
+        else:
+            score += 10  # Still give some points for counter-trend (can be reversal)
+        
+        # Strength score (0-30)
+        if strength == 'strong':
+            score += 30
+        elif strength == 'moderate':
+            score += 20
+        else:
+            score += 10
+        
+        return score
     
     def _filter_overlapping_obs(self, obs: List[Dict], price: float, threshold_pct: float = 3.0) -> List[Dict]:
         """
@@ -732,13 +840,14 @@ class SMCCalculator:
     # ==================== Technical Indicators ====================
     
     def calc_indicators(self) -> Dict:
-        """Calculate additional technical indicators"""
+        """Calculate additional technical indicators including EMA and Volume"""
         if self.df is None or len(self.df) < 20:
             return {}
         
         closes = self.df['Close'].values
         highs = self.df['High'].values
         lows = self.df['Low'].values
+        volumes = self.df['Volume'].values
         
         # RSI
         rsi = self._calc_rsi(closes, 14)
@@ -746,11 +855,24 @@ class SMCCalculator:
         # ATR (Average True Range)
         atr = self._calc_atr(highs, lows, closes, 14)
         
-        # Moving Averages
+        # Simple Moving Averages
         ma20 = np.mean(closes[-20:]) if len(closes) >= 20 else closes[-1]
         ma50 = np.mean(closes[-50:]) if len(closes) >= 50 else closes[-1]
         
+        # Exponential Moving Averages (more responsive to recent price)
+        ema20 = self._calc_ema(closes, 20)
+        ema50 = self._calc_ema(closes, 50)
+        ema200 = self._calc_ema(closes, 200) if len(closes) >= 200 else self._calc_ema(closes, len(closes))
+        
+        # Volume Analysis
+        vol_avg = np.mean(volumes[-20:]) if len(volumes) >= 20 else np.mean(volumes)
+        vol_current = volumes[-1]
+        vol_ratio = vol_current / vol_avg if vol_avg > 0 else 1.0
+        
         price = closes[-1]
+        
+        # EMA Trend Analysis
+        ema_trend = self._analyze_ema_trend(price, ema20, ema50, ema200)
         
         return {
             'rsi': {
@@ -761,11 +883,134 @@ class SMCCalculator:
                 'value': round(atr, 2),
                 'pct': round(atr / price * 100, 2)
             },
+            # SMA
             'ma20': round(ma20, 2),
             'ma50': round(ma50, 2),
             'price_vs_ma20': 'above' if price > ma20 else 'below',
-            'price_vs_ma50': 'above' if price > ma50 else 'below'
+            'price_vs_ma50': 'above' if price > ma50 else 'below',
+            # EMA
+            'ema20': round(ema20, 2),
+            'ema50': round(ema50, 2),
+            'ema200': round(ema200, 2),
+            'price_vs_ema20': 'above' if price > ema20 else 'below',
+            'price_vs_ema50': 'above' if price > ema50 else 'below',
+            'price_vs_ema200': 'above' if price > ema200 else 'below',
+            'ema_trend': ema_trend,
+            # Volume
+            'volume': {
+                'current': int(vol_current),
+                'avg_20': int(vol_avg),
+                'ratio': round(vol_ratio, 2),
+                'signal': 'HIGH' if vol_ratio > 1.5 else 'LOW' if vol_ratio < 0.5 else 'NORMAL'
+            }
         }
+    
+    def _calc_ema(self, prices: np.ndarray, period: int) -> float:
+        """Calculate Exponential Moving Average"""
+        if len(prices) < period:
+            return float(np.mean(prices))
+        
+        multiplier = 2 / (period + 1)
+        ema = prices[0]
+        
+        for price in prices[1:]:
+            ema = (price - ema) * multiplier + ema
+        
+        return float(ema)
+    
+    def _analyze_ema_trend(self, price: float, ema20: float, ema50: float, ema200: float) -> Dict:
+        """
+        Analyze trend using EMA alignment
+        
+        Strong Bullish: Price > EMA20 > EMA50 > EMA200
+        Bullish: Price > EMA20 > EMA50
+        Bearish: Price < EMA20 < EMA50
+        Strong Bearish: Price < EMA20 < EMA50 < EMA200
+        """
+        # Count bullish signals
+        bullish_count = 0
+        if price > ema20: bullish_count += 1
+        if price > ema50: bullish_count += 1
+        if price > ema200: bullish_count += 1
+        if ema20 > ema50: bullish_count += 1
+        if ema50 > ema200: bullish_count += 1
+        
+        # Determine trend
+        if bullish_count >= 5:
+            trend = 'STRONG_BULLISH'
+            signal = 'BUY'
+            strength = 100
+        elif bullish_count >= 4:
+            trend = 'BULLISH'
+            signal = 'BUY'
+            strength = 75
+        elif bullish_count >= 3:
+            trend = 'NEUTRAL'
+            signal = 'HOLD'
+            strength = 50
+        elif bullish_count >= 2:
+            trend = 'BEARISH'
+            signal = 'SELL'
+            strength = 25
+        else:
+            trend = 'STRONG_BEARISH'
+            signal = 'SELL'
+            strength = 0
+        
+        # Check for Golden Cross / Death Cross
+        cross = None
+        if ema50 > ema200 and ema20 > ema50:
+            cross = 'GOLDEN_CROSS'
+        elif ema50 < ema200 and ema20 < ema50:
+            cross = 'DEATH_CROSS'
+        
+        return {
+            'trend': trend,
+            'signal': signal,
+            'strength': strength,
+            'cross': cross,
+            'alignment': f"Price {'>' if price > ema20 else '<'} EMA20 {'>' if ema20 > ema50 else '<'} EMA50 {'>' if ema50 > ema200 else '<'} EMA200"
+        }
+    
+    # ==================== Volume Confirmation ====================
+    
+    def calc_volume_at_ob(self, ob_index: int, lookback: int = 3) -> Dict:
+        """
+        Calculate volume characteristics at Order Block formation
+        
+        High volume at OB = Strong institutional interest
+        Low volume at OB = Weak zone, may not hold
+        """
+        if self.df is None or ob_index < lookback:
+            return {'confirmed': False, 'ratio': 1.0}
+        
+        volumes = self.df['Volume'].values
+        
+        # Volume at OB formation
+        ob_volume = volumes[ob_index]
+        
+        # Average volume before OB
+        avg_volume = np.mean(volumes[max(0, ob_index - 20):ob_index])
+        
+        if avg_volume == 0:
+            return {'confirmed': False, 'ratio': 1.0}
+        
+        ratio = ob_volume / avg_volume
+        
+        # Volume spike = institutional activity
+        confirmed = ratio > 1.2  # 20% above average
+        
+        return {
+            'confirmed': confirmed,
+            'ratio': round(ratio, 2),
+            'ob_volume': int(ob_volume),
+            'avg_volume': int(avg_volume),
+            'signal': 'STRONG' if ratio > 2.0 else 'MODERATE' if ratio > 1.2 else 'WEAK'
+        }
+    
+    def _get_ob_volume_confirmation(self, ob_idx: int) -> Dict:
+        """Get volume confirmation for an Order Block"""
+        return self.calc_volume_at_ob(ob_idx)
     
     def _calc_rsi(self, prices: np.ndarray, period: int = 14) -> float:
         """Calculate RSI"""
@@ -929,9 +1174,11 @@ class SMCCalculator:
         # Detect trend
         trend = self.detect_trend(swing_h, swing_l)
         
-        # Find Order Blocks
-        order_blocks = self.find_order_blocks(swing_h, swing_l, max_blocks=10)
-        major_obs = self.find_order_blocks(major_swing_h, major_swing_l, max_blocks=5)
+        # Find Order Blocks (with Volume and EMA filters)
+        order_blocks = self.find_order_blocks(swing_h, swing_l, max_blocks=10, 
+                                               use_volume_filter=True, use_ema_filter=True)
+        major_obs = self.find_order_blocks(major_swing_h, major_swing_l, max_blocks=5,
+                                            use_volume_filter=True, use_ema_filter=True)
         
         # Find Fair Value Gaps
         fvgs = self.find_fair_value_gaps()
@@ -945,7 +1192,7 @@ class SMCCalculator:
         # Calculate zones
         zones = self.calc_premium_discount_zones(swing_h, swing_l)
         
-        # Calculate indicators
+        # Calculate indicators (includes EMA and Volume)
         indicators = self.calc_indicators()
         
         # Generate alerts
@@ -958,6 +1205,10 @@ class SMCCalculator:
         nearest_buy = next((ob for ob in order_blocks if ob['signal'] == 'BUY'), None)
         nearest_sell = next((ob for ob in order_blocks if ob['signal'] == 'SELL'), None)
         
+        # Count volume-confirmed OBs
+        vol_confirmed_obs = [ob for ob in order_blocks if ob.get('volume', {}).get('confirmed', False)]
+        trend_aligned_obs = [ob for ob in order_blocks if ob.get('trend_aligned', False)]
+        
         return {
             'symbol': self.symbol,
             'current_price': round(price, 2),
@@ -968,6 +1219,9 @@ class SMCCalculator:
             
             # Trend Analysis
             'trend': trend,
+            
+            # EMA Trend (NEW)
+            'ema_trend': indicators.get('ema_trend', {}),
             
             # Order Blocks
             'order_blocks': order_blocks,
@@ -987,14 +1241,17 @@ class SMCCalculator:
             # Zones
             'zones': zones,
             
-            # Indicators
+            # Indicators (includes EMA and Volume)
             'indicators': indicators,
             
-            # Summary
+            # Summary (UPDATED)
             'ob_summary': {
                 'total_buy': len([o for o in order_blocks if o['signal'] == 'BUY']),
                 'total_sell': len([o for o in order_blocks if o['signal'] == 'SELL']),
-                'total_fvg': len(fvgs)
+                'total_fvg': len(fvgs),
+                'volume_confirmed': len(vol_confirmed_obs),
+                'trend_aligned': len(trend_aligned_obs),
+                'high_quality': len([o for o in order_blocks if o.get('quality_score', 0) >= 70])
             },
             
             # Alerts
@@ -1068,9 +1325,13 @@ if __name__ == '__main__':
     
     for sym, d in results.items():
         trend_emoji = '🟢' if d['trend']['direction'] == 'bullish' else '🔴' if d['trend']['direction'] == 'bearish' else '🟡'
+        ema_trend = d.get('ema_trend', {}).get('trend', 'N/A')
         print(f"\n{trend_emoji} {sym} @ ${d['current_price']:.2f}")
         print(f"   Trend: {d['trend']['direction'].upper()} ({d['trend']['structure']})")
+        print(f"   EMA Trend: {ema_trend}")
         print(f"   Order Blocks: {d['ob_summary']['total_buy']} BUY / {d['ob_summary']['total_sell']} SELL")
+        print(f"   Volume Confirmed: {d['ob_summary'].get('volume_confirmed', 0)} | Trend Aligned: {d['ob_summary'].get('trend_aligned', 0)}")
+        print(f"   High Quality OBs: {d['ob_summary'].get('high_quality', 0)}")
         print(f"   FVGs: {d['ob_summary']['total_fvg']}")
         
         if d.get('alerts'):

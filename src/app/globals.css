@@ -4369,3 +4369,183 @@ body.lang-th .target-price {
   width: 60px;
   height: 20px;
 }
+
+/* ==================== Alert Settings Card ==================== */
+.alert-settings-card {
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.alert-settings-card.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.alert-settings-card .settings-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.alert-settings-card .settings-header h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.alert-settings-card .settings-section {
+  margin-bottom: var(--space-5);
+}
+
+.alert-settings-card .settings-section h4 {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.alert-settings-card .toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.alert-settings-card .toggle-row:not(:last-child) {
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.alert-settings-card .toggle-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.alert-settings-card .toggle-info span {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.alert-settings-card .toggle-info .icon-buy {
+  color: var(--accent-success);
+}
+
+.alert-settings-card .toggle-info .icon-sell {
+  color: var(--accent-danger);
+}
+
+.alert-settings-card .toggle-info .icon-critical {
+  color: var(--accent-warning);
+}
+
+.alert-settings-card .toggle-row input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.alert-settings-card .toggle-switch {
+  width: 44px;
+  height: 24px;
+  background: var(--glass-border);
+  border-radius: 12px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.alert-settings-card .toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.alert-settings-card .toggle-row input:checked + .toggle-switch {
+  background: var(--accent-primary);
+}
+
+.alert-settings-card .toggle-row input:checked + .toggle-switch::after {
+  transform: translateX(20px);
+  background: white;
+}
+
+.alert-settings-card .slider-row {
+  padding: var(--space-4) 0;
+}
+
+.alert-settings-card .slider-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.alert-settings-card .slider-label span {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.alert-settings-card .slider-value {
+  font-weight: var(--font-semibold);
+  color: var(--accent-primary);
+}
+
+.alert-settings-card input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: var(--glass-border);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.alert-settings-card input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(110, 86, 207, 0.4);
+}
+
+.alert-settings-card .slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+}
+
+.alert-settings-card .slider-labels span {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.alert-settings-card .saving-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--glass-highlight);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
