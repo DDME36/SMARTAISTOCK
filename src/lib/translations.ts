@@ -187,7 +187,8 @@ export const translations: Record<Language, Record<string, string>> = {
     // Notifications
     test_notification_title: "🔔 Test Notification",
     test_notification_body: "Push notifications are working! You will receive alerts when stocks enter Order Block zones.",
-    notification_enabled_success: "Notifications enabled successfully!"
+    notification_enabled_success: "Notifications enabled successfully!",
+    notification_subscribed_hint: "You will receive alerts when stocks in your watchlist enter Order Block zones"
   },
   th: {
     // Header
@@ -375,6 +376,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Notifications
     test_notification_title: "🔔 ทดสอบการแจ้งเตือน",
     test_notification_body: "การแจ้งเตือนใช้งานได้แล้ว! คุณจะได้รับแจ้งเตือนเมื่อหุ้นเข้าโซน Order Block",
-    notification_enabled_success: "เปิดการแจ้งเตือนสำเร็จ!"
+    notification_enabled_success: "เปิดการแจ้งเตือนสำเร็จ!",
+    notification_subscribed_hint: "คุณจะได้รับแจ้งเตือนเมื่อหุ้นในรายการติดตามเข้าโซน Order Block"
   }
 }

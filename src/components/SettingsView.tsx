@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2, Send } from 'lucide-react'
+import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2 } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { subscribeToPush, isPushSubscribed, testNotification } from '@/lib/notifications'
+import { subscribeToPush, isPushSubscribed } from '@/lib/notifications'
 import ConfirmDialog from './ConfirmDialog'
 
 export default function SettingsView() {
@@ -16,7 +16,6 @@ export default function SettingsView() {
   const [notificationStatus, setNotificationStatus] = useState<'granted' | 'denied' | 'default'>('default')
   const [pushSubscribed, setPushSubscribed] = useState(false)
   const [subscribing, setSubscribing] = useState(false)
-  const [testing, setTesting] = useState(false)
   const [clearing, setClearing] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
@@ -68,40 +67,15 @@ export default function SettingsView() {
         setPushSubscribed(true)
         showToast('🔔 ' + t('notifications_enabled'))
       } else {
-        // Even if server subscribe fails, local notifications still work
+        // Even if server subscribe fails, permission is still granted
         setPushSubscribed(false)
-        showToast('🔔 Local notifications enabled (server sync failed)')
+        showToast(t('browser_settings_hint'))
       }
     } catch (error) {
       console.error('Notification error:', error)
       showToast('Failed to enable notifications')
     } finally {
       setSubscribing(false)
-    }
-  }
-
-  const handleTestNotification = async () => {
-    if (notificationStatus !== 'granted') {
-      showToast('Please enable notifications first')
-      return
-    }
-    
-    setTesting(true)
-    try {
-      const success = await testNotification(
-        t('test_notification_title'),
-        t('test_notification_body')
-      )
-      if (success) {
-        showToast('✅ Test notification sent!')
-      } else {
-        showToast('❌ Failed to send test notification')
-      }
-    } catch (error) {
-      console.error('Test notification error:', error)
-      showToast('❌ Error sending notification')
-    } finally {
-      setTesting(false)
     }
   }
 
@@ -253,21 +227,11 @@ export default function SettingsView() {
             <Info size={14} /> {t('browser_settings_hint')}
           </p>
         )}
-        
-        {/* Test Notification Button - always show for debugging */}
-        <button 
-          className="action-btn" 
-          onClick={handleTestNotification}
-          disabled={testing}
-          style={{ marginTop: 12 }}
-        >
-          {testing ? <Loader2 size={18} className="icon-spin" /> : <Send size={18} />}
-          <span>{testing ? 'Sending...' : `Test Notification (${notificationStatus})`}</span>
-        </button>
-        
-        <p className="settings-hint" style={{ marginTop: 8 }}>
-          <Info size={14} /> iOS: ต้อง Add to Home Screen ก่อนถึงจะรับ push ได้
-        </p>
+        {notificationStatus === 'granted' && pushSubscribed && (
+          <p className="settings-hint" style={{ marginTop: 8, color: 'var(--success)' }}>
+            <Info size={14} /> {t('notification_subscribed_hint')}
+          </p>
+        )}
       </div>
 
       {/* Data Management */}
@@ -303,12 +267,12 @@ export default function SettingsView() {
         </div>
         <div className="stat-divider"></div>
         <div className="stat-item">
-          <span className="stat-number">{notificationStatus === 'granted' ? '🔔' : '🔕'}</span>
+          <span className="stat-number">{notificationStatus === 'granted' && pushSubscribed ? '🔔' : '🔕'}</span>
           <span className="stat-label">{t('alerts')}</span>
         </div>
         <div className="stat-divider"></div>
         <div className="stat-item">
-          <span className="stat-number">v2.0</span>
+          <span className="stat-number">v2.1</span>
           <span className="stat-label">{t('version')}</span>
         </div>
       </div>
