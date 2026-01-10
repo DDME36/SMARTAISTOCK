@@ -182,7 +182,12 @@ export const translations: Record<Language, Record<string, string>> = {
     confirm_clear_title: "Clear All Data?",
     confirm_clear_desc: "This will delete your watchlist, settings, and all cached data. This action cannot be undone.",
     confirm_logout_title: "Logout?",
-    confirm_logout_desc: "You will need to login again to access your account."
+    confirm_logout_desc: "You will need to login again to access your account.",
+    
+    // Notifications
+    test_notification_title: "🔔 Test Notification",
+    test_notification_body: "Push notifications are working! You will receive alerts when stocks enter Order Block zones.",
+    notification_enabled_success: "Notifications enabled successfully!"
   },
   th: {
     // Header
@@ -365,6 +370,11 @@ export const translations: Record<Language, Record<string, string>> = {
     confirm_clear_title: "ล้างข้อมูลทั้งหมด?",
     confirm_clear_desc: "การดำเนินการนี้จะลบรายการหุ้น, การตั้งค่า และข้อมูลแคชทั้งหมด ไม่สามารถกู้คืนได้",
     confirm_logout_title: "ออกจากระบบ?",
-    confirm_logout_desc: "คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อเข้าถึงบัญชีของคุณ"
+    confirm_logout_desc: "คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อเข้าถึงบัญชีของคุณ",
+    
+    // Notifications
+    test_notification_title: "🔔 ทดสอบการแจ้งเตือน",
+    test_notification_body: "การแจ้งเตือนใช้งานได้แล้ว! คุณจะได้รับแจ้งเตือนเมื่อหุ้นเข้าโซน Order Block",
+    notification_enabled_success: "เปิดการแจ้งเตือนสำเร็จ!"
   }
 }

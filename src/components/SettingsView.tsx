@@ -68,7 +68,10 @@ export default function SettingsView() {
     
     setTesting(true)
     try {
-      const success = await testNotification()
+      const success = await testNotification(
+        t('test_notification_title'),
+        t('test_notification_body')
+      )
       if (success) {
         showToast('✅ Test notification sent!')
       } else {

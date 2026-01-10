@@ -240,8 +240,11 @@ export async function showLocalNotification(
 }
 
 // Test notification - try multiple methods
-export async function testNotification(): Promise<boolean> {
+export async function testNotification(title?: string, body?: string): Promise<boolean> {
   console.log('testNotification called')
+  
+  const notifTitle = title || '🔔 Test Notification'
+  const notifBody = body || 'Push notifications are working! You will receive alerts when stocks enter Order Block zones.'
   
   try {
     // Check permission
@@ -264,8 +267,8 @@ export async function testNotification(): Promise<boolean> {
           'SW timeout'
         )
         
-        await registration.showNotification('🔔 Test Notification', {
-          body: 'Push notifications are working! You will receive alerts when stocks enter Order Block zones.',
+        await registration.showNotification(notifTitle, {
+          body: notifBody,
           icon: '/icon.svg',
           badge: '/favicon.svg',
           tag: 'test-notification-' + Date.now(),
@@ -281,8 +284,8 @@ export async function testNotification(): Promise<boolean> {
 
     // Method 2: Fallback to basic Notification API
     try {
-      const notification = new Notification('🔔 Test Notification', {
-        body: 'Push notifications are working!',
+      const notification = new Notification(notifTitle, {
+        body: notifBody,
         icon: '/icon.svg',
         tag: 'test-basic-' + Date.now()
       })
