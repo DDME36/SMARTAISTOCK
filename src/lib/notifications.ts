@@ -144,7 +144,7 @@ export async function showLocalNotification(
   body: string,
   options?: NotificationOptions
 ): Promise<void> {
-  const hasPermission = await requestNotificationPermission()
+  const hasPermission = Notification.permission === 'granted'
   if (!hasPermission) return
 
   const registration = await navigator.serviceWorker.ready
@@ -157,4 +157,30 @@ export async function showLocalNotification(
     renotify: true,
     ...options
   } as NotificationOptions)
+}
+
+// Test notification - sends a test push
+export async function testNotification(): Promise<boolean> {
+  try {
+    // First try local notification via service worker
+    if ('serviceWorker' in navigator && 'Notification' in window) {
+      if (Notification.permission === 'granted') {
+        const registration = await navigator.serviceWorker.ready
+        
+        await registration.showNotification('🔔 Test Notification', {
+          body: 'Push notifications are working! You will receive alerts when stocks enter Order Block zones.',
+          icon: '/icon.svg',
+          badge: '/favicon.svg',
+          tag: 'test-notification',
+          vibrate: [200, 100, 200]
+        } as NotificationOptions)
+        
+        return true
+      }
+    }
+    return false
+  } catch (error) {
+    console.error('Test notification failed:', error)
+    return false
+  }
 }

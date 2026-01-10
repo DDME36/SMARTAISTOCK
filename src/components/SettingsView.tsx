@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2 } from 'lucide-react'
+import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2, Send } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { subscribeToPush, isPushSubscribed } from '@/lib/notifications'
+import { subscribeToPush, isPushSubscribed, testNotification } from '@/lib/notifications'
 import ConfirmDialog from './ConfirmDialog'
 
 export default function SettingsView() {
@@ -16,6 +16,7 @@ export default function SettingsView() {
   const [notificationStatus, setNotificationStatus] = useState<'granted' | 'denied' | 'default'>('default')
   const [pushSubscribed, setPushSubscribed] = useState(false)
   const [subscribing, setSubscribing] = useState(false)
+  const [testing, setTesting] = useState(false)
   const [clearing, setClearing] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
@@ -56,6 +57,28 @@ export default function SettingsView() {
       showToast('Failed to enable notifications')
     } finally {
       setSubscribing(false)
+    }
+  }
+
+  const handleTestNotification = async () => {
+    if (notificationStatus !== 'granted') {
+      showToast('Please enable notifications first')
+      return
+    }
+    
+    setTesting(true)
+    try {
+      const success = await testNotification()
+      if (success) {
+        showToast('✅ Test notification sent!')
+      } else {
+        showToast('❌ Failed to send test notification')
+      }
+    } catch (error) {
+      console.error('Test notification error:', error)
+      showToast('❌ Error sending notification')
+    } finally {
+      setTesting(false)
     }
   }
 
@@ -206,6 +229,17 @@ export default function SettingsView() {
           <p className="settings-hint">
             <Info size={14} /> {t('browser_settings_hint')}
           </p>
+        )}
+        {notificationStatus === 'granted' && (
+          <button 
+            className="action-btn" 
+            onClick={handleTestNotification}
+            disabled={testing}
+            style={{ marginTop: 12 }}
+          >
+            {testing ? <Loader2 size={18} className="icon-spin" /> : <Send size={18} />}
+            <span>{testing ? 'Sending...' : 'Test Notification'}</span>
+          </button>
         )}
       </div>
 
