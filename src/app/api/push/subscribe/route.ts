@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { verifyToken } from '@/lib/auth'
+import { verifyToken, COOKIE_NAME } from '@/lib/auth'
 import { savePushSubscription, removePushSubscription, initDatabase } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
     // Verify auth from cookie
     const cookieStore = await cookies()
-    const token = cookieStore.get('auth_token')?.value
+    const token = cookieStore.get(COOKIE_NAME)?.value
     
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -39,7 +39,7 @@ export async function DELETE(request: NextRequest) {
   try {
     // Verify auth from cookie
     const cookieStore = await cookies()
-    const token = cookieStore.get('auth_token')?.value
+    const token = cookieStore.get(COOKIE_NAME)?.value
     
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
