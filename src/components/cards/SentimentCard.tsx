@@ -418,11 +418,29 @@ export default function SentimentCard() {
         </div>
         
         <div className="ai-indicator">
-          <span className="indicator-label">MA Trend</span>
+          <span className="indicator-label">{ma?.ma_type || 'MA'}</span>
           <div className={`indicator-value ${(ma?.bullish_signals ?? 0) >= 4 ? 'has-success' : (ma?.bullish_signals ?? 0) <= 1 ? 'has-danger' : ''}`}>
             {ma?.bullish_signals ?? 0}<span style={{ fontSize: 11, opacity: 0.5 }}>/5</span>
           </div>
         </div>
+
+        {indicators?.momentum && (
+          <div className="ai-indicator">
+            <span className="indicator-label">RSI</span>
+            <div className={`indicator-value ${(indicators.momentum.rsi ?? 50) > 60 ? 'has-success' : (indicators.momentum.rsi ?? 50) < 40 ? 'has-danger' : ''}`}>
+              {indicators.momentum.rsi?.toFixed(0) ?? '--'}
+            </div>
+          </div>
+        )}
+
+        {indicators?.dollar_index && (
+          <div className="ai-indicator">
+            <span className="indicator-label">DXY</span>
+            <div className={`indicator-value ${indicators.dollar_index.signal === 'BULLISH' ? 'has-success' : indicators.dollar_index.signal === 'BEARISH' ? 'has-danger' : ''}`}>
+              {indicators.dollar_index.value?.toFixed(1) ?? '--'}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Yield Warning */}

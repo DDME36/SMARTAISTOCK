@@ -149,11 +149,41 @@ export interface MarketSentiment {
       ma200?: number
       bullish_signals?: number
       cross?: string | null
+      ma_type?: string
+      distance_from_ma20?: number
+      distance_from_ma50?: number
+      distance_from_ma200?: number
     }
     treasury_yields?: {
       yields: Record<string, number>
       inverted: boolean
       signal: string
+    }
+    // New indicators v2.0
+    momentum?: {
+      momentum: string
+      score: number
+      returns?: { '1d': number; '1w': number; '1m': number; '3m': number }
+      rsi?: number
+      macd_histogram?: number
+    }
+    dollar_index?: {
+      value: number
+      change: number
+      signal: string
+      interpretation?: string
+    }
+    gold?: {
+      value: number
+      change_1d: number
+      change_1w: number
+      signal: string
+      interpretation?: string
+    }
+    put_call_ratio?: {
+      ratio: number
+      signal: string
+      interpretation?: string
     }
   }
   score_breakdown?: Record<string, number>

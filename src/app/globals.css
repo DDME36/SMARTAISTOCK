@@ -4239,6 +4239,26 @@ body.lang-th .target-price {
 .ob-entry-subtitle {
   font-size: var(--text-xs);
   color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.signal-quality-badges {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 4px;
+}
+
+.sq-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: rgba(39, 215, 150, 0.2);
+  color: var(--accent-success);
+  border-radius: 3px;
 }
 
 
