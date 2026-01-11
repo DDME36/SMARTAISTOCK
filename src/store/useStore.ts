@@ -24,6 +24,7 @@ interface AppState {
   smcData: SMCData | null
   onDemandSMC: Record<string, OnDemandSMC>
   loadingSMC: Record<string, boolean>
+  isLoading: boolean
   
   // UI
   language: Language
@@ -42,6 +43,7 @@ interface AppState {
   showToast: (message: string) => void
   hideToast: () => void
   fetchOnDemandSMC: (symbol: string) => Promise<void>
+  setIsLoading: (loading: boolean) => void
 }
 
 export const useStore = create<AppState>()(
@@ -52,6 +54,7 @@ export const useStore = create<AppState>()(
       smcData: null,
       onDemandSMC: {},
       loadingSMC: {},
+      isLoading: false,
       language: 'en',
       theme: getThemeByTime(),
       activeView: 'dashboard',
@@ -59,6 +62,7 @@ export const useStore = create<AppState>()(
       
       // Actions
       setWatchlist: (watchlist) => set({ watchlist }),
+      setIsLoading: (loading) => set({ isLoading: loading }),
       
       addSymbol: async (symbol) => {
         const { watchlist } = get()

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Clock } from 'lucide-react'
+import { Clock, Wifi, WifiOff, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import NotificationBanner from './NotificationBanner'
@@ -13,12 +13,46 @@ import SignalsCard from './cards/SignalsCard'
 import QuickStatsCard from './cards/QuickStatsCard'
 import PriceTargetCard from './cards/PriceTargetCard'
 
+// Connection Status Component
+function ConnectionIndicator() {
+  const [isOnline, setIsOnline] = useState(true)
+  const [showOffline, setShowOffline] = useState(false)
+
+  useEffect(() => {
+    setIsOnline(navigator.onLine)
+
+    const handleOnline = () => {
+      setIsOnline(true)
+      setShowOffline(false)
+    }
+    const handleOffline = () => {
+      setIsOnline(false)
+      setShowOffline(true)
+    }
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  if (isOnline && !showOffline) return null
+
+  return (
+    <div className={`connection-indicator ${isOnline ? 'online' : 'offline'}`}>
+      {isOnline ? <Wifi size={12} /> : <WifiOff size={12} />}
+    </div>
+  )
+}
+
+// Data Freshness Status
 function SMCUpdateInfo() {
-  const { smcData } = useStore()
+  const { smcData, isLoading } = useStore()
   const { language } = useTranslation()
   const [now, setNow] = useState(new Date())
   
-  // Update every minute
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
     return () => clearInterval(timer)
@@ -26,50 +60,36 @@ function SMCUpdateInfo() {
   
   if (!smcData?.generated_at) return null
   
-  // Handle timestamp without timezone - assume UTC
   let generatedAt: Date
   const genAt = smcData.generated_at
   if (genAt.endsWith('Z') || genAt.includes('+') || genAt.includes('-', 10)) {
     generatedAt = new Date(genAt)
   } else {
-    // No timezone info - assume UTC
     generatedAt = new Date(genAt + 'Z')
   }
   
   const diffMins = Math.round((now.getTime() - generatedAt.getTime()) / 60000)
   
-  // Check if market is open (9:30 AM - 4:00 PM ET, Mon-Fri)
   const etNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
   const hour = etNow.getHours()
   const minute = etNow.getMinutes()
   const day = etNow.getDay()
   const timeInMins = hour * 60 + minute
-  const marketOpen = 9 * 60 + 30  // 9:30 AM ET
-  const marketClose = 16 * 60     // 4:00 PM ET
+  const marketOpen = 9 * 60 + 30
+  const marketClose = 16 * 60
   const isWeekday = day >= 1 && day <= 5
   const isMarketHours = isWeekday && timeInMins >= marketOpen && timeInMins <= marketClose
   
-  // Calculate time until market opens
   const getTimeUntilMarketOpen = () => {
     let daysToAdd = 0
+    if (day === 0) daysToAdd = 1
+    else if (day === 6) daysToAdd = 2
+    else if (timeInMins >= marketClose) daysToAdd = day === 5 ? 3 : 1
     
-    // If weekend, find next Monday
-    if (day === 0) { // Sunday
-      daysToAdd = 1
-    } else if (day === 6) { // Saturday
-      daysToAdd = 2
-    } else if (timeInMins >= marketClose) {
-      // After market close, next day (or Monday if Friday)
-      daysToAdd = day === 5 ? 3 : 1
-    }
-    
-    // Calculate minutes until 9:30 AM ET
     let minsUntilOpen = 0
     if (daysToAdd > 0) {
-      // Full days + time until 9:30 AM
       minsUntilOpen = daysToAdd * 24 * 60 - timeInMins + marketOpen
     } else if (timeInMins < marketOpen) {
-      // Same day, before market open
       minsUntilOpen = marketOpen - timeInMins
     }
     
@@ -81,34 +101,24 @@ function SMCUpdateInfo() {
     if (hours >= 24) {
       const days = Math.floor(hours / 24)
       const remainingHours = hours % 24
-      return language === 'th' 
-        ? `${days}d ${remainingHours}h` 
-        : `${days}d ${remainingHours}h`
+      return `${days}d ${remainingHours}h`
     } else if (hours > 0) {
       return `${hours}h ${mins}m`
-    } else {
-      return `${mins}m`
     }
+    return `${mins}m`
   }
   
-  // Format last update time - convert to local timezone
   const timeStr = generatedAt.toLocaleTimeString('th-TH', { 
     hour: '2-digit', 
     minute: '2-digit',
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
   })
   
-  // Format diff
   let diffText = ''
-  if (diffMins < 60) {
-    diffText = `${diffMins}m`
-  } else if (diffMins < 1440) {
-    diffText = `${Math.round(diffMins / 60)}h`
-  } else {
-    diffText = `${Math.round(diffMins / 1440)}d`
-  }
+  if (diffMins < 60) diffText = `${diffMins}m`
+  else if (diffMins < 1440) diffText = `${Math.round(diffMins / 60)}h`
+  else diffText = `${Math.round(diffMins / 1440)}d`
   
-  // Next update text
   let nextText = ''
   if (isMarketHours) {
     const minsToNext = 15 - (minute % 15)
@@ -116,19 +126,22 @@ function SMCUpdateInfo() {
   } else {
     const countdown = getTimeUntilMarketOpen()
     if (countdown) {
-      nextText = language === 'th' ? `ตลาดเปิดใน ${countdown}` : `Market opens in ${countdown}`
+      nextText = language === 'th' ? `ตลาดเปิดใน ${countdown}` : `Opens in ${countdown}`
     } else {
-      nextText = language === 'th' ? 'ตลาดปิด' : 'Market closed'
+      nextText = language === 'th' ? 'ตลาดปิด' : 'Closed'
     }
   }
   
-  // Data is stale if > 30 mins during market hours
+  // Fresh = < 20 mins, Stale = > 30 mins during market hours
+  const isFresh = diffMins < 20
   const isStale = isMarketHours && diffMins > 30
   
   return (
-    <div className="smc-update-info">
+    <div className={`smc-update-info ${isLoading ? 'loading' : ''}`}>
       <div className="smc-update-time">
-        <span className={`smc-update-dot ${isStale ? 'stale' : ''}`}></span>
+        <span className={`smc-update-dot ${isStale ? 'stale' : isFresh ? 'fresh' : ''}`}>
+          {isLoading && <RefreshCw size={8} className="icon-spin" />}
+        </span>
         <span>
           {language === 'th' ? 'อัพเดท' : 'Updated'}: {timeStr} ({diffText})
         </span>
@@ -137,16 +150,24 @@ function SMCUpdateInfo() {
           <Clock size={10} />
           {nextText}
         </span>
+        <ConnectionIndicator />
       </div>
     </div>
   )
 }
 
 export default function Dashboard() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    // Trigger staggered animation after mount
+    setMounted(true)
+  }, [])
+
   return (
     <main>
       <NotificationBanner />
-      <div className="bento-grid">
+      <div className={`bento-grid ${mounted ? 'animate-in' : ''}`}>
         <SentimentCard />
         <AddSymbolCard />
         <MarketStatusCard />
