@@ -9,22 +9,8 @@ import { formatPrice } from '@/lib/utils'
 interface LivePrice {
   price: number
   change: number
-}
-
-const stockNames: Record<string, { name: string; exchange: string }> = {
-  'AAPL': { name: 'Apple Inc.', exchange: 'NASDAQ' },
-  'TSLA': { name: 'Tesla Inc.', exchange: 'NASDAQ' },
-  'NVDA': { name: 'NVIDIA Corp.', exchange: 'NASDAQ' },
-  'GOOGL': { name: 'Alphabet Inc.', exchange: 'NASDAQ' },
-  'MSFT': { name: 'Microsoft Corp.', exchange: 'NASDAQ' },
-  'RKLB': { name: 'Rocket Lab USA', exchange: 'NASDAQ' },
-  'EOSE': { name: 'Eos Energy', exchange: 'NASDAQ' },
-  'PLTR': { name: 'Palantir Tech', exchange: 'NYSE' },
-  'ACHR': { name: 'Archer Aviation', exchange: 'NYSE' },
-  'RBLX': { name: 'Roblox Corp.', exchange: 'NYSE' },
-  'PRME': { name: 'Prime Medicine', exchange: 'NASDAQ' },
-  'BTC-USD': { name: 'Bitcoin', exchange: 'Crypto' },
-  'ETH-USD': { name: 'Ethereum', exchange: 'Crypto' },
+  name?: string
+  exchange?: string
 }
 
 export default function WatchlistCard() {
@@ -54,7 +40,6 @@ export default function WatchlistCard() {
         }
         setFailedSymbols(failed)
         
-        // If some failed, retry after 10 seconds
         if (failed.size > 0) {
           setRetryCountdown(10)
         }
@@ -68,17 +53,19 @@ export default function WatchlistCard() {
     }
   }
 
+  // Fetch prices for all watchlist items (to get names)
   useEffect(() => {
     if (fetchedRef.current || watchlist.length === 0) return
-    const need = watchlist.filter(s => !smcData?.stocks?.[s]?.current_price && !livePrices[s])
+    
+    // Fetch all symbols to get names
+    const need = watchlist.filter(s => !livePrices[s])
     if (need.length === 0) return
     
     fetchedRef.current = true
     setTimeout(() => fetchPrices(need), 300)
     
-    // Reset after 60 seconds to allow refetch
     setTimeout(() => { fetchedRef.current = false }, 60000)
-  }, [watchlist, smcData, livePrices])
+  }, [watchlist, livePrices])
 
   // Retry countdown
   useEffect(() => {
@@ -86,7 +73,6 @@ export default function WatchlistCard() {
     const timer = setInterval(() => {
       setRetryCountdown(prev => {
         if (prev <= 1) {
-          // Retry failed symbols
           const failed = Array.from(failedSymbols)
           if (failed.length > 0) {
             fetchPrices(failed)
@@ -102,18 +88,21 @@ export default function WatchlistCard() {
   const getData = (symbol: string) => {
     const smc = smcData?.stocks?.[symbol]
     const live = livePrices[symbol]
-    const info = stockNames[symbol] || { name: symbol, exchange: 'US' }
     const failed = failedSymbols.has(symbol)
+    
+    // Get name from live data (API) or fallback to symbol
+    const name = live?.name || symbol
+    const exchange = live?.exchange || 'US'
     
     if (smc?.current_price) {
       const dir = typeof smc.trend === 'string' ? smc.trend : smc.trend?.direction || 'neutral'
-      return { price: smc.current_price, change: undefined, trend: dir, hasSmc: true, failed: false, ...info }
+      return { price: smc.current_price, change: live?.change, trend: dir, hasSmc: true, failed: false, name, exchange }
     }
     if (live) {
       const dir = live.change > 0.5 ? 'up' : live.change < -0.5 ? 'down' : 'flat'
-      return { price: live.price, change: live.change, trend: dir, hasSmc: false, failed: false, ...info }
+      return { price: live.price, change: live.change, trend: dir, hasSmc: false, failed: false, name, exchange }
     }
-    return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, ...info }
+    return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, name, exchange }
   }
 
   const getTrendText = (trend: string) => {

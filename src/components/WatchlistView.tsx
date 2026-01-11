@@ -12,32 +12,8 @@ type SortType = 'name' | 'price' | 'trend'
 interface LivePrice {
   price: number
   change: number
-}
-
-// Stock name mapping
-const stockNames: Record<string, { name: string; exchange: string }> = {
-  'AAPL': { name: 'Apple Inc.', exchange: 'NASDAQ' },
-  'TSLA': { name: 'Tesla Inc.', exchange: 'NASDAQ' },
-  'NVDA': { name: 'NVIDIA Corp.', exchange: 'NASDAQ' },
-  'GOOGL': { name: 'Alphabet Inc.', exchange: 'NASDAQ' },
-  'MSFT': { name: 'Microsoft Corp.', exchange: 'NASDAQ' },
-  'AMZN': { name: 'Amazon.com Inc.', exchange: 'NASDAQ' },
-  'META': { name: 'Meta Platforms', exchange: 'NASDAQ' },
-  'AMD': { name: 'AMD Inc.', exchange: 'NASDAQ' },
-  'NFLX': { name: 'Netflix Inc.', exchange: 'NASDAQ' },
-  'RKLB': { name: 'Rocket Lab USA', exchange: 'NASDAQ' },
-  'EOSE': { name: 'Eos Energy', exchange: 'NASDAQ' },
-  'PLTR': { name: 'Palantir Tech', exchange: 'NYSE' },
-  'COIN': { name: 'Coinbase Global', exchange: 'NASDAQ' },
-  'SOFI': { name: 'SoFi Technologies', exchange: 'NASDAQ' },
-  'NIO': { name: 'NIO Inc.', exchange: 'NYSE' },
-  'RIVN': { name: 'Rivian Automotive', exchange: 'NASDAQ' },
-  'LCID': { name: 'Lucid Group', exchange: 'NASDAQ' },
-  'BTC-USD': { name: 'Bitcoin', exchange: 'Crypto' },
-  'ETH-USD': { name: 'Ethereum', exchange: 'Crypto' },
-  'SOL-USD': { name: 'Solana', exchange: 'Crypto' },
-  'XRP-USD': { name: 'Ripple', exchange: 'Crypto' },
-  'DOGE-USD': { name: 'Dogecoin', exchange: 'Crypto' },
+  name?: string
+  exchange?: string
 }
 
 export default function WatchlistView() {
@@ -50,24 +26,19 @@ export default function WatchlistView() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const hasFetchedRef = useRef(false)
 
-  // Fetch live prices for stocks without SMC data
-  // Fetch live prices for stocks without SMC data
+  // Fetch live prices and names for all stocks
   useEffect(() => {
     if (watchlist.length === 0) return
 
-    const needPrices = watchlist.filter(s => !smcData?.stocks?.[s]?.current_price)
+    // Fetch all to get names
+    const needPrices = watchlist.filter(s => !livePrices[s])
     if (needPrices.length === 0) return
 
-    // Check if we have symbols that absolutely need data right now (not just update)
-    const missingData = needPrices.some(s => !livePrices[s])
-
-    // If we have fetched recently AND we aren't missing any data, skip
-    if (hasFetchedRef.current && !missingData) return
+    if (hasFetchedRef.current) return
+    hasFetchedRef.current = true
 
     const fetchPrices = async () => {
       setLoading(true)
-      hasFetchedRef.current = true
-
       try {
         const res = await fetch('/api/stock-price', {
           method: 'POST',
@@ -82,21 +53,12 @@ export default function WatchlistView() {
         console.error('Price fetch error:', e)
       } finally {
         setLoading(false)
-        // Reset ref after 60s to allow update
         setTimeout(() => { hasFetchedRef.current = false }, 60000)
       }
     }
 
     fetchPrices()
-
-    // Set up auto-refresh every 60s
-    const intervalId = setInterval(() => {
-      hasFetchedRef.current = false
-      fetchPrices()
-    }, 60000)
-
-    return () => clearInterval(intervalId)
-  }, [watchlist, smcData])
+  }, [watchlist, livePrices])
 
   const handleRemove = (symbol: string) => {
     setDeleteConfirm(symbol)
@@ -121,19 +83,22 @@ export default function WatchlistView() {
   const getStockData = (symbol: string) => {
     const smcStock = smcData?.stocks?.[symbol]
     const livePrice = livePrices[symbol]
-    const stockInfo = stockNames[symbol]
+
+    // Get name from API response
+    const name = livePrice?.name || symbol
+    const exchange = livePrice?.exchange || 'US'
 
     if (smcStock?.current_price) {
       return {
         price: smcStock.current_price,
-        change: undefined,
+        change: livePrice?.change,
         trend: getTrendDirection(smcStock.trend),
         hasAnalysis: true,
         buyZones: smcStock.ob_summary?.total_buy || 0,
         sellZones: smcStock.ob_summary?.total_sell || 0,
         alertCount: smcStock.alerts?.length || 0,
-        name: stockInfo?.name || symbol,
-        exchange: stockInfo?.exchange || 'US'
+        name,
+        exchange
       }
     }
 
@@ -147,8 +112,8 @@ export default function WatchlistView() {
         buyZones: 0,
         sellZones: 0,
         alertCount: 0,
-        name: stockInfo?.name || symbol,
-        exchange: stockInfo?.exchange || 'US'
+        name,
+        exchange
       }
     }
 
@@ -160,14 +125,15 @@ export default function WatchlistView() {
       buyZones: 0,
       sellZones: 0,
       alertCount: 0,
-      name: stockInfo?.name || symbol,
-      exchange: stockInfo?.exchange || 'US'
+      name,
+      exchange
     }
   }
 
   // Filter and sort
   let filteredList = watchlist.filter(symbol =>
-    symbol.toLowerCase().includes(search.toLowerCase())
+    symbol.toLowerCase().includes(search.toLowerCase()) ||
+    (livePrices[symbol]?.name || '').toLowerCase().includes(search.toLowerCase())
   )
 
   // Sort

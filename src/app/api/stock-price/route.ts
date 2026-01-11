@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Cache prices for 1 minute
-const priceCache = new Map<string, { price: number; change: number; timestamp: number }>()
+interface CachedStock {
+  price: number
+  change: number
+  name?: string
+  exchange?: string
+  timestamp: number
+}
+
+const priceCache = new Map<string, CachedStock>()
 const CACHE_TTL = 60 * 1000 // 1 minute
+
+// Get exchange from symbol
+function getExchange(symbol: string, currency?: string): string {
+  if (symbol.endsWith('-USD')) return 'Crypto'
+  if (currency === 'GBP' || currency === 'GBp') return 'LSE'
+  if (currency === 'EUR') return 'EU'
+  if (currency === 'JPY') return 'TSE'
+  // Default to US exchanges
+  return 'US'
+}
 
 export async function GET(request: NextRequest) {
   const symbol = request.nextUrl.searchParams.get('symbol')
@@ -20,6 +38,8 @@ export async function GET(request: NextRequest) {
       symbol: upperSymbol,
       price: cached.price,
       change: cached.change,
+      name: cached.name,
+      exchange: cached.exchange,
       cached: true
     })
   }
@@ -45,15 +65,18 @@ export async function GET(request: NextRequest) {
     const price = meta.regularMarketPrice
     const prevClose = meta.previousClose || meta.chartPreviousClose
     const change = prevClose ? ((price - prevClose) / prevClose) * 100 : 0
+    const name = meta.shortName || meta.longName || upperSymbol
+    const exchange = getExchange(upperSymbol, meta.currency)
     
     // Update cache
-    priceCache.set(upperSymbol, { price, change, timestamp: Date.now() })
+    priceCache.set(upperSymbol, { price, change, name, exchange, timestamp: Date.now() })
     
     return NextResponse.json({
       symbol: upperSymbol,
       price: price,
       change: Math.round(change * 100) / 100,
-      name: meta.shortName || meta.longName,
+      name,
+      exchange,
       currency: meta.currency
     })
   } catch (error) {
@@ -61,7 +84,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Batch endpoint for multiple symbols
+// Batch endpoint for multiple symbols - now returns name and exchange
 export async function POST(request: NextRequest) {
   try {
     const { symbols } = await request.json()
@@ -70,7 +93,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Symbols array required' }, { status: 400 })
     }
     
-    const results: Record<string, { price: number; change: number }> = {}
+    const results: Record<string, { price: number; change: number; name?: string; exchange?: string }> = {}
     
     // Fetch in parallel (max 10 at a time)
     const chunks = []
@@ -85,7 +108,13 @@ export async function POST(request: NextRequest) {
         // Check cache first
         const cached = priceCache.get(upperSymbol)
         if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-          return { symbol: upperSymbol, price: cached.price, change: cached.change }
+          return { 
+            symbol: upperSymbol, 
+            price: cached.price, 
+            change: cached.change,
+            name: cached.name,
+            exchange: cached.exchange
+          }
         }
         
         try {
@@ -104,9 +133,17 @@ export async function POST(request: NextRequest) {
             const price = meta.regularMarketPrice
             const prevClose = meta.previousClose || meta.chartPreviousClose
             const change = prevClose ? ((price - prevClose) / prevClose) * 100 : 0
+            const name = meta.shortName || meta.longName || upperSymbol
+            const exchange = getExchange(upperSymbol, meta.currency)
             
-            priceCache.set(upperSymbol, { price, change, timestamp: Date.now() })
-            return { symbol: upperSymbol, price, change: Math.round(change * 100) / 100 }
+            priceCache.set(upperSymbol, { price, change, name, exchange, timestamp: Date.now() })
+            return { 
+              symbol: upperSymbol, 
+              price, 
+              change: Math.round(change * 100) / 100,
+              name,
+              exchange
+            }
           }
         } catch {}
         return null
@@ -114,7 +151,12 @@ export async function POST(request: NextRequest) {
       
       const chunkResults = await Promise.all(promises)
       chunkResults.forEach(r => {
-        if (r) results[r.symbol] = { price: r.price, change: r.change }
+        if (r) results[r.symbol] = { 
+          price: r.price, 
+          change: r.change,
+          name: r.name,
+          exchange: r.exchange
+        }
       })
     }
     
