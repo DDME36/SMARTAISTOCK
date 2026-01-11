@@ -9,6 +9,16 @@ export interface OrderBlock {
   distance: number
   distance_pct: number
   rank: number
+  // Quality indicators (v2.0)
+  quality_score?: number
+  strength?: 'weak' | 'medium' | 'strong'
+  in_zone?: boolean
+  trend_aligned?: boolean
+  volume?: {
+    ratio: number
+    confirmed: boolean
+  }
+  date?: string
 }
 
 export interface Alert {

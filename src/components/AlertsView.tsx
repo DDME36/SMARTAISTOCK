@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, TrendingUp, TrendingDown } from 'lucide-react'
+import { Bell, TrendingUp, TrendingDown, Zap, BarChart3, TrendingUp as TrendIcon } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useState } from 'react'
@@ -16,6 +16,35 @@ interface AlertItem {
   level?: number
   ob_high?: number
   ob_low?: number
+  // Quality indicators
+  qualityScore?: number
+  volumeConfirmed?: boolean
+  trendAligned?: boolean
+  strength?: string
+}
+
+// Get quality label and color
+const getQualityInfo = (score: number, language: string) => {
+  if (score >= 80) return { 
+    label: language === 'th' ? 'สัญญาณแข็งแกร่ง' : 'Strong Signal', 
+    color: '#10b981',
+    stars: 3
+  }
+  if (score >= 60) return { 
+    label: language === 'th' ? 'สัญญาณดี' : 'Good Signal', 
+    color: '#3b82f6',
+    stars: 2
+  }
+  if (score >= 40) return { 
+    label: language === 'th' ? 'สัญญาณปานกลาง' : 'Moderate', 
+    color: '#f59e0b',
+    stars: 1
+  }
+  return { 
+    label: language === 'th' ? 'สัญญาณอ่อน' : 'Weak Signal', 
+    color: '#6b7280',
+    stars: 0
+  }
 }
 
 export default function AlertsView() {
@@ -29,112 +58,82 @@ export default function AlertsView() {
     const type = alert.type || ''
     
     if (language === 'th') {
-      // Already Thai - return as is
       if (message.includes('ราคาเข้าโซน') || message.includes('ใกล้โซน') || message.includes('สัญญาณ')) {
         return message
       }
-      
-      // Translate English to Thai
       if (type.startsWith('ob_entry_')) {
         const signal = alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'
-        return `🎯 ราคาเข้าโซน ${alert.signal} Order Block! - สัญญาณ${signal}`
+        return `ราคาเข้าโซน Order Block - สัญญาณ${signal}`
       }
       if (type.startsWith('ob_near_')) {
-        return `⚠️ ใกล้โซน ${alert.signal} ที่ $${alert.level?.toFixed(2) || ''} (${alert.distancePct?.toFixed(1) || ''}% away)`
+        return `ใกล้โซน ${alert.signal} (${alert.distancePct?.toFixed(1) || ''}%)`
       }
       if (type.includes('choch')) {
-        if (type.includes('bullish')) return 'Bullish CHoCH: อาจกลับตัวเป็นขาขึ้น'
-        return 'Bearish CHoCH: อาจกลับตัวเป็นขาลง'
+        return type.includes('bullish') ? 'CHoCH: อาจกลับตัวขึ้น' : 'CHoCH: อาจกลับตัวลง'
       }
       if (type.includes('bos')) {
-        if (type.includes('bullish')) return `Bullish BOS: ราคาทะลุขึ้น`
-        return `Bearish BOS: ราคาทะลุลง`
+        return type.includes('bullish') ? 'BOS: ทะลุแนวต้าน' : 'BOS: ทะลุแนวรับ'
       }
       if (type.includes('fvg')) {
-        const signal = alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'
-        return `FVG ${signal} ที่ $${alert.level?.toFixed(2) || ''}`
+        return `FVG ${alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'}`
       }
-      if (type === 'zone_premium') return 'ราคาอยู่ในโซน Premium - มองหาจุดขาย'
-      if (type === 'zone_discount') return 'ราคาอยู่ในโซน Discount - มองหาจุดซื้อ'
-      if (type === 'bullish' || type === 'bearish') {
-        const match = message.match(/\$([0-9.]+)\s*\(([0-9.]+)%/)
-        if (match) {
-          const signal = alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'
-          return `โซน${signal} ที่ $${match[1]} (ห่าง ${match[2]}%)`
-        }
-      }
-      
+      if (type === 'zone_premium') return 'อยู่ในโซน Premium - มองหาจุดขาย'
+      if (type === 'zone_discount') return 'อยู่ในโซน Discount - มองหาจุดซื้อ'
       return message
     }
     
-    // English translation
-    if (language === 'en') {
-      // OB Entry alerts (Thai -> English)
-      if (message.includes('ราคาเข้าโซน') && message.includes('Order Block')) {
-        const signal = alert.signal === 'BUY' ? 'Buy' : 'Sell'
-        return `🎯 Price entered ${alert.signal} Order Block! - ${signal} signal`
-      }
-      
-      // Near OB alerts (Thai -> English)
-      if (message.includes('ใกล้โซน')) {
-        return `⚠️ Near ${alert.signal} Zone at $${alert.level?.toFixed(2) || ''} (${alert.distancePct?.toFixed(1) || ''}% away)`
-      }
-      
-      // Already English - return as is
-      if (message.includes('CHoCH') || message.includes('BOS') || message.includes('FVG')) {
-        return message
-      }
-      if (message.includes('Zone') && !message.includes('โซน')) {
-        return message
-      }
-      
-      // Type-based translation
-      if (type.startsWith('ob_entry_')) {
-        const signal = alert.signal === 'BUY' ? 'Buy' : 'Sell'
-        return `🎯 Price entered ${alert.signal} Order Block! - ${signal} signal`
-      }
-      if (type.startsWith('ob_near_')) {
-        return `⚠️ Near ${alert.signal} Zone at $${alert.level?.toFixed(2) || ''} (${alert.distancePct?.toFixed(1) || ''}% away)`
-      }
-      if (type.includes('choch')) {
-        if (type.includes('bullish')) return 'Bullish CHoCH: Potential trend reversal to upside'
-        return 'Bearish CHoCH: Potential trend reversal to downside'
-      }
-      if (type.includes('bos')) {
-        if (type.includes('bullish')) return `Bullish BOS: Price broke above resistance`
-        return `Bearish BOS: Price broke below support`
-      }
-      if (type.includes('fvg')) {
-        return `FVG ${alert.signal} at $${alert.level?.toFixed(2) || ''}`
-      }
-      if (type === 'zone_premium') return 'Price in Premium Zone - Look for sells'
-      if (type === 'zone_discount') return 'Price in Discount Zone - Look for buys'
-      if (type === 'bullish' || type === 'bearish') {
-        const match = message.match(/\$([0-9.]+)\s*\(([0-9.]+)%/)
-        if (match) {
-          return `${alert.signal} Zone at $${match[1]} (${match[2]}% away)`
-        }
-      }
-      
-      // Generic Thai to English
-      if (message.includes('สัญญาณซื้อ')) return message.replace('สัญญาณซื้อ', 'Buy signal')
-      if (message.includes('สัญญาณขาย')) return message.replace('สัญญาณขาย', 'Sell signal')
-      if (message.includes('โซนซื้อ')) return message.replace('โซนซื้อ', 'Buy Zone')
-      if (message.includes('โซนขาย')) return message.replace('โซนขาย', 'Sell Zone')
-      
-      return message
+    // English
+    if (type.startsWith('ob_entry_')) {
+      return `Price entered Order Block - ${alert.signal} signal`
     }
+    if (type.startsWith('ob_near_')) {
+      return `Near ${alert.signal} Zone (${alert.distancePct?.toFixed(1) || ''}%)`
+    }
+    if (type.includes('choch')) {
+      return type.includes('bullish') ? 'CHoCH: Potential reversal up' : 'CHoCH: Potential reversal down'
+    }
+    if (type.includes('bos')) {
+      return type.includes('bullish') ? 'BOS: Broke resistance' : 'BOS: Broke support'
+    }
+    if (type.includes('fvg')) {
+      return `FVG ${alert.signal}`
+    }
+    if (type === 'zone_premium') return 'In Premium Zone - Look for sells'
+    if (type === 'zone_discount') return 'In Discount Zone - Look for buys'
     
     return message
   }
 
-  // Collect all alerts from watchlist stocks
+  // Collect all alerts from watchlist stocks with quality data
   const alerts: AlertItem[] = []
   
   for (const symbol of watchlist) {
     const stock = smcData?.stocks?.[symbol]
     if (stock?.alerts?.length) {
+      // Get order blocks for quality data
+      const orderBlocks = stock.order_blocks || []
+      
       for (const alert of stock.alerts) {
+        // Find matching OB for quality info
+        let qualityScore = 50
+        let volumeConfirmed = false
+        let trendAligned = false
+        let strength = 'medium'
+        
+        if (alert.type?.includes('ob_')) {
+          // Find the OB that triggered this alert
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const matchingOB = orderBlocks.find((ob: any) => 
+            ob.in_zone || ob.signal === alert.signal
+          )
+          if (matchingOB) {
+            qualityScore = matchingOB.quality_score || 50
+            volumeConfirmed = matchingOB.volume?.confirmed || false
+            trendAligned = matchingOB.trend_aligned || false
+            strength = matchingOB.strength || 'medium'
+          }
+        }
+        
         alerts.push({
           symbol,
           message: alert.message,
@@ -143,7 +142,11 @@ export default function AlertsView() {
           distancePct: alert.distance_pct,
           level: alert.level,
           ob_high: alert.ob_high,
-          ob_low: alert.ob_low
+          ob_low: alert.ob_low,
+          qualityScore,
+          volumeConfirmed,
+          trendAligned,
+          strength
         })
       }
     }
@@ -157,11 +160,36 @@ export default function AlertsView() {
     return true
   })
 
-  // Sort by distance (nearest first)
-  filteredAlerts.sort((a, b) => (a.distancePct || 100) - (b.distancePct || 100))
+  // Sort: Entry alerts first (by quality), then near zone, then others
+  filteredAlerts.sort((a, b) => {
+    const aIsEntry = a.type?.startsWith('ob_entry_')
+    const bIsEntry = b.type?.startsWith('ob_entry_')
+    if (aIsEntry && !bIsEntry) return -1
+    if (!aIsEntry && bIsEntry) return 1
+    
+    // Both entry: sort by quality
+    if (aIsEntry && bIsEntry) {
+      return (b.qualityScore || 0) - (a.qualityScore || 0)
+    }
+    
+    const aIsNear = a.type?.startsWith('ob_near_')
+    const bIsNear = b.type?.startsWith('ob_near_')
+    if (aIsNear && !bIsNear) return -1
+    if (!aIsNear && bIsNear) return 1
+    
+    // Both near: sort by distance
+    if (aIsNear && bIsNear) {
+      return (a.distancePct || 100) - (b.distancePct || 100)
+    }
+    
+    return 0
+  })
 
   const buyCount = alerts.filter(a => a.signal === 'BUY').length
   const sellCount = alerts.filter(a => a.signal === 'SELL').length
+
+  // Check if alert is OB related (has quality data)
+  const isOBAlert = (type: string) => type?.includes('ob_entry_') || type?.includes('ob_near_')
 
   return (
     <main className="alerts-page">
@@ -213,34 +241,72 @@ export default function AlertsView() {
           </div>
         ) : (
           <div className="alerts-list">
-            {filteredAlerts.map((alert, i) => (
-              <div 
-                key={i} 
-                className={`alert-item ${alert.signal.toLowerCase()}`}
-              >
-                <div className="alert-icon">
-                  {alert.signal === 'BUY' ? (
-                    <TrendingUp size={18} />
-                  ) : (
-                    <TrendingDown size={18} />
-                  )}
-                </div>
-                <div className="alert-content">
-                  <div className="alert-header">
-                    <span className="alert-symbol">{alert.symbol}</span>
-                    {alert.distancePct !== undefined && (
-                      <span className={`alert-distance ${alert.distancePct <= 2 ? 'near' : ''}`}>
-                        {alert.distancePct}% {t('away')}
-                      </span>
+            {filteredAlerts.map((alert, i) => {
+              const isOB = isOBAlert(alert.type)
+              const qualityInfo = isOB ? getQualityInfo(alert.qualityScore || 50, language) : null
+              const isEntry = alert.type?.startsWith('ob_entry_')
+              
+              return (
+                <div 
+                  key={i} 
+                  className={`alert-item ${alert.signal.toLowerCase()} ${isEntry ? 'entry' : ''}`}
+                >
+                  <div className="alert-icon">
+                    {alert.signal === 'BUY' ? (
+                      <TrendingUp size={18} />
+                    ) : (
+                      <TrendingDown size={18} />
                     )}
                   </div>
-                  <p className="alert-message">{translateMessage(alert)}</p>
+                  <div className="alert-content">
+                    <div className="alert-header">
+                      <span className="alert-symbol">{alert.symbol}</span>
+                      {/* Distance or In Zone badge */}
+                      {alert.distancePct !== undefined && alert.distancePct > 0 && isOB && (
+                        <span className={`alert-distance ${alert.distancePct <= 2 ? 'near' : ''}`}>
+                          {alert.distancePct.toFixed(1)}% {t('away')}
+                        </span>
+                      )}
+                      {isEntry && (
+                        <span className="alert-distance near">
+                          {language === 'th' ? '🎯 อยู่ในโซน' : '🎯 In Zone'}
+                        </span>
+                      )}
+                    </div>
+                    <p className="alert-message">{translateMessage(alert)}</p>
+                    
+                    {/* Quality indicators for OB alerts */}
+                    {isOB && qualityInfo && (
+                      <div className="alert-quality">
+                        {/* Stars */}
+                        <span className="quality-stars" style={{ color: qualityInfo.color }}>
+                          {'★'.repeat(qualityInfo.stars)}{'☆'.repeat(3 - qualityInfo.stars)}
+                        </span>
+                        <span className="quality-label" style={{ color: qualityInfo.color }}>
+                          {qualityInfo.label}
+                        </span>
+                        {/* Confirmation badges */}
+                        <div className="quality-badges">
+                          {alert.volumeConfirmed && (
+                            <span className="quality-badge confirmed" title={language === 'th' ? 'Volume ยืนยัน' : 'Volume Confirmed'}>
+                              <BarChart3 size={10} /> Vol
+                            </span>
+                          )}
+                          {alert.trendAligned && (
+                            <span className="quality-badge confirmed" title={language === 'th' ? 'ไปตาม Trend' : 'Trend Aligned'}>
+                              <TrendIcon size={10} /> Trend
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
+                    {alert.signal === 'BUY' ? t('buy').toUpperCase() : t('sell').toUpperCase()}
+                  </span>
                 </div>
-                <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
-                  {alert.signal === 'BUY' ? t('buy').toUpperCase() : t('sell').toUpperCase()}
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

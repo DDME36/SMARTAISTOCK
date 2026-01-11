@@ -1490,6 +1490,62 @@ body.lang-th .target-price {
   text-overflow: ellipsis;
 }
 
+/* Quality indicators for OB alerts */
+.alert-quality {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.quality-stars {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.quality-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.quality-badges {
+  display: flex;
+  gap: 4px;
+}
+
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: var(--glass-surface);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.quality-badge.confirmed {
+  background: rgba(39, 215, 150, 0.15);
+  color: var(--accent-success);
+}
+
+/* Entry alert highlight */
+.alert-item.entry {
+  background: rgba(110, 86, 207, 0.1);
+  border-left-width: 4px;
+}
+
+.alert-item.entry.buy {
+  background: rgba(39, 215, 150, 0.08);
+}
+
+.alert-item.entry.sell {
+  background: rgba(255, 79, 94, 0.08);
+}
+
 
 /* === Watchlist Page === */
 .watchlist-page {
