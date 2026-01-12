@@ -5318,23 +5318,30 @@ body.lang-th .target-price {
 }
 
 .alerts-list-v2 {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-/* Desktop: 2 columns for better space usage */
+/* Desktop: 2 columns using CSS columns for masonry effect */
 @media (min-width: 768px) {
   .alerts-list-v2 {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    display: block;
+    column-count: 2;
+    column-gap: 16px;
+  }
+  
+  .alerts-list-v2 > .alert-card-v2,
+  .alerts-list-v2 > .card {
+    break-inside: avoid;
+    margin-bottom: 16px;
   }
 }
 
-/* Large desktop: can do 3 columns if many alerts */
+/* Large desktop */
 @media (min-width: 1200px) {
   .alerts-list-v2 {
-    grid-template-columns: repeat(2, 1fr);
+    column-count: 2;
   }
 }
 
