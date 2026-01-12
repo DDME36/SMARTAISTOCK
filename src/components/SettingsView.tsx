@@ -236,10 +236,8 @@ export default function SettingsView() {
         )}
       </div>
 
-      {/* Alert Settings - Show when notifications enabled */}
-      {notificationStatus === 'granted' && pushSubscribed && (
-        <AlertSettingsCard />
-      )}
+      {/* Alert Settings - Always show for configuring alert preferences */}
+      <AlertSettingsCard />
 
       {/* Advanced Settings Toggle */}
       <button 

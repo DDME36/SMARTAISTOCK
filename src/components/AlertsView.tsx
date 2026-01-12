@@ -5,6 +5,7 @@ import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useState } from 'react'
 import { formatPrice } from '@/lib/utils'
+import { useLivePrices } from '@/hooks/useLivePrices'
 
 type FilterType = 'all' | 'buy' | 'sell'
 
@@ -145,6 +146,9 @@ export default function AlertsView() {
   const { t, language } = useTranslation()
   const [filter, setFilter] = useState<FilterType>('all')
   const [expandedAlert, setExpandedAlert] = useState<number | null>(null)
+  
+  // Get live prices for all watchlist symbols
+  const { prices: livePrices } = useLivePrices(watchlist)
 
   // Collect all alerts with full context
   const alerts: AlertItem[] = []
@@ -155,6 +159,9 @@ export default function AlertsView() {
     
     const orderBlocks = stock.order_blocks || []
     const hasOBEntry = stock.alerts.some((a: { type?: string }) => a.type?.startsWith('ob_entry_'))
+    
+    // Get live price for this symbol (prefer live over cached)
+    const livePrice = livePrices[symbol]?.price
     
     for (const alert of stock.alerts) {
       // Skip redundant zone alerts
@@ -187,7 +194,8 @@ export default function AlertsView() {
         symbol,
         signal: alert.signal,
         type: alert.type,
-        currentPrice: stock.current_price,
+        // Use live price if available, fallback to SMC cached price
+        currentPrice: livePrice || stock.current_price,
         obHigh: alert.ob_high,
         obLow: alert.ob_low,
         distancePct: alert.distance_pct,
