@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, TrendingUp, TrendingDown, Activity, Volume2, Target, AlertTriangle, CheckCircle, XCircle, MinusCircle, Minus, X } from 'lucide-react'
+import { Bell, TrendingUp, TrendingDown, Activity, Volume2, Target, AlertTriangle, CheckCircle, XCircle, MinusCircle, Minus, X, Crosshair, RefreshCw, Navigation, Zap, BarChart3, MapPin, ChevronRight, DollarSign, ArrowUpRight } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useState, useEffect } from 'react'
@@ -52,6 +52,16 @@ const ALERT_PRIORITY: Record<string, number> = {
   'zone_premium': 6, 'zone_discount': 6
 }
 
+// Icon mapping for alerts - using Lucide icons instead of emoji
+const ALERT_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  'ob_entry': Crosshair,
+  'ob_near': Target,
+  'choch': RefreshCw,
+  'bos': Zap,
+  'fvg': BarChart3,
+  'zone': MapPin
+}
+
 function analyzeAlerts(alerts: SingleAlert[]) {
   let buyScore = 0, sellScore = 0, buyCount = 0, sellCount = 0
   
@@ -88,14 +98,14 @@ function getAlertInfo(alert: SingleAlert, language: string) {
   const type = alert.type
   const isBuy = alert.signal === 'BUY'
   
-  if (type.startsWith('ob_entry_')) return { icon: '🎯', label: language === 'th' ? 'เข้า Order Block' : 'OB Entry', color: isBuy ? '#10b981' : '#ef4444' }
-  if (type.startsWith('ob_near_')) return { icon: '⚠️', label: language === 'th' ? `ใกล้ OB (${alert.distancePct?.toFixed(1)}%)` : `Near OB (${alert.distancePct?.toFixed(1)}%)`, color: '#f59e0b' }
-  if (type.includes('choch')) return { icon: '🔄', label: language === 'th' ? 'CHoCH กลับตัว' : 'CHoCH Reversal', color: '#8b5cf6' }
-  if (type.includes('bos')) return { icon: '💥', label: language === 'th' ? 'BOS ทะลุ' : 'BOS Break', color: '#3b82f6' }
-  if (type.includes('fvg')) return { icon: '📊', label: 'FVG', color: '#6366f1' }
-  if (type === 'zone_premium') return { icon: '📍', label: language === 'th' ? 'โซน Premium' : 'Premium Zone', color: '#ef4444' }
-  if (type === 'zone_discount') return { icon: '📍', label: language === 'th' ? 'โซน Discount' : 'Discount Zone', color: '#10b981' }
-  return { icon: '📌', label: type, color: '#6b7280' }
+  if (type.startsWith('ob_entry_')) return { Icon: Crosshair, label: language === 'th' ? 'เข้า Order Block' : 'OB Entry', color: isBuy ? '#10b981' : '#ef4444' }
+  if (type.startsWith('ob_near_')) return { Icon: Target, label: language === 'th' ? `ใกล้ OB (${alert.distancePct?.toFixed(1)}%)` : `Near OB (${alert.distancePct?.toFixed(1)}%)`, color: '#f59e0b' }
+  if (type.includes('choch')) return { Icon: RefreshCw, label: language === 'th' ? 'CHoCH กลับตัว' : 'CHoCH Reversal', color: '#8b5cf6' }
+  if (type.includes('bos')) return { Icon: Zap, label: language === 'th' ? 'BOS ทะลุ' : 'BOS Break', color: '#3b82f6' }
+  if (type.includes('fvg')) return { Icon: BarChart3, label: 'FVG', color: '#6366f1' }
+  if (type === 'zone_premium') return { Icon: ArrowUpRight, label: language === 'th' ? 'โซน Premium' : 'Premium Zone', color: '#ef4444' }
+  if (type === 'zone_discount') return { Icon: DollarSign, label: language === 'th' ? 'โซน Discount' : 'Discount Zone', color: '#10b981' }
+  return { Icon: MapPin, label: type, color: '#6b7280' }
 }
 
 function getConsensusDisplay(consensus: string, language: string) {
@@ -161,9 +171,10 @@ function DetailModal({ group, language, onClose }: { group: StockAlertGroup; lan
           <div className="signal-list-compact">
             {group.alerts.map((alert, idx) => {
               const info = getAlertInfo(alert, language)
+              const AlertIcon = info.Icon
               return (
                 <div key={idx} className="signal-row">
-                  <span className="signal-icon">{info.icon}</span>
+                  <span className="signal-icon" style={{ color: info.color }}><AlertIcon size={14} /></span>
                   <span className="signal-name">{info.label}</span>
                   <span className={`signal-badge ${alert.signal.toLowerCase()}`}>
                     {alert.signal === 'BUY' ? (language === 'th' ? 'ซื้อ' : 'BUY') : (language === 'th' ? 'ขาย' : 'SELL')}
@@ -346,6 +357,7 @@ export default function AlertsView() {
             const logoUrl = `https://assets.parqet.com/logos/symbol/${group.symbol}?format=png`
             const hasEntry = group.alerts.some(a => a.type.startsWith('ob_entry_'))
             const info = getAlertInfo(group.primaryAlert, language)
+            const AlertIcon = info.Icon
             
             return (
               <div 
@@ -372,8 +384,17 @@ export default function AlertsView() {
                   </div>
                 </div>
                 <div className="acc-bottom">
-                  <span style={{ color: info.color }}>{info.icon} {info.label}</span>
-                  {group.zone && <span className={`zone-tag ${group.zone}`}>{group.zone === 'discount' ? '💰' : '📈'}</span>}
+                  <span className="acc-signal" style={{ color: info.color }}>
+                    <AlertIcon size={14} /> {info.label}
+                  </span>
+                  {group.zone && (
+                    <span className={`zone-tag ${group.zone}`}>
+                      {group.zone === 'discount' ? <DollarSign size={12} /> : <ArrowUpRight size={12} />}
+                    </span>
+                  )}
+                  <span className="acc-tap-hint">
+                    <ChevronRight size={14} />
+                  </span>
                 </div>
               </div>
             )

@@ -5968,8 +5968,15 @@ body.lang-th .target-price {
 /* ===== Alerts Grid - Compact Cards ===== */
 .alerts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
+}
+
+/* Desktop: 2 columns */
+@media (min-width: 768px) {
+  .alerts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .alert-card-compact {
@@ -5986,6 +5993,11 @@ body.lang-th .target-price {
   border-color: var(--glass-highlight);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.alert-card-compact:hover .acc-tap-hint {
+  opacity: 1;
+  transform: translateX(2px);
 }
 
 .alert-card-compact.buy { border-left-color: var(--accent-success); }
@@ -6061,15 +6073,38 @@ body.lang-th .target-price {
 .acc-bottom {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--glass-border);
   font-size: 12px;
 }
 
+.acc-signal {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
 .zone-tag {
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.zone-tag.discount { color: var(--accent-success); }
+.zone-tag.premium { color: var(--accent-danger); }
+
+.acc-tap-hint {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+  transition: all 0.2s ease;
+  margin-left: auto;
 }
 
 /* ===== Alert Detail Modal ===== */
