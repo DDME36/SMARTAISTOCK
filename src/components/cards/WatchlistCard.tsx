@@ -37,11 +37,14 @@ export default function WatchlistCard() {
     const change = live?.change
     
     if (smc) {
-      const dir = typeof smc.trend === 'string' ? smc.trend : smc.trend?.direction || 'neutral'
+      // Use change value to determine color, not SMC trend
+      const dir = change !== undefined ? (change > 0 ? 'up' : change < 0 ? 'down' : 'flat') : 
+                  (typeof smc.trend === 'string' ? smc.trend : smc.trend?.direction || 'neutral')
       return { price, change, trend: dir, hasSmc: true, failed: false, name, exchange }
     }
     if (live) {
-      const dir = live.change > 0.5 ? 'up' : live.change < -0.5 ? 'down' : 'flat'
+      // Any positive = green, any negative = red
+      const dir = live.change > 0 ? 'up' : live.change < 0 ? 'down' : 'flat'
       return { price, change, trend: dir, hasSmc: false, failed: false, name, exchange }
     }
     return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, name, exchange }

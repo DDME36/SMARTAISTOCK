@@ -5052,3 +5052,57 @@ body.lang-th .target-price {
     right: 12px;
   }
 }
+
+
+/* ===== ALERT SETTINGS COLLAPSIBLE ===== */
+.alert-settings-header-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.alert-settings-header-toggle .settings-header {
+  margin-bottom: 0;
+}
+
+.alert-settings-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.preset-badge {
+  font-size: 11px;
+  padding: 4px 8px;
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* Fix mobile refresh button - ensure it's truly fixed */
+.mobile-refresh-fab {
+  position: fixed !important;
+  bottom: 90px !important;
+  right: 16px !important;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(110, 86, 207, 0.4);
+  z-index: 99 !important;
+  transition: all 0.2s ease;
+}
