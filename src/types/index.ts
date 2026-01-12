@@ -52,6 +52,17 @@ export interface StockData {
     lh_count?: number
     ll_count?: number
   }
+  // Position Score (for position trading)
+  position_score?: {
+    score: number
+    action: string
+    action_th: string
+    confidence: number
+    buy_factors: number
+    sell_factors: number
+    reasons: Array<{ type: string; message: string }>
+    summary: string
+  }
   // Order Blocks
   order_blocks?: OrderBlock[]
   major_order_blocks?: OrderBlock[]

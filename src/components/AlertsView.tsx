@@ -38,6 +38,15 @@ interface StockAlertGroup {
   buySignals: number
   sellSignals: number
   primaryAlert: SingleAlert
+  // Position Score from backend
+  positionScore?: {
+    score: number
+    action: string
+    action_th: string
+    summary: string
+    reasons: Array<{ type: string; message: string }>
+  }
+  zone?: string
 }
 
 // Priority order for alerts
@@ -264,6 +273,11 @@ export default function AlertsView() {
     // Analyze and get consensus
     const analysis = analyzeAlerts(alerts)
     
+    // Get position score from backend (if available)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const positionScore = (stock as any).position_score
+    const zone = stock.zones?.current_zone
+    
     stockGroups.push({
       symbol,
       alerts,
@@ -275,10 +289,12 @@ export default function AlertsView() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       volumeRatio: (stock.indicators as any)?.volume?.ratio,
       consensus: analysis.consensus,
-      confidence: analysis.confidence,
+      confidence: positionScore?.score || analysis.confidence,
       buySignals: analysis.buySignals,
       sellSignals: analysis.sellSignals,
-      primaryAlert: alerts[0]
+      primaryAlert: alerts[0],
+      positionScore,
+      zone
     })
   }
 
@@ -431,6 +447,16 @@ export default function AlertsView() {
                             </span>
                           )
                         })()}
+                        {group.zone && (
+                          <span className={`zone-badge ${group.zone}`}>
+                            {group.zone === 'discount' 
+                              ? (language === 'th' ? '💰 Discount' : '💰 Discount')
+                              : group.zone === 'premium'
+                              ? (language === 'th' ? '📈 Premium' : '📈 Premium')
+                              : ''
+                            }
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -483,6 +509,36 @@ export default function AlertsView() {
                 {/* Expanded Details */}
                 {isExpanded && (
                   <div className="alert-details">
+                    {/* Position Score Summary (from backend) */}
+                    {group.positionScore && (
+                      <div className={`position-score-box ${group.positionScore.action.toLowerCase().replace('_', '-')}`}>
+                        <div className="position-score-header">
+                          <span className="position-score-label">
+                            {language === 'th' ? 'คะแนนสำหรับ Position Trading' : 'Position Score'}
+                          </span>
+                          <span className="position-score-value">{group.positionScore.score}/100</span>
+                        </div>
+                        <div className="position-score-action">
+                          {group.positionScore.action_th || group.positionScore.action}
+                        </div>
+                        {group.positionScore.summary && (
+                          <div className="position-score-summary">
+                            {group.positionScore.summary}
+                          </div>
+                        )}
+                        {group.positionScore.reasons && group.positionScore.reasons.length > 0 && (
+                          <div className="position-score-reasons">
+                            {group.positionScore.reasons.slice(0, 3).map((reason, idx) => (
+                              <div key={idx} className={`reason-item ${reason.type.toLowerCase()}`}>
+                                <span className="reason-dot"></span>
+                                {reason.message}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     {/* All Signals */}
                     <div className="signals-list">
                       <div className="signals-list-title">

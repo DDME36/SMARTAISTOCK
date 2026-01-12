@@ -5804,3 +5804,139 @@ body.lang-th .target-price {
 .indicator-item .high {
   color: var(--accent-warning) !important;
 }
+
+/* Position Score Box */
+.position-score-box {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--text-tertiary);
+  margin-bottom: 10px;
+}
+
+.position-score-box.strong-buy {
+  border-left-color: var(--accent-success);
+  background: rgba(39, 215, 150, 0.1);
+}
+
+.position-score-box.buy {
+  border-left-color: #4ade80;
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.position-score-box.strong-sell {
+  border-left-color: var(--accent-danger);
+  background: rgba(255, 79, 94, 0.1);
+}
+
+.position-score-box.sell {
+  border-left-color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.position-score-box.hold {
+  border-left-color: var(--text-tertiary);
+}
+
+.position-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.position-score-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.position-score-value {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.position-score-action {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.position-score-box.strong-buy .position-score-action,
+.position-score-box.buy .position-score-action {
+  color: var(--accent-success);
+}
+
+.position-score-box.strong-sell .position-score-action,
+.position-score-box.sell .position-score-action {
+  color: var(--accent-danger);
+}
+
+.position-score-summary {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.position-score-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.reason-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.reason-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.reason-item.buy .reason-dot {
+  background: var(--accent-success);
+}
+
+.reason-item.sell .reason-dot {
+  background: var(--accent-danger);
+}
+
+/* Zone Badge */
+.zone-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.zone-badge.discount {
+  background: rgba(39, 215, 150, 0.15);
+  color: var(--accent-success);
+}
+
+.zone-badge.premium {
+  background: rgba(255, 79, 94, 0.15);
+  color: var(--accent-danger);
+}
+
+/* Alert Primary Preview with Zone */
+.alert-primary-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
