@@ -15,15 +15,24 @@ const navItems: { view: View; icon: typeof LayoutGrid }[] = [
 
 export default function BottomNav() {
   const { activeView, setActiveView } = useStore()
-  const [itemSize, setItemSize] = useState(48) // 44px button + 4px gap
+  const [navConfig, setNavConfig] = useState({ buttonSize: 44, gap: 4, padding: 8 })
   
-  // Adjust for mobile
+  // Adjust for mobile - match CSS media queries
   useEffect(() => {
     const updateSize = () => {
-      if (window.innerWidth <= 480) {
-        setItemSize(42) // 40px button + 2px gap
+      const width = window.innerWidth
+      const height = window.innerHeight
+      const isLandscape = width > height
+      
+      if (isLandscape && height <= 500) {
+        // Landscape mode
+        setNavConfig({ buttonSize: 36, gap: 4, padding: 4 })
+      } else if (width <= 480) {
+        // Mobile portrait
+        setNavConfig({ buttonSize: 40, gap: 2, padding: 6 })
       } else {
-        setItemSize(48) // 44px button + 4px gap
+        // Desktop
+        setNavConfig({ buttonSize: 44, gap: 4, padding: 8 })
       }
     }
     updateSize()
@@ -39,6 +48,9 @@ export default function BottomNav() {
   }
   
   const activeIndex = navItems.findIndex(item => item.view === activeView)
+  
+  // Calculate translateX: each item takes buttonSize + gap
+  const translateX = activeIndex * (navConfig.buttonSize + navConfig.gap)
 
   return (
     <nav className="bottom-nav">
@@ -46,7 +58,7 @@ export default function BottomNav() {
       <div 
         className="nav-indicator"
         style={{ 
-          transform: `translateX(${activeIndex * itemSize}px)` 
+          transform: `translateX(${translateX}px)` 
         }}
       />
       
