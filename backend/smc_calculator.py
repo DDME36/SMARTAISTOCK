@@ -1046,6 +1046,224 @@ class SMCCalculator:
         
         return np.mean(tr_list[-period:])
     
+    # ==================== Trade Setup Calculation ====================
+    
+    def calculate_trade_setup(self, ob: Dict, zones: Dict, indicators: Dict) -> Dict:
+        """
+        Calculate complete trade setup with SL/TP and Risk/Reward
+        
+        For Bullish OB (BUY):
+        - Entry: OB high (top of zone)
+        - Stop Loss: Below OB low (with ATR buffer)
+        - Take Profit 1: Next resistance / 1:1 RR
+        - Take Profit 2: 1:2 RR
+        - Take Profit 3: 1:3 RR
+        
+        For Bearish OB (SELL):
+        - Entry: OB low (bottom of zone)
+        - Stop Loss: Above OB high (with ATR buffer)
+        - Take Profit 1: Next support / 1:1 RR
+        - Take Profit 2: 1:2 RR
+        - Take Profit 3: 1:3 RR
+        """
+        if self.df is None:
+            return {}
+        
+        price = float(self.df['Close'].iloc[-1])
+        atr = indicators.get('atr', {}).get('value', price * 0.02)
+        atr_buffer = atr * 0.5  # Half ATR as buffer
+        
+        if ob['type'] == 'bullish':
+            # BUY setup
+            entry = ob['high']  # Enter at top of OB
+            stop_loss = ob['low'] - atr_buffer  # SL below OB with buffer
+            risk = entry - stop_loss
+            
+            # Take Profit levels
+            tp1 = entry + risk * 1.0  # 1:1 RR
+            tp2 = entry + risk * 2.0  # 1:2 RR
+            tp3 = entry + risk * 3.0  # 1:3 RR
+            
+            # Use equilibrium as potential TP if available
+            if zones and zones.get('equilibrium'):
+                eq = zones['equilibrium']
+                if eq > entry:
+                    tp1 = eq
+            
+            direction = 'LONG'
+            
+        else:
+            # SELL setup
+            entry = ob['low']  # Enter at bottom of OB
+            stop_loss = ob['high'] + atr_buffer  # SL above OB with buffer
+            risk = stop_loss - entry
+            
+            # Take Profit levels
+            tp1 = entry - risk * 1.0  # 1:1 RR
+            tp2 = entry - risk * 2.0  # 1:2 RR
+            tp3 = entry - risk * 3.0  # 1:3 RR
+            
+            # Use equilibrium as potential TP if available
+            if zones and zones.get('equilibrium'):
+                eq = zones['equilibrium']
+                if eq < entry:
+                    tp1 = eq
+            
+            direction = 'SHORT'
+        
+        # Calculate risk/reward for each TP
+        rr1 = abs(tp1 - entry) / risk if risk > 0 else 0
+        rr2 = abs(tp2 - entry) / risk if risk > 0 else 0
+        rr3 = abs(tp3 - entry) / risk if risk > 0 else 0
+        
+        # Risk percentage (how much price needs to move to hit SL)
+        risk_pct = abs(entry - stop_loss) / entry * 100
+        
+        return {
+            'direction': direction,
+            'entry': round(entry, 2),
+            'stop_loss': round(stop_loss, 2),
+            'take_profit_1': round(tp1, 2),
+            'take_profit_2': round(tp2, 2),
+            'take_profit_3': round(tp3, 2),
+            'risk': round(risk, 2),
+            'risk_pct': round(risk_pct, 2),
+            'risk_reward': {
+                'tp1': round(rr1, 2),
+                'tp2': round(rr2, 2),
+                'tp3': round(rr3, 2)
+            },
+            'recommended_rr': round(rr2, 2),  # 1:2 is standard
+            'valid': risk_pct <= 5.0  # Invalid if risk > 5%
+        }
+    
+    def calculate_confluence_score(self, ob: Dict, trend: Dict, indicators: Dict, 
+                                    zones: Dict, structure: Dict) -> Dict:
+        """
+        Calculate confluence score for trade entry
+        
+        Factors:
+        - OB Quality Score (0-30)
+        - Trend Alignment (0-20)
+        - EMA Alignment (0-15)
+        - RSI Confirmation (0-15)
+        - Zone Position (0-10)
+        - Structure Confirmation (0-10)
+        
+        Total: 0-100
+        """
+        score = 0
+        factors = []
+        
+        # 1. OB Quality Score (0-30)
+        ob_quality = ob.get('quality_score', 50)
+        ob_score = int(ob_quality * 0.3)
+        score += ob_score
+        factors.append(f"OB Quality: {ob_score}/30")
+        
+        # 2. Trend Alignment (0-20)
+        trend_dir = trend.get('direction', 'neutral')
+        if (ob['type'] == 'bullish' and trend_dir == 'bullish') or \
+           (ob['type'] == 'bearish' and trend_dir == 'bearish'):
+            score += 20
+            factors.append("Trend Aligned: 20/20")
+        elif trend_dir == 'neutral':
+            score += 10
+            factors.append("Trend Neutral: 10/20")
+        else:
+            score += 5  # Counter-trend (can be reversal)
+            factors.append("Counter-Trend: 5/20")
+        
+        # 3. EMA Alignment (0-15)
+        ema_trend = indicators.get('ema_trend', {})
+        ema_signal = ema_trend.get('signal', 'HOLD')
+        if (ob['type'] == 'bullish' and ema_signal == 'BUY') or \
+           (ob['type'] == 'bearish' and ema_signal == 'SELL'):
+            score += 15
+            factors.append("EMA Aligned: 15/15")
+        elif ema_signal == 'HOLD':
+            score += 8
+            factors.append("EMA Neutral: 8/15")
+        else:
+            score += 3
+            factors.append("EMA Against: 3/15")
+        
+        # 4. RSI Confirmation (0-15)
+        rsi = indicators.get('rsi', {})
+        rsi_val = rsi.get('value', 50)
+        rsi_signal = rsi.get('signal', 'NEUTRAL')
+        
+        if ob['type'] == 'bullish':
+            if rsi_signal == 'OVERSOLD' or rsi_val < 40:
+                score += 15
+                factors.append("RSI Oversold: 15/15")
+            elif rsi_val < 50:
+                score += 10
+                factors.append("RSI Favorable: 10/15")
+            else:
+                score += 5
+                factors.append("RSI Neutral: 5/15")
+        else:
+            if rsi_signal == 'OVERBOUGHT' or rsi_val > 60:
+                score += 15
+                factors.append("RSI Overbought: 15/15")
+            elif rsi_val > 50:
+                score += 10
+                factors.append("RSI Favorable: 10/15")
+            else:
+                score += 5
+                factors.append("RSI Neutral: 5/15")
+        
+        # 5. Zone Position (0-10)
+        if zones:
+            current_zone = zones.get('current_zone', '')
+            if (ob['type'] == 'bullish' and current_zone == 'discount') or \
+               (ob['type'] == 'bearish' and current_zone == 'premium'):
+                score += 10
+                factors.append("Zone Optimal: 10/10")
+            else:
+                score += 3
+                factors.append("Zone Suboptimal: 3/10")
+        else:
+            score += 5
+            factors.append("Zone Unknown: 5/10")
+        
+        # 6. Structure Confirmation (0-10)
+        bos = structure.get('bos', [])
+        choch = structure.get('choch')
+        
+        if choch and choch['type'] == ob['type']:
+            score += 10
+            factors.append("CHoCH Confirmed: 10/10")
+        elif any(b['type'] == ob['type'] for b in bos):
+            score += 7
+            factors.append("BOS Confirmed: 7/10")
+        else:
+            score += 3
+            factors.append("No Structure: 3/10")
+        
+        # Determine signal strength
+        if score >= 80:
+            strength = 'STRONG'
+            recommendation = 'High probability setup'
+        elif score >= 60:
+            strength = 'MODERATE'
+            recommendation = 'Good setup, manage risk'
+        elif score >= 40:
+            strength = 'WEAK'
+            recommendation = 'Low probability, wait for better'
+        else:
+            strength = 'AVOID'
+            recommendation = 'Do not trade this setup'
+        
+        return {
+            'score': score,
+            'max_score': 100,
+            'strength': strength,
+            'recommendation': recommendation,
+            'factors': factors
+        }
+    
     # ==================== Alert Generation ====================
     
     def generate_alerts(self, order_blocks: List[Dict], fvgs: List[Dict], 
@@ -1259,8 +1477,42 @@ class SMCCalculator:
             
             # Alerts
             'alerts': alerts,
-            'alert_count': len(alerts)
+            'alert_count': len(alerts),
+            
+            # Trade Setups (NEW) - Calculate for top OBs
+            'trade_setups': self._generate_trade_setups(order_blocks[:3], zones, indicators, trend, structure)
         }
+    
+    def _generate_trade_setups(self, order_blocks: List[Dict], zones: Dict, 
+                                indicators: Dict, trend: Dict, structure: Dict) -> List[Dict]:
+        """Generate trade setups for top order blocks"""
+        setups = []
+        
+        for ob in order_blocks:
+            # Calculate trade setup (SL/TP)
+            trade_setup = self.calculate_trade_setup(ob, zones, indicators)
+            
+            # Calculate confluence score
+            confluence = self.calculate_confluence_score(ob, trend, indicators, zones, structure)
+            
+            setups.append({
+                'ob_type': ob['type'],
+                'signal': ob['signal'],
+                'ob_zone': {
+                    'high': ob['high'],
+                    'low': ob['low'],
+                    'mid': ob['mid']
+                },
+                'quality_score': ob.get('quality_score', 50),
+                'trade_setup': trade_setup,
+                'confluence': confluence,
+                'recommendation': 'TRADE' if confluence['score'] >= 60 and trade_setup.get('valid', False) else 'WAIT'
+            })
+        
+        # Sort by confluence score
+        setups.sort(key=lambda x: x['confluence']['score'], reverse=True)
+        
+        return setups
 
 
 # ==================== Batch Analysis ====================
@@ -1279,7 +1531,6 @@ def analyze_watchlist(symbols: List[str], interval: str = '1h') -> Dict:
             print(f'  [ERROR] {symbol}: {e}')
     
     return results
-
 
 # ==================== Main Entry Point ====================
 
@@ -1303,7 +1554,7 @@ if __name__ == '__main__':
         interval = os.environ.get('INTERVAL', '1h')
     
     print(f'{"=" * 60}')
-    print(f'🤖 SMC Calculator v2.0 - Professional Grade')
+    print(f'🤖 SMC Calculator v2.1 - Professional Grade')
     print(f'{"=" * 60}')
     print(f'Watchlist: {watchlist}')
     print(f'Interval: {interval}')
@@ -1337,6 +1588,19 @@ if __name__ == '__main__':
         print(f"   High Quality OBs: {d['ob_summary'].get('high_quality', 0)}")
         print(f"   FVGs: {d['ob_summary']['total_fvg']}")
         
+        # Show trade setups
+        if d.get('trade_setups'):
+            print(f"   📈 Trade Setups:")
+            for setup in d['trade_setups'][:2]:
+                conf = setup['confluence']
+                ts = setup['trade_setup']
+                rec = '✅' if setup['recommendation'] == 'TRADE' else '⏳'
+                print(f"      {rec} {setup['signal']} @ ${setup['ob_zone']['mid']:.2f}")
+                print(f"         Confluence: {conf['score']}/100 ({conf['strength']})")
+                if ts.get('valid'):
+                    print(f"         Entry: ${ts['entry']:.2f} | SL: ${ts['stop_loss']:.2f} | TP: ${ts['take_profit_2']:.2f}")
+                    print(f"         Risk: {ts['risk_pct']:.1f}% | R:R = 1:{ts['risk_reward']['tp2']:.1f}")
+        
         if d.get('alerts'):
             print(f"   ⚠️ Alerts ({len(d['alerts'])}):")
             for alert in d['alerts'][:3]:
@@ -1344,3 +1608,4 @@ if __name__ == '__main__':
     
     print(f'\n{"=" * 60}')
     print('✅ Saved to data/smc_data.json')
+
