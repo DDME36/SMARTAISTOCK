@@ -1,95 +1,27 @@
 ﻿'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { X, TrendingUp, TrendingDown, Loader2, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
+import { useLivePrices } from '@/hooks/useLivePrices'
 import { formatPrice } from '@/lib/utils'
-
-interface LivePrice {
-  price: number
-  change: number
-  name?: string
-  exchange?: string
-}
 
 export default function WatchlistCard() {
   const { watchlist, smcData, removeSymbol, showToast } = useStore()
   const { t } = useTranslation()
-  const [livePrices, setLivePrices] = useState<Record<string, LivePrice>>({})
-  const [loading, setLoading] = useState(false)
-  const [retryCountdown, setRetryCountdown] = useState(0)
+  const { prices: livePrices, loading, refresh } = useLivePrices(watchlist)
   const [failedSymbols, setFailedSymbols] = useState<Set<string>>(new Set())
-  const fetchedRef = useRef(false)
 
-  const fetchPrices = async (symbols: string[]) => {
-    if (symbols.length === 0) return
-    setLoading(true)
-    try {
-      const res = await fetch('/api/stock-price', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symbols })
-      })
-      const data = await res.json()
-      if (data.prices) {
-        setLivePrices(prev => ({ ...prev, ...data.prices }))
-        const failed = new Set<string>()
-        for (const sym of symbols) {
-          if (!data.prices[sym]) failed.add(sym)
-        }
-        setFailedSymbols(failed)
-        
-        if (failed.size > 0) {
-          setRetryCountdown(10)
-        }
-      }
-    } catch (e) { 
-      console.error(e)
-      setFailedSymbols(new Set(symbols))
-      setRetryCountdown(10)
-    } finally { 
-      setLoading(false)
-    }
-  }
-
-  // Fetch prices on mount and auto-refresh every 30 seconds
+  // Check for failed symbols
   useEffect(() => {
     if (watchlist.length === 0) return
-    
-    // Initial fetch
-    if (!fetchedRef.current) {
-      fetchedRef.current = true
-      setTimeout(() => fetchPrices(watchlist), 300)
+    const failed = new Set<string>()
+    for (const sym of watchlist) {
+      if (!livePrices[sym]) failed.add(sym)
     }
-    
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      if (watchlist.length > 0) {
-        fetchPrices(watchlist)
-      }
-    }, 30000)
-    
-    return () => clearInterval(interval)
-  }, [watchlist])
-
-  // Retry countdown
-  useEffect(() => {
-    if (retryCountdown <= 0) return
-    const timer = setInterval(() => {
-      setRetryCountdown(prev => {
-        if (prev <= 1) {
-          const failed = Array.from(failedSymbols)
-          if (failed.length > 0) {
-            fetchPrices(failed)
-          }
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [retryCountdown, failedSymbols])
+    setFailedSymbols(failed)
+  }, [watchlist, livePrices])
 
   const getData = (symbol: string) => {
     const smc = smcData?.stocks?.[symbol]
@@ -127,7 +59,7 @@ export default function WatchlistCard() {
         <span>{t('active_watchlist')}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button 
-            onClick={() => fetchPrices(watchlist)} 
+            onClick={refresh} 
             disabled={loading}
             className="refresh-btn"
             title="Refresh prices"
@@ -147,7 +79,6 @@ export default function WatchlistCard() {
           const { price, change, trend, hasSmc, failed, name, exchange } = getData(symbol)
           const logo = 'https://assets.parqet.com/logos/symbol/' + symbol + '?format=png'
           const isLoading = loading && !price && !failed
-          const isRetrying = failed && retryCountdown > 0
           
           return (
             <div key={symbol} className="watchlist-row-v2">
@@ -176,15 +107,6 @@ export default function WatchlistCard() {
                       </span>
                       <span className="wl-change wl-loading-text">
                         <Loader2 size={10} className="icon-spin" /> {t('loading_prices')}
-                      </span>
-                    </>
-                  ) : isRetrying ? (
-                    <>
-                      <span className="wl-price" style={{ opacity: 0.4 }}>
-                        <RefreshCw size={14} className="icon-spin" />
-                      </span>
-                      <span className="wl-change wl-retry-text">
-                        {t('retry_in')} {retryCountdown}{t('seconds')}
                       </span>
                     </>
                   ) : price ? (

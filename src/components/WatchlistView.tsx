@@ -1,69 +1,22 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { X, TrendingUp, TrendingDown, Minus, Search, SortAsc, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
+import { useLivePrices } from '@/hooks/useLivePrices'
 import { formatPrice } from '@/lib/utils'
 import ConfirmDialog from './ConfirmDialog'
 
 type SortType = 'name' | 'price' | 'trend'
-
-interface LivePrice {
-  price: number
-  change: number
-  name?: string
-  exchange?: string
-}
 
 export default function WatchlistView() {
   const { watchlist, smcData, removeSymbol, showToast } = useStore()
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState<SortType>('name')
-  const [livePrices, setLivePrices] = useState<Record<string, LivePrice>>({})
-  const [loading, setLoading] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
-  const hasFetchedRef = useRef(false)
-
-  // Fetch prices function
-  const fetchPrices = async () => {
-    if (watchlist.length === 0) return
-    setLoading(true)
-    try {
-      const res = await fetch('/api/stock-price', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symbols: watchlist })
-      })
-      const data = await res.json()
-      if (data.prices) {
-        setLivePrices(prev => ({ ...prev, ...data.prices }))
-      }
-    } catch (e) {
-      console.error('Price fetch error:', e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Fetch live prices and names for all stocks - auto refresh every 30s
-  useEffect(() => {
-    if (watchlist.length === 0) return
-
-    // Initial fetch
-    if (!hasFetchedRef.current) {
-      hasFetchedRef.current = true
-      fetchPrices()
-    }
-
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      fetchPrices()
-    }, 30000)
-
-    return () => clearInterval(interval)
-  }, [watchlist])
+  const { prices: livePrices, loading, refresh } = useLivePrices(watchlist)
 
   const handleRemove = (symbol: string) => {
     setDeleteConfirm(symbol)
@@ -210,7 +163,7 @@ export default function WatchlistView() {
       <div className="watchlist-stats">
         <span>{filteredList.length} {t('of')} {watchlist.length} {t('stocks')}</span>
         <button 
-          onClick={fetchPrices} 
+          onClick={refresh} 
           disabled={loading}
           className="refresh-btn"
           title="Refresh prices"

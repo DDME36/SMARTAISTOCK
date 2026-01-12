@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Target, ArrowUp, ArrowDown } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -8,6 +9,36 @@ import { formatPrice } from '@/lib/utils'
 export default function PriceTargetCard() {
   const { watchlist, smcData, onDemandSMC } = useStore()
   const { t } = useTranslation()
+  const [livePrices, setLivePrices] = useState<Record<string, number>>({})
+
+  // Fetch live prices for distance calculation
+  useEffect(() => {
+    if (watchlist.length === 0) return
+    
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch('/api/stock-price', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symbols: watchlist })
+        })
+        const data = await res.json()
+        if (data.prices) {
+          const prices: Record<string, number> = {}
+          for (const [sym, info] of Object.entries(data.prices)) {
+            prices[sym] = (info as { price: number }).price
+          }
+          setLivePrices(prices)
+        }
+      } catch (e) {
+        console.error('Price fetch error:', e)
+      }
+    }
+    
+    fetchPrices()
+    const interval = setInterval(fetchPrices, 30000)
+    return () => clearInterval(interval)
+  }, [watchlist])
 
   // Find nearest targets across all watchlist (pre-calculated + on-demand)
   const targets: Array<{
@@ -19,36 +50,46 @@ export default function PriceTargetCard() {
   }> = []
 
   for (const symbol of watchlist) {
+    // Get live price for accurate distance calculation
+    const currentPrice = livePrices[symbol]
+    
     // Check pre-calculated data
     const stock = smcData?.stocks?.[symbol]
     if (stock) {
       if (stock.nearest_buy_zone) {
+        const zonePrice = stock.nearest_buy_zone.mid
+        // Recalculate distance with live price if available
+        const distance = currentPrice ? currentPrice - zonePrice : stock.nearest_buy_zone.distance
+        const distancePct = currentPrice ? Math.abs((distance / currentPrice) * 100) : stock.nearest_buy_zone.distance_pct
+        
         targets.push({
           symbol,
           type: 'BUY',
-          price: stock.nearest_buy_zone.mid,
-          distance: stock.nearest_buy_zone.distance,
-          distancePct: stock.nearest_buy_zone.distance_pct
+          price: zonePrice,
+          distance,
+          distancePct: Math.round(distancePct * 10) / 10
         })
       }
       if (stock.nearest_sell_zone) {
+        const zonePrice = stock.nearest_sell_zone.mid
+        const distance = currentPrice ? zonePrice - currentPrice : stock.nearest_sell_zone.distance
+        const distancePct = currentPrice ? Math.abs((distance / currentPrice) * 100) : stock.nearest_sell_zone.distance_pct
+        
         targets.push({
           symbol,
           type: 'SELL',
-          price: stock.nearest_sell_zone.mid,
-          distance: stock.nearest_sell_zone.distance,
-          distancePct: stock.nearest_sell_zone.distance_pct
+          price: zonePrice,
+          distance,
+          distancePct: Math.round(distancePct * 10) / 10
         })
       }
     }
     
-    // Check on-demand data
+    // Check on-demand data (only if no pre-calculated)
     const onDemand = onDemandSMC[symbol]
-    if (onDemand && !stock) {
-      const currentPrice = onDemand.current_price
-      
+    if (onDemand && !stock && currentPrice) {
       // Support as buy zone
-      if (onDemand.support && currentPrice) {
+      if (onDemand.support) {
         const distance = currentPrice - onDemand.support
         const distancePct = Math.abs((distance / currentPrice) * 100)
         targets.push({
@@ -61,7 +102,7 @@ export default function PriceTargetCard() {
       }
       
       // Resistance as sell zone
-      if (onDemand.resistance && currentPrice) {
+      if (onDemand.resistance) {
         const distance = onDemand.resistance - currentPrice
         const distancePct = Math.abs((distance / currentPrice) * 100)
         targets.push({
