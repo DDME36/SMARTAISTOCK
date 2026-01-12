@@ -5323,25 +5323,25 @@ body.lang-th .target-price {
   gap: 12px;
 }
 
-/* Desktop: 2 columns using CSS columns for masonry effect */
+/* Desktop: 2 columns grid */
 @media (min-width: 768px) {
   .alerts-list-v2 {
-    display: block;
-    column-count: 2;
-    column-gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-items: start;
   }
   
-  .alerts-list-v2 > .alert-card-v2,
-  .alerts-list-v2 > .card {
-    break-inside: avoid;
-    margin-bottom: 16px;
+  /* Expanded card takes full width */
+  .alerts-list-v2 > .alert-card-v2.expanded {
+    grid-column: 1 / -1;
   }
 }
 
 /* Large desktop */
 @media (min-width: 1200px) {
   .alerts-list-v2 {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -5939,4 +5939,20 @@ body.lang-th .target-price {
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+/* Expanded Card Highlight */
+.alert-card-v2.expanded {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary), 0 8px 24px rgba(110, 86, 207, 0.2);
+}
+
+.alert-card-v2.expanded.buy {
+  border-color: var(--accent-success);
+  box-shadow: 0 0 0 1px var(--accent-success), 0 8px 24px rgba(39, 215, 150, 0.15);
+}
+
+.alert-card-v2.expanded.sell {
+  border-color: var(--accent-danger);
+  box-shadow: 0 0 0 1px var(--accent-danger), 0 8px 24px rgba(255, 79, 94, 0.15);
 }

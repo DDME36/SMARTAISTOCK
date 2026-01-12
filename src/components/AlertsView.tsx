@@ -409,7 +409,7 @@ export default function AlertsView() {
             return (
               <div 
                 key={group.symbol} 
-                className={`alert-card-v2 ${group.consensus.toLowerCase()} ${hasEntry ? 'entry' : ''}`}
+                className={`alert-card-v2 ${group.consensus.toLowerCase()} ${hasEntry ? 'entry' : ''} ${isExpanded ? 'expanded' : ''}`}
               >
                 {/* Main Content */}
                 <div className="alert-card-main">
