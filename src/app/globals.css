@@ -5309,11 +5309,33 @@ body.lang-th .target-price {
   font-family: var(--font-mono);
 }
 
+.alert-price-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
 .alert-price {
   font-size: 18px;
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--text-primary);
+}
+
+.alert-price-change {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+}
+
+.alert-price-change.up {
+  color: var(--accent-success);
+}
+
+.alert-price-change.down {
+  color: var(--accent-danger);
 }
 
 /* Quick Reasons */

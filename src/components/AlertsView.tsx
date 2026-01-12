@@ -15,6 +15,7 @@ interface AlertItem {
   type: string
   // Price data
   currentPrice?: number
+  priceChange?: number
   obHigh?: number
   obLow?: number
   distancePct?: number
@@ -196,6 +197,7 @@ export default function AlertsView() {
         type: alert.type,
         // Use live price if available, fallback to SMC cached price
         currentPrice: livePrice || stock.current_price,
+        priceChange: livePrices[symbol]?.change,
         obHigh: alert.ob_high,
         obLow: alert.ob_low,
         distancePct: alert.distance_pct,
@@ -364,8 +366,15 @@ export default function AlertsView() {
                     
                     {/* Price Info */}
                     {alert.currentPrice && (
-                      <div className="alert-price">
-                        ${formatPrice(alert.currentPrice)}
+                      <div className="alert-price-block">
+                        <div className="alert-price">
+                          ${formatPrice(alert.currentPrice)}
+                        </div>
+                        {alert.priceChange !== undefined && (
+                          <div className={`alert-price-change ${alert.priceChange > 0 ? 'up' : alert.priceChange < 0 ? 'down' : ''}`}>
+                            {alert.priceChange > 0 ? '+' : ''}{alert.priceChange.toFixed(2)}%
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
