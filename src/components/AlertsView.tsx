@@ -169,12 +169,15 @@ export default function AlertsView() {
       let strength = 'medium'
       
       if (alert.type?.includes('ob_')) {
-        const matchingOB = orderBlocks.find((ob: { in_zone?: boolean; signal?: string }) => 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const matchingOB = orderBlocks.find((ob: any) => 
           ob.in_zone || ob.signal === alert.signal
         )
         if (matchingOB) {
           qualityScore = matchingOB.quality_score || 50
-          volumeConfirmed = matchingOB.volume?.confirmed === true || matchingOB.volume?.confirmed === 'True'
+          // Handle both boolean and string 'True'/'False' from JSON
+          const confirmed = matchingOB.volume?.confirmed
+          volumeConfirmed = confirmed === true || String(confirmed) === 'True'
           trendAligned = matchingOB.trend_aligned || false
           strength = matchingOB.strength || 'medium'
         }
@@ -194,10 +197,12 @@ export default function AlertsView() {
         strength,
         // Stock context
         rsi: stock.indicators?.rsi?.value,
-        trend: stock.trend?.direction,
-        trendStrength: stock.trend?.strength,
-        volumeRatio: stock.indicators?.volume?.ratio,
-        emaTrend: stock.ema_trend?.trend
+        trend: typeof stock.trend === 'string' ? stock.trend : stock.trend?.direction,
+        trendStrength: typeof stock.trend === 'object' ? stock.trend?.strength : undefined,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        volumeRatio: (stock.indicators as any)?.volume?.ratio,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        emaTrend: (stock as any).ema_trend?.trend
       })
     }
   }
