@@ -18,6 +18,30 @@ interface OnDemandSMC {
   generated_at: string
 }
 
+interface AlertSettings {
+  alert_buy_zone: boolean
+  alert_sell_zone: boolean
+  alert_ob_entry: boolean
+  alert_fvg: boolean
+  alert_bos: boolean
+  alert_choch: boolean
+  min_quality_score: number
+  volume_confirmed_only: boolean
+  trend_aligned_only: boolean
+}
+
+const DEFAULT_ALERT_SETTINGS: AlertSettings = {
+  alert_buy_zone: true,
+  alert_sell_zone: true,
+  alert_ob_entry: true,
+  alert_fvg: false,
+  alert_bos: false,
+  alert_choch: true,
+  min_quality_score: 50,
+  volume_confirmed_only: false,
+  trend_aligned_only: false
+}
+
 interface AppState {
   // Data
   watchlist: string[]
@@ -25,6 +49,8 @@ interface AppState {
   onDemandSMC: Record<string, OnDemandSMC>
   loadingSMC: Record<string, boolean>
   isLoading: boolean
+  alertSettings: AlertSettings | null
+  alertSettingsLoaded: boolean
   
   // UI
   language: Language
@@ -44,6 +70,8 @@ interface AppState {
   hideToast: () => void
   fetchOnDemandSMC: (symbol: string) => Promise<void>
   setIsLoading: (loading: boolean) => void
+  fetchAlertSettings: () => Promise<void>
+  setAlertSettings: (settings: AlertSettings) => void
 }
 
 export const useStore = create<AppState>()(
@@ -55,6 +83,8 @@ export const useStore = create<AppState>()(
       onDemandSMC: {},
       loadingSMC: {},
       isLoading: false,
+      alertSettings: null,
+      alertSettingsLoaded: false,
       language: 'en',
       theme: getThemeByTime(),
       activeView: 'dashboard',
@@ -63,6 +93,25 @@ export const useStore = create<AppState>()(
       // Actions
       setWatchlist: (watchlist) => set({ watchlist }),
       setIsLoading: (loading) => set({ isLoading: loading }),
+      
+      fetchAlertSettings: async () => {
+        const { alertSettingsLoaded } = get()
+        if (alertSettingsLoaded) return // Already loaded
+        
+        try {
+          const res = await fetch('/api/user/alert-settings', { credentials: 'include' })
+          if (res.ok) {
+            const data = await res.json()
+            set({ alertSettings: data.settings, alertSettingsLoaded: true })
+          } else {
+            set({ alertSettings: DEFAULT_ALERT_SETTINGS, alertSettingsLoaded: true })
+          }
+        } catch {
+          set({ alertSettings: DEFAULT_ALERT_SETTINGS, alertSettingsLoaded: true })
+        }
+      },
+      
+      setAlertSettings: (settings) => set({ alertSettings: settings }),
       
       addSymbol: async (symbol) => {
         const { watchlist } = get()

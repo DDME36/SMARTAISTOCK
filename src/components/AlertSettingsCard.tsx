@@ -36,13 +36,13 @@ const PRESETS = {
     settings: {
       alert_buy_zone: false,
       alert_sell_zone: false,
-      alert_ob_entry: true,  // Only critical alerts
+      alert_ob_entry: true,
       alert_fvg: false,
       alert_bos: false,
       alert_choch: false,
-      min_quality_score: 70,  // High quality only
-      volume_confirmed_only: true,  // Must have volume
-      trend_aligned_only: true  // Must follow trend
+      min_quality_score: 70,
+      volume_confirmed_only: true,
+      trend_aligned_only: true
     }
   },
   balanced: {
@@ -77,17 +77,21 @@ const PRESETS = {
 
 export default function AlertSettingsCard() {
   const { t, language } = useTranslation()
-  const { showToast } = useStore()
-  const [settings, setSettings] = useState<AlertSettings>(DEFAULT_SETTINGS)
-  const [loading, setLoading] = useState(true)
+  const { showToast, alertSettings, alertSettingsLoaded, fetchAlertSettings, setAlertSettings } = useStore()
   const [saving, setSaving] = useState(false)
   const [activePreset, setActivePreset] = useState<string | null>(null)
   const [showInfo, setShowInfo] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(false)
+  
+  // Use store settings or default
+  const settings = alertSettings || DEFAULT_SETTINGS
 
   useEffect(() => {
-    fetchSettings()
-  }, [])
+    // Fetch only if not loaded yet
+    if (!alertSettingsLoaded) {
+      fetchAlertSettings()
+    }
+  }, [alertSettingsLoaded, fetchAlertSettings])
 
   // Check which preset matches current settings
   useEffect(() => {
@@ -103,22 +107,9 @@ export default function AlertSettingsCard() {
     setActivePreset('custom')
   }, [settings])
 
-  const fetchSettings = async () => {
-    try {
-      const res = await fetch('/api/user/alert-settings', { credentials: 'include' })
-      if (res.ok) {
-        const data = await res.json()
-        setSettings(data.settings)
-      }
-    } catch (error) {
-      console.error('Failed to fetch alert settings:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const saveSettings = async (newSettings: AlertSettings) => {
     setSaving(true)
+    setAlertSettings(newSettings) // Update store immediately
     try {
       const res = await fetch('/api/user/alert-settings', {
         method: 'POST',
@@ -142,13 +133,12 @@ export default function AlertSettingsCard() {
 
   const handleToggle = (key: keyof AlertSettings) => {
     const newSettings = { ...settings, [key]: !settings[key] }
-    setSettings(newSettings)
     saveSettings(newSettings)
   }
 
   const handleSliderChange = (value: number) => {
     const newSettings = { ...settings, min_quality_score: value }
-    setSettings(newSettings)
+    setAlertSettings(newSettings) // Update store for immediate UI feedback
   }
 
   const handleSliderCommit = () => {
@@ -159,13 +149,13 @@ export default function AlertSettingsCard() {
     const preset = PRESETS[presetKey as keyof typeof PRESETS]
     if (preset) {
       const newSettings = { ...settings, ...preset.settings }
-      setSettings(newSettings)
       saveSettings(newSettings)
       showToast(`${t(`preset_${presetKey}`)} ${t('preset_applied')}`)
     }
   }
 
-  if (loading) {
+  // Show loading only on first load
+  if (!alertSettingsLoaded) {
     return (
       <div className="alert-settings-card loading">
         <Loader2 className="icon-spin" size={24} />
