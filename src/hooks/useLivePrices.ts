@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { PRICE_CACHE_TTL, PRICE_REFRESH_INTERVAL } from '@/lib/constants'
 
 interface LivePrice {
   price: number
@@ -14,19 +15,19 @@ interface LivePrice {
 // Global cache to share between components
 let globalPrices: Record<string, LivePrice> = {}
 let lastFetchTime = 0
-const CACHE_TTL = 15000 // 15 seconds
 
 export function useLivePrices(symbols: string[]) {
   const [prices, setPrices] = useState<Record<string, LivePrice>>(globalPrices)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const mountedRef = useRef(true)
 
   const fetchPrices = useCallback(async (force = false) => {
     if (symbols.length === 0) return
     
     // Use cache if fresh enough and not forced
     const now = Date.now()
-    if (!force && now - lastFetchTime < CACHE_TTL && Object.keys(globalPrices).length > 0) {
+    if (!force && now - lastFetchTime < PRICE_CACHE_TTL && Object.keys(globalPrices).length > 0) {
       setPrices(globalPrices)
       return
     }
@@ -35,39 +36,72 @@ export function useLivePrices(symbols: string[]) {
     setError(null)
     
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+      
       const res = await fetch('/api/stock-price', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symbols })
+        body: JSON.stringify({ symbols }),
+        signal: controller.signal
       })
       
-      if (!res.ok) throw new Error('Failed to fetch prices')
+      clearTimeout(timeoutId)
+      
+      if (!res.ok) {
+        throw new Error(res.status === 404 ? 'symbol_not_found' : 'error_fetch_prices')
+      }
       
       const data = await res.json()
-      if (data.prices) {
+      
+      if (data.prices && mountedRef.current) {
         globalPrices = { ...globalPrices, ...data.prices }
         lastFetchTime = Date.now()
         setPrices(globalPrices)
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unknown error')
+      if (mountedRef.current) {
+        if (e instanceof Error) {
+          if (e.name === 'AbortError') {
+            setError('error_timeout')
+          } else {
+            setError(e.message || 'error_unknown')
+          }
+        } else {
+          setError('error_unknown')
+        }
+      }
     } finally {
-      setLoading(false)
+      if (mountedRef.current) {
+        setLoading(false)
+      }
     }
   }, [symbols])
 
   // Initial fetch and auto-refresh
   useEffect(() => {
+    mountedRef.current = true
+    
     if (symbols.length === 0) return
     
     fetchPrices()
     
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => fetchPrices(true), 30000)
-    return () => clearInterval(interval)
+    // Auto-refresh
+    const interval = setInterval(() => fetchPrices(true), PRICE_REFRESH_INTERVAL)
+    
+    return () => {
+      mountedRef.current = false
+      clearInterval(interval)
+    }
   }, [symbols.join(','), fetchPrices])
 
-  return { prices, loading, error, refresh: () => fetchPrices(true) }
+  return { 
+    prices, 
+    loading, 
+    error, 
+    refresh: () => fetchPrices(true),
+    clearError: () => setError(null)
+  }
 }
 
 // Helper to get price for a single symbol
@@ -75,7 +109,7 @@ export function getPrice(symbol: string): number | null {
   return globalPrices[symbol]?.price || null
 }
 
-// Clear cache (useful for testing)
+// Clear cache (useful for logout)
 export function clearPriceCache() {
   globalPrices = {}
   lastFetchTime = 0

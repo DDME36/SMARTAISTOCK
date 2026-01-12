@@ -237,7 +237,26 @@ export const translations: Record<Language, Record<string, string>> = {
     volume_normal: "Normal Volume",
     trend_aligned: "Trend Aligned",
     counter_trend: "Counter Trend",
-    quality_score: "Quality Score"
+    quality_score: "Quality Score",
+    
+    // Error Messages
+    error_network: "Network error. Please check your connection.",
+    error_server: "Server error. Please try again later.",
+    error_timeout: "Request timed out. Please try again.",
+    error_unknown: "Something went wrong. Please try again.",
+    error_fetch_prices: "Failed to fetch prices",
+    error_fetch_data: "Failed to load data",
+    error_save_failed: "Failed to save changes",
+    
+    // Connection Status
+    online: "Online",
+    offline: "Offline",
+    reconnecting: "Reconnecting...",
+    
+    // Data Status
+    data_fresh: "Data is fresh",
+    data_updating: "Updating...",
+    data_stale: "Data may be outdated"
   },
   th: {
     // Header
@@ -475,6 +494,25 @@ export const translations: Record<Language, Record<string, string>> = {
     volume_normal: "Volume ปกติ",
     trend_aligned: "ตามเทรนด์",
     counter_trend: "สวนเทรนด์",
-    quality_score: "คะแนนคุณภาพ"
+    quality_score: "คะแนนคุณภาพ",
+    
+    // Error Messages
+    error_network: "เครือข่ายมีปัญหา กรุณาตรวจสอบการเชื่อมต่อ",
+    error_server: "เซิร์ฟเวอร์มีปัญหา กรุณาลองใหม่ภายหลัง",
+    error_timeout: "หมดเวลาการเชื่อมต่อ กรุณาลองใหม่",
+    error_unknown: "เกิดข้อผิดพลาด กรุณาลองใหม่",
+    error_fetch_prices: "ดึงราคาไม่สำเร็จ",
+    error_fetch_data: "โหลดข้อมูลไม่สำเร็จ",
+    error_save_failed: "บันทึกไม่สำเร็จ",
+    
+    // Connection Status
+    online: "ออนไลน์",
+    offline: "ออฟไลน์",
+    reconnecting: "กำลังเชื่อมต่อใหม่...",
+    
+    // Data Status
+    data_fresh: "ข้อมูลล่าสุด",
+    data_updating: "กำลังอัพเดท...",
+    data_stale: "ข้อมูลอาจไม่เป็นปัจจุบัน"
   }
 }
