@@ -33,7 +33,7 @@ function MobileRefreshButton() {
   const handleRefresh = useCallback(async () => {
     if (refreshing) return
     setRefreshing(true)
-    showToast('🔄 ' + t('refreshing'))
+    showToast(t('refreshing'))
     
     // Trigger a page-wide refresh event
     window.dispatchEvent(new CustomEvent('dashboard-refresh'))
@@ -41,7 +41,7 @@ function MobileRefreshButton() {
     // Wait a bit then stop
     setTimeout(() => {
       setRefreshing(false)
-      showToast('✅ ' + t('data_refreshed'))
+      showToast(t('data_refreshed'))
     }, 1500)
   }, [refreshing, showToast, t])
 

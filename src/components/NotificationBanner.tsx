@@ -31,7 +31,7 @@ export default function NotificationBanner() {
     setShowBanner(false)
     
     if (granted) {
-      showToast('🔔 ' + t('notifications_enabled'))
+      showToast(t('notifications_enabled'))
     }
   }
 

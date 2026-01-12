@@ -128,13 +128,13 @@ export default function AlertSettingsCard() {
       })
       
       if (res.ok) {
-        showToast('✅ ' + t('settings_saved'))
+        showToast(t('settings_saved'))
       } else {
-        showToast('❌ ' + t('failed_save'))
+        showToast(t('failed_save'))
       }
     } catch (error) {
       console.error('Failed to save settings:', error)
-      showToast('❌ ' + t('failed_save'))
+      showToast(t('failed_save'))
     } finally {
       setSaving(false)
     }
@@ -161,7 +161,7 @@ export default function AlertSettingsCard() {
       const newSettings = { ...settings, ...preset.settings }
       setSettings(newSettings)
       saveSettings(newSettings)
-      showToast(`✅ ${t(`preset_${presetKey}`)} ${t('preset_applied')}`)
+      showToast(`${t(`preset_${presetKey}`)} ${t('preset_applied')}`)
     }
   }
 

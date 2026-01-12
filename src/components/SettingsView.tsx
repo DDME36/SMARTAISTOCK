@@ -39,7 +39,7 @@ export default function SettingsView() {
 
     // If already fully set up, just show success
     if (pushSubscribed && notificationStatus === 'granted') {
-      showToast('🔔 ' + t('notifications_enabled'))
+      showToast(t('notifications_enabled'))
       return
     }
 
@@ -67,7 +67,7 @@ export default function SettingsView() {
       
       if (success) {
         setPushSubscribed(true)
-        showToast('🔔 ' + t('notifications_enabled'))
+        showToast(t('notifications_enabled'))
       } else {
         // Even if server subscribe fails, permission is still granted
         setPushSubscribed(false)
@@ -110,29 +110,29 @@ export default function SettingsView() {
     }
     
     setClearing(false)
-    showToast('🗑️ ' + t('cleared_data'))
+    showToast(t('cleared_data'))
     
     // Reload page
     setTimeout(() => window.location.reload(), 500)
   }
 
   const refreshData = async () => {
-    showToast('🔄 ' + t('refreshing'))
+    showToast(t('refreshing'))
     try {
       const res = await fetch('/data/smc_data.json?t=' + Date.now())
       if (res.ok) {
-        showToast('✅ ' + t('data_refreshed'))
+        showToast(t('data_refreshed'))
         window.location.reload()
       }
     } catch {
-      showToast('❌ ' + t('failed_refresh'))
+      showToast(t('failed_refresh'))
     }
   }
 
   const handleLogout = async () => {
     setShowLogoutConfirm(false)
     await logout()
-    showToast('👋 ' + t('auth.logout'))
+    showToast(t('auth.logout'))
   }
 
   return (
@@ -285,7 +285,7 @@ export default function SettingsView() {
             </div>
             <div className="stat-divider"></div>
             <div className="stat-item">
-              <span className="stat-number">{notificationStatus === 'granted' && pushSubscribed ? '🔔' : '🔕'}</span>
+              <span className="stat-number">{notificationStatus === 'granted' && pushSubscribed ? <Bell size={20} /> : <BellOff size={20} />}</span>
               <span className="stat-label">{t('alerts')}</span>
             </div>
             <div className="stat-divider"></div>
