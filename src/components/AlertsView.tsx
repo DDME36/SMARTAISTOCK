@@ -272,6 +272,15 @@ export default function AlertsView() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const positionScore = (stock as any).position_score
     
+    // Use positionScore action if available, otherwise use analysis consensus
+    let finalConsensus: 'BUY' | 'SELL' | 'MIXED' | 'HOLD' = analysis.consensus
+    if (positionScore?.action) {
+      const action = positionScore.action.toUpperCase()
+      if (action === 'STRONG_BUY' || action === 'BUY') finalConsensus = 'BUY'
+      else if (action === 'STRONG_SELL' || action === 'SELL') finalConsensus = 'SELL'
+      else if (action === 'HOLD') finalConsensus = 'HOLD'
+    }
+    
     stockGroups.push({
       symbol,
       alerts,
@@ -281,7 +290,7 @@ export default function AlertsView() {
       trend: typeof stock.trend === 'string' ? stock.trend : stock.trend?.direction,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       volumeRatio: (stock.indicators as any)?.volume?.ratio,
-      consensus: analysis.consensus,
+      consensus: finalConsensus,
       confidence: positionScore?.score || analysis.confidence,
       buySignals: analysis.buySignals,
       sellSignals: analysis.sellSignals,
