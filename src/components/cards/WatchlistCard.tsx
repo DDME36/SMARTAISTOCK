@@ -100,13 +100,17 @@ export default function WatchlistCard() {
     const name = live?.name || symbol
     const exchange = live?.exchange || 'US'
     
-    if (smc?.current_price) {
+    // ALWAYS prefer live price over SMC cached price
+    const price = live?.price || smc?.current_price || null
+    const change = live?.change
+    
+    if (smc) {
       const dir = typeof smc.trend === 'string' ? smc.trend : smc.trend?.direction || 'neutral'
-      return { price: smc.current_price, change: live?.change, trend: dir, hasSmc: true, failed: false, name, exchange }
+      return { price, change, trend: dir, hasSmc: true, failed: false, name, exchange }
     }
     if (live) {
       const dir = live.change > 0.5 ? 'up' : live.change < -0.5 ? 'down' : 'flat'
-      return { price: live.price, change: live.change, trend: dir, hasSmc: false, failed: false, name, exchange }
+      return { price, change, trend: dir, hasSmc: false, failed: false, name, exchange }
     }
     return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, name, exchange }
   }

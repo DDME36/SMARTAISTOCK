@@ -84,7 +84,7 @@ export default function WatchlistView() {
     return trend.direction || 'neutral'
   }
 
-  // Get stock data (SMC or live)
+  // Get stock data (SMC or live) - ALWAYS prefer live price
   const getStockData = (symbol: string) => {
     const smcStock = smcData?.stocks?.[symbol]
     const livePrice = livePrices[symbol]
@@ -92,11 +92,15 @@ export default function WatchlistView() {
     // Get name from API response
     const name = livePrice?.name || symbol
     const exchange = livePrice?.exchange || 'US'
+    
+    // ALWAYS prefer live price over SMC cached price
+    const price = livePrice?.price || smcStock?.current_price || null
+    const change = livePrice?.change
 
-    if (smcStock?.current_price) {
+    if (smcStock) {
       return {
-        price: smcStock.current_price,
-        change: livePrice?.change,
+        price,
+        change,
         trend: getTrendDirection(smcStock.trend),
         hasAnalysis: true,
         buyZones: smcStock.ob_summary?.total_buy || 0,
@@ -110,8 +114,8 @@ export default function WatchlistView() {
     if (livePrice) {
       const dir = livePrice.change > 0.5 ? 'up' : livePrice.change < -0.5 ? 'down' : 'flat'
       return {
-        price: livePrice.price,
-        change: livePrice.change,
+        price,
+        change,
         trend: dir,
         hasAnalysis: false,
         buyZones: 0,
