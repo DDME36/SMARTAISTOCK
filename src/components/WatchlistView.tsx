@@ -69,10 +69,15 @@ export default function WatchlistView() {
     const change = livePrice?.change
 
     if (smcStock) {
+      // Use change value to determine color direction
+      const colorDir = change !== undefined 
+        ? (change > 0 ? 'up' : change < 0 ? 'down' : 'flat')
+        : (getTrendDirection(smcStock.trend) === 'bullish' ? 'up' : getTrendDirection(smcStock.trend) === 'bearish' ? 'down' : 'flat')
+      
       return {
         price,
         change,
-        trend: getTrendDirection(smcStock.trend),
+        trend: colorDir,
         hasAnalysis: true,
         buyZones: smcStock.ob_summary?.total_buy || 0,
         sellZones: smcStock.ob_summary?.total_sell || 0,
@@ -83,7 +88,7 @@ export default function WatchlistView() {
     }
 
     if (livePrice) {
-      const dir = livePrice.change > 0.5 ? 'up' : livePrice.change < -0.5 ? 'down' : 'flat'
+      const dir = livePrice.change > 0 ? 'up' : livePrice.change < 0 ? 'down' : 'flat'
       return {
         price,
         change,
