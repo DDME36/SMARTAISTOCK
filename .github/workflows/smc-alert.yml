@@ -6,9 +6,17 @@ on:
     - cron: '30,45 14 * * 1-5'  # 9:30, 9:45 AM ET
     - cron: '0,15,30,45 15-20 * * 1-5'  # 10:00 AM - 3:45 PM ET
     - cron: '0 21 * * 1-5'  # 4:00 PM ET (market close)
+    - cron: '0 12 * * 0'  # Keep-alive: รันทุกวันอาทิตย์ 12:00 UTC เพื่อไม่ให้ GitHub disable workflow
   
   # Manual trigger
   workflow_dispatch:
+  
+  # Trigger on push to main (keeps workflow active)
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/smc-alert.yml'
 
 # Fixed interval to 1 week
 env:
@@ -17,6 +25,8 @@ env:
 jobs:
   analyze:
     runs-on: ubuntu-latest
+    # Skip if triggered by keep-alive on Sunday and market is closed
+    if: github.event_name != 'schedule' || (github.event.schedule != '0 12 * * 0')
     
     steps:
       - name: Checkout
@@ -88,3 +98,11 @@ jobs:
           retention-days: 7
 
       # Vercel will auto-deploy when data is pushed to main branch
+
+  # Keep-alive job - prevents GitHub from disabling scheduled workflows
+  keep-alive:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 12 * * 0'
+    steps:
+      - name: Keep workflow alive
+        run: echo "🔄 Keep-alive ping - $(date -u)"
