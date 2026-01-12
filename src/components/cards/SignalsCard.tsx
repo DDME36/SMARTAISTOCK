@@ -81,7 +81,15 @@ export default function SignalsCard() {
     if (stock?.alerts?.length) {
       const orderBlocks = stock.order_blocks || []
       
+      // Check if this symbol has an OB entry alert (highest priority)
+      const hasOBEntry = stock.alerts.some((a: { type?: string }) => a.type?.startsWith('ob_entry_'))
+      
       for (const alert of stock.alerts) {
+        // Skip zone alerts if we already have OB entry for this symbol
+        if (hasOBEntry && (alert.type === 'zone_premium' || alert.type === 'zone_discount')) {
+          continue
+        }
+        
         let qualityScore = 50
         let volumeConfirmed = false
         let trendAligned = false

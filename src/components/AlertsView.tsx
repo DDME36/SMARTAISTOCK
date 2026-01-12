@@ -113,7 +113,16 @@ export default function AlertsView() {
       // Get order blocks for quality data
       const orderBlocks = stock.order_blocks || []
       
+      // Check if this symbol has an OB entry alert (highest priority)
+      const hasOBEntry = stock.alerts.some((a: { type?: string }) => a.type?.startsWith('ob_entry_'))
+      
       for (const alert of stock.alerts) {
+        // Skip zone alerts if we already have OB entry for this symbol
+        // (zone_premium/zone_discount are redundant when price is IN an OB)
+        if (hasOBEntry && (alert.type === 'zone_premium' || alert.type === 'zone_discount')) {
+          continue
+        }
+        
         // Find matching OB for quality info
         let qualityScore = 50
         let volumeConfirmed = false
