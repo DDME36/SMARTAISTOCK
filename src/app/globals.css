@@ -6026,7 +6026,7 @@ body.lang-th .target-price {
   background: var(--glass-surface);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  padding: 12px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 3px solid var(--glass-border);
@@ -6034,11 +6034,11 @@ body.lang-th .target-price {
 
 .alert-card-compact:hover {
   border-color: var(--glass-highlight);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.alert-card-compact:hover .acc-tap-hint {
+.alert-card-compact:hover .acc-arrow {
   opacity: 1;
   transform: translateX(2px);
 }
@@ -6051,23 +6051,34 @@ body.lang-th .target-price {
   background: linear-gradient(135deg, rgba(110, 86, 207, 0.08) 0%, var(--glass-surface) 100%);
 }
 
-.acc-top {
+/* Single row layout */
+.acc-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .acc-logo {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--glass-surface);
   object-fit: contain;
+  flex-shrink: 0;
 }
 
-.acc-info {
+.acc-main {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.acc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .acc-symbol {
@@ -6080,32 +6091,57 @@ body.lang-th .target-price {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 4px;
-  margin-top: 2px;
 }
 
-.acc-right {
-  text-align: right;
+.acc-signal-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.zone-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  margin-left: 4px;
+}
+
+.zone-mini.discount { color: var(--accent-success); }
+.zone-mini.premium { color: var(--accent-danger); }
+
+.acc-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  flex-shrink: 0;
 }
 
 .acc-score {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   font-family: var(--font-mono);
 }
 
 .acc-price {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   font-family: var(--font-mono);
 }
 
 .acc-change {
-  font-size: 11px;
+  font-size: 10px;
   font-family: var(--font-mono);
   color: var(--text-tertiary);
 }
@@ -6113,41 +6149,11 @@ body.lang-th .target-price {
 .acc-change.up { color: var(--accent-success); }
 .acc-change.down { color: var(--accent-danger); }
 
-.acc-bottom {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--glass-border);
-  font-size: 12px;
-}
-
-.acc-signal {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-}
-
-.zone-tag {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.zone-tag.discount { color: var(--accent-success); }
-.zone-tag.premium { color: var(--accent-danger); }
-
-.acc-tap-hint {
+.acc-arrow {
   color: var(--text-tertiary);
-  opacity: 0.5;
+  opacity: 0.4;
   transition: all 0.2s ease;
-  margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* ===== Alert Detail Modal ===== */

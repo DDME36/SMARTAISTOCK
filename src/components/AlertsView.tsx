@@ -365,36 +365,37 @@ export default function AlertsView() {
                 className={`alert-card-compact ${group.consensus.toLowerCase()} ${hasEntry ? 'entry' : ''}`}
                 onClick={() => setSelectedStock(group)}
               >
-                <div className="acc-top">
+                {/* Single row layout */}
+                <div className="acc-row">
                   <img src={logoUrl} alt={group.symbol} className="acc-logo" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-                  <div className="acc-info">
-                    <div className="acc-symbol">{group.symbol}</div>
-                    <span className="acc-tag" style={{ background: consensusDisplay.bgColor, color: consensusDisplay.color }}>
-                      <ConsensusIcon size={10} /> {consensusDisplay.label}
-                    </span>
+                  
+                  <div className="acc-main">
+                    <div className="acc-header">
+                      <span className="acc-symbol">{group.symbol}</span>
+                      <span className="acc-tag" style={{ background: consensusDisplay.bgColor, color: consensusDisplay.color }}>
+                        <ConsensusIcon size={10} /> {consensusDisplay.label}
+                      </span>
+                    </div>
+                    <div className="acc-signal-row" style={{ color: info.color }}>
+                      <AlertIcon size={12} /> 
+                      <span>{info.label}</span>
+                      {group.zone && (
+                        <span className={`zone-mini ${group.zone}`}>
+                          {group.zone === 'discount' ? <DollarSign size={10} /> : <ArrowUpRight size={10} />}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="acc-right">
+                  
+                  <div className="acc-data">
                     <div className="acc-score" style={{ color: consensusDisplay.color }}>{group.confidence}%</div>
                     <div className="acc-price">${group.currentPrice ? formatPrice(group.currentPrice) : '...'}</div>
-                    {group.priceChange !== undefined && (
-                      <div className={`acc-change ${group.priceChange > 0 ? 'up' : group.priceChange < 0 ? 'down' : ''}`}>
-                        {group.priceChange > 0 ? '+' : ''}{group.priceChange.toFixed(2)}%
-                      </div>
-                    )}
+                    <div className={`acc-change ${group.priceChange !== undefined ? (group.priceChange > 0 ? 'up' : group.priceChange < 0 ? 'down' : '') : ''}`}>
+                      {group.priceChange !== undefined ? `${group.priceChange > 0 ? '+' : ''}${group.priceChange.toFixed(2)}%` : ''}
+                    </div>
                   </div>
-                </div>
-                <div className="acc-bottom">
-                  <span className="acc-signal" style={{ color: info.color }}>
-                    <AlertIcon size={14} /> {info.label}
-                  </span>
-                  {group.zone && (
-                    <span className={`zone-tag ${group.zone}`}>
-                      {group.zone === 'discount' ? <DollarSign size={12} /> : <ArrowUpRight size={12} />}
-                    </span>
-                  )}
-                  <span className="acc-tap-hint">
-                    <ChevronRight size={14} />
-                  </span>
+                  
+                  <ChevronRight size={16} className="acc-arrow" />
                 </div>
               </div>
             )
