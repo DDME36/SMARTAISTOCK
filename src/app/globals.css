@@ -5160,9 +5160,143 @@ body.lang-th .target-price {
   color: var(--accent-success);
 }
 
-.count-badge.sell {
-  background: rgba(255, 79, 94, 0.15);
+.count-badge.mixed {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accent-warning);
+}
+
+.filter-btn.mixed.active {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accent-warning);
+}
+
+.alert-card-v2.mixed {
+  border-left-color: var(--accent-warning);
+}
+
+.alert-card-v2.hold {
+  border-left-color: var(--text-tertiary);
+}
+
+.consensus-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.alert-card-summary {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.alert-primary-preview {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.signals-list {
+  margin-bottom: 12px;
+}
+
+.signals-list-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.signal-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.signal-icon {
+  font-size: 14px;
+}
+
+.signal-label {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.signal-direction {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.signal-direction.buy {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-success);
+}
+
+.signal-direction.sell {
+  background: rgba(239, 68, 68, 0.2);
   color: var(--accent-danger);
+}
+
+.signal-quality {
+  font-size: 11px;
+  color: var(--accent-warning);
+}
+
+.indicators-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.indicator-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm);
+}
+
+.indicator-item span:last-child {
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.indicator-item span.oversold {
+  color: var(--accent-success);
+}
+
+.indicator-item span.overbought {
+  color: var(--accent-danger);
+}
+
+.indicator-item span.bullish {
+  color: var(--accent-success);
+}
+
+.indicator-item span.bearish {
+  color: var(--accent-danger);
+}
+
+.indicator-item span.high {
+  color: var(--accent-warning);
 }
 
 .alerts-list-v2 {
