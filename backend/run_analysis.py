@@ -24,7 +24,9 @@ from send_notification import NotificationSender
 def load_watchlist() -> tuple[List[str], str]:
     """Load watchlist from database API or fallback sources"""
     watchlist = []
-    interval = os.environ.get('INTERVAL', '1h')
+    # Changed to Daily timeframe for Position Trading (holding weeks/months)
+    # Daily is better for swing/position traders who don't need intraday noise
+    interval = os.environ.get('INTERVAL', '1d')
     
     # Try to fetch from database API first
     api_base = os.environ.get('API_BASE_URL', '')
@@ -94,8 +96,8 @@ def load_watchlist() -> tuple[List[str], str]:
     return watchlist, interval
 
 
-def analyze_stocks(watchlist: List[str], interval: str, notifier: NotificationSender) -> Dict:
-    """Run SMC analysis on all stocks"""
+def analyze_stocks(watchlist: List[str], interval: str, notifier: NotificationSender, sentiment: Dict = None) -> Dict:
+    """Run SMC analysis on all stocks with market sentiment integration"""
     results = {}
     total_alerts = 0
     
@@ -106,6 +108,19 @@ def analyze_stocks(watchlist: List[str], interval: str, notifier: NotificationSe
             result = smc.analyze()
             
             if result:
+                # Update position score with market sentiment
+                if sentiment and result.get('position_score'):
+                    # Recalculate with sentiment
+                    updated_score = smc.calculate_position_score(
+                        trend=result.get('trend', {}),
+                        zones=result.get('zones', {}),
+                        indicators=result.get('indicators', {}),
+                        order_blocks=result.get('order_blocks', []),
+                        structure=result.get('structure_breaks', {}),
+                        market_sentiment=sentiment
+                    )
+                    result['position_score'] = updated_score
+                
                 results[symbol] = result
                 alerts = result.get('alerts', [])
                 
@@ -117,11 +132,16 @@ def analyze_stocks(watchlist: List[str], interval: str, notifier: NotificationSe
                         notifier.send(msg)
                         total_alerts += 1
                 
-                # Print summary
+                # Print summary with position score
                 trend = result.get('trend', {})
                 trend_dir = trend.get('direction', 'neutral')
-                emoji = '🟢' if trend_dir == 'bullish' else '🔴' if trend_dir == 'bearish' else '🟡'
-                print(f"   {emoji} {trend_dir.upper()} | OB: {result['ob_summary']['total_buy']}B/{result['ob_summary']['total_sell']}S | Alerts: {len(alerts)}")
+                pos_score = result.get('position_score', {})
+                score = pos_score.get('score', 50)
+                action = pos_score.get('action_th', 'รอดู')
+                
+                emoji = '🟢' if score >= 60 else '🔴' if score <= 40 else '🟡'
+                print(f"   {emoji} Position Score: {score}/100 ({action})")
+                print(f"   Trend: {trend_dir.upper()} | OB: {result['ob_summary']['total_buy']}B/{result['ob_summary']['total_sell']}S")
                 
         except Exception as e:
             print(f"   ❌ Error: {e}")
@@ -235,7 +255,7 @@ def print_banner():
 def print_summary(summary: Dict):
     """Print analysis summary"""
     print("\n" + "=" * 60)
-    print("📊 ANALYSIS COMPLETE")
+    print("📊 ANALYSIS COMPLETE (Position Trading Mode)")
     print("=" * 60)
     print(f"   Stocks Analyzed: {summary['total_stocks']}")
     print(f"   Total Alerts: {summary['total_alerts']}")
@@ -243,15 +263,32 @@ def print_summary(summary: Dict):
     print(f"   Sentiment Score: {summary['sentiment_score']}/100")
     print(f"   Recommendation: {summary['recommendation']}")
     
-    if summary['top_buy_opportunities']:
-        print("\n   🎯 Top BUY Opportunities:")
-        for opp in summary['top_buy_opportunities'][:3]:
-            print(f"      • {opp['symbol']}: {opp['message']}")
-    
-    if summary['top_sell_opportunities']:
-        print("\n   ⚠️ Top SELL Signals:")
-        for opp in summary['top_sell_opportunities'][:3]:
-            print(f"      • {opp['symbol']}: {opp['message']}")
+    # Position Trading Summary
+    pos = summary.get('position_trading', {})
+    if pos:
+        print("\n   📈 POSITION TRADING SIGNALS:")
+        
+        if pos.get('strong_buy_opportunities'):
+            print("\n   🟢 STRONG BUY (จุดเข้าที่ดีมาก):")
+            for opp in pos['strong_buy_opportunities'][:3]:
+                print(f"      • {opp['symbol']} @ ${opp['price']:.2f} - Score: {opp['score']}/100")
+                print(f"        {opp['summary']}")
+        
+        if pos.get('buy_opportunities'):
+            print("\n   🟡 BUY (น่าสนใจ):")
+            for opp in pos['buy_opportunities'][:3]:
+                print(f"      • {opp['symbol']} @ ${opp['price']:.2f} - Score: {opp['score']}/100")
+        
+        if pos.get('take_profit_signals'):
+            print("\n   🔴 TAKE PROFIT (ควรทำกำไร):")
+            for opp in pos['take_profit_signals'][:3]:
+                print(f"      • {opp['symbol']} @ ${opp['price']:.2f} - Score: {opp['score']}/100")
+                print(f"        {opp['summary']}")
+        
+        if pos.get('caution_signals'):
+            print("\n   🟠 CAUTION (ระวัง):")
+            for opp in pos['caution_signals'][:3]:
+                print(f"      • {opp['symbol']} @ ${opp['price']:.2f} - Score: {opp['score']}/100")
     
     print("=" * 60)
 
@@ -263,24 +300,28 @@ def analyze_all():
     # Load watchlist
     watchlist, interval = load_watchlist()
     print(f"\n📋 Watchlist: {', '.join(watchlist)}")
-    print(f"⏱️ Interval: {interval}")
+    print(f"⏱️ Interval: {interval} (Daily for Position Trading)")
     
     # Initialize notifier
     notifier = NotificationSender()
     
-    # Run stock analysis
-    stocks = analyze_stocks(watchlist, interval, notifier)
-    
-    # Run sentiment analysis
+    # Run sentiment analysis FIRST (so we can use it in stock analysis)
     sentiment = analyze_sentiment()
+    
+    # Run stock analysis with sentiment integration
+    stocks = analyze_stocks(watchlist, interval, notifier, sentiment)
     
     # Generate summary
     summary = generate_summary(stocks, sentiment)
+    
+    # Add position trading summary
+    summary['position_trading'] = generate_position_summary(stocks)
     
     # Build output
     output = {
         'generated_at': datetime.now().isoformat(),
         'interval': interval,
+        'trading_style': 'position',  # NEW: Indicate this is for position trading
         'market_sentiment': sentiment,
         'stocks': stocks,
         'summary': summary
@@ -293,6 +334,52 @@ def analyze_all():
     print_summary(summary)
     
     return output
+
+
+def generate_position_summary(stocks: Dict) -> Dict:
+    """Generate position trading specific summary"""
+    strong_buys = []
+    buys = []
+    strong_sells = []
+    sells = []
+    
+    for symbol, data in stocks.items():
+        pos_score = data.get('position_score', {})
+        score = pos_score.get('score', 50)
+        action = pos_score.get('action', 'HOLD')
+        summary = pos_score.get('summary', '')
+        
+        entry = {
+            'symbol': symbol,
+            'score': score,
+            'action': action,
+            'summary': summary,
+            'price': data.get('current_price', 0),
+            'zone': data.get('zones', {}).get('current_zone', 'neutral')
+        }
+        
+        if action == 'STRONG_BUY':
+            strong_buys.append(entry)
+        elif action == 'BUY':
+            buys.append(entry)
+        elif action == 'STRONG_SELL':
+            strong_sells.append(entry)
+        elif action == 'SELL':
+            sells.append(entry)
+    
+    # Sort by score
+    strong_buys.sort(key=lambda x: x['score'], reverse=True)
+    buys.sort(key=lambda x: x['score'], reverse=True)
+    strong_sells.sort(key=lambda x: x['score'])
+    sells.sort(key=lambda x: x['score'])
+    
+    return {
+        'strong_buy_opportunities': strong_buys,
+        'buy_opportunities': buys,
+        'take_profit_signals': strong_sells,
+        'caution_signals': sells,
+        'total_actionable': len(strong_buys) + len(buys) + len(strong_sells) + len(sells)
+    }
 
 
 if __name__ == "__main__":

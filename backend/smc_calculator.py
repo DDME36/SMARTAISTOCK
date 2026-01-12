@@ -1375,6 +1375,227 @@ class SMCCalculator:
         return alerts
 
     
+    # ==================== Position Trading Score ====================
+    
+    def calculate_position_score(self, trend: Dict, zones: Dict, indicators: Dict, 
+                                  order_blocks: List[Dict], structure: Dict,
+                                  market_sentiment: Optional[Dict] = None) -> Dict:
+        """
+        Calculate Position Trading Score (0-100)
+        
+        For position traders who hold for weeks/months:
+        - Focus on finding good entry points (buy low)
+        - Identify when to take profits (sell high)
+        - Consider overall market conditions
+        
+        Returns:
+            - score: 0-100 (higher = better time to BUY)
+            - action: BUY / SELL / HOLD
+            - confidence: how confident the signal is
+            - reasons: list of factors
+        """
+        score = 50  # Start neutral
+        reasons = []
+        
+        # 1. Zone Analysis (25 points max)
+        # Position traders want to buy in discount zone, sell in premium
+        if zones:
+            zone = zones.get('current_zone', 'neutral')
+            zone_pct = zones.get('zone_percentage', 50)
+            
+            if zone == 'discount':
+                # Deep discount = great buy opportunity
+                if zone_pct <= 20:
+                    score += 25
+                    reasons.append(('BUY', f'ราคาอยู่ในโซน Discount ลึก ({zone_pct:.0f}%) - จุดซื้อที่ดีมาก'))
+                elif zone_pct <= 35:
+                    score += 18
+                    reasons.append(('BUY', f'ราคาอยู่ในโซน Discount ({zone_pct:.0f}%) - จุดซื้อที่ดี'))
+                else:
+                    score += 10
+                    reasons.append(('BUY', f'ราคาอยู่ในโซน Discount ({zone_pct:.0f}%)'))
+            elif zone == 'premium':
+                # High premium = consider taking profits
+                if zone_pct >= 80:
+                    score -= 25
+                    reasons.append(('SELL', f'ราคาอยู่ในโซน Premium สูงมาก ({zone_pct:.0f}%) - ควรทำกำไร'))
+                elif zone_pct >= 65:
+                    score -= 18
+                    reasons.append(('SELL', f'ราคาอยู่ในโซน Premium ({zone_pct:.0f}%) - พิจารณาทำกำไร'))
+                else:
+                    score -= 10
+                    reasons.append(('SELL', f'ราคาอยู่ในโซน Premium ({zone_pct:.0f}%)'))
+        
+        # 2. Order Block Proximity (20 points max)
+        # Near a buy zone = good entry, near sell zone = caution
+        buy_obs = [ob for ob in order_blocks if ob['signal'] == 'BUY']
+        sell_obs = [ob for ob in order_blocks if ob['signal'] == 'SELL']
+        
+        if buy_obs:
+            nearest_buy = buy_obs[0]
+            if nearest_buy.get('in_zone'):
+                score += 20
+                quality = nearest_buy.get('quality_score', 50)
+                reasons.append(('BUY', f'ราคาอยู่ใน Order Block ซื้อ (คุณภาพ {quality}/100)'))
+            elif nearest_buy['distance_pct'] <= 2:
+                score += 15
+                reasons.append(('BUY', f'ใกล้ Order Block ซื้อ ({nearest_buy["distance_pct"]:.1f}% ห่าง)'))
+            elif nearest_buy['distance_pct'] <= 5:
+                score += 8
+                reasons.append(('BUY', f'มี Order Block ซื้อใกล้ๆ ({nearest_buy["distance_pct"]:.1f}% ห่าง)'))
+        
+        if sell_obs:
+            nearest_sell = sell_obs[0]
+            if nearest_sell.get('in_zone'):
+                score -= 20
+                reasons.append(('SELL', f'ราคาอยู่ใน Order Block ขาย - ควรระวัง'))
+            elif nearest_sell['distance_pct'] <= 2:
+                score -= 12
+                reasons.append(('SELL', f'ใกล้ Order Block ขาย ({nearest_sell["distance_pct"]:.1f}% ห่าง)'))
+        
+        # 3. Trend Analysis (15 points max)
+        trend_dir = trend.get('direction', 'neutral')
+        trend_strength = trend.get('strength', 0)
+        
+        if trend_dir == 'bullish':
+            points = min(15, int(10 + trend_strength * 5))
+            score += points
+            reasons.append(('BUY', f'เทรนด์ขาขึ้น (ความแข็งแกร่ง {trend_strength:.0%})'))
+        elif trend_dir == 'bearish':
+            points = min(15, int(10 + trend_strength * 5))
+            score -= points
+            reasons.append(('SELL', f'เทรนด์ขาลง (ความแข็งแกร่ง {trend_strength:.0%})'))
+        
+        # 4. RSI Analysis (15 points max)
+        rsi = indicators.get('rsi', {}).get('value', 50)
+        if rsi:
+            if rsi <= 30:
+                score += 15
+                reasons.append(('BUY', f'RSI Oversold ({rsi:.0f}) - โอกาสซื้อ'))
+            elif rsi <= 40:
+                score += 8
+                reasons.append(('BUY', f'RSI ต่ำ ({rsi:.0f}) - น่าสนใจ'))
+            elif rsi >= 70:
+                score -= 15
+                reasons.append(('SELL', f'RSI Overbought ({rsi:.0f}) - ควรทำกำไร'))
+            elif rsi >= 60:
+                score -= 5
+                reasons.append(('SELL', f'RSI สูง ({rsi:.0f}) - ระวัง'))
+        
+        # 5. Structure Analysis (10 points max)
+        if structure.get('choch'):
+            choch = structure['choch']
+            if choch['type'] == 'bullish':
+                score += 10
+                reasons.append(('BUY', 'CHoCH กลับตัวขึ้น - สัญญาณกลับตัว'))
+            else:
+                score -= 10
+                reasons.append(('SELL', 'CHoCH กลับตัวลง - สัญญาณกลับตัว'))
+        
+        if structure.get('bos'):
+            for bos in structure['bos'][:1]:  # Only first BOS
+                if bos['type'] == 'bullish':
+                    score += 5
+                    reasons.append(('BUY', 'BOS ทะลุขึ้น - เทรนด์ต่อเนื่อง'))
+                else:
+                    score -= 5
+                    reasons.append(('SELL', 'BOS ทะลุลง - เทรนด์ต่อเนื่อง'))
+        
+        # 6. Market Sentiment (15 points max) - NEW!
+        if market_sentiment:
+            sentiment_score = market_sentiment.get('score', 50)
+            sentiment_rec = market_sentiment.get('recommendation', 'HOLD')
+            
+            if sentiment_score >= 65:
+                score += 15
+                reasons.append(('BUY', f'ตลาดโดยรวมเป็นบวก (Sentiment {sentiment_score}/100)'))
+            elif sentiment_score >= 55:
+                score += 8
+                reasons.append(('BUY', f'ตลาดค่อนข้างดี (Sentiment {sentiment_score}/100)'))
+            elif sentiment_score <= 35:
+                score -= 15
+                reasons.append(('SELL', f'ตลาดโดยรวมเป็นลบ (Sentiment {sentiment_score}/100) - ระวัง'))
+            elif sentiment_score <= 45:
+                score -= 8
+                reasons.append(('SELL', f'ตลาดค่อนข้างแย่ (Sentiment {sentiment_score}/100)'))
+            
+            # VIX check
+            vix = market_sentiment.get('indicators', {}).get('vix', {}).get('value', 20)
+            if vix and vix > 30:
+                score -= 10
+                reasons.append(('SELL', f'VIX สูง ({vix:.1f}) - ตลาดผันผวน ควรรอ'))
+            elif vix and vix < 15:
+                score += 5
+                reasons.append(('BUY', f'VIX ต่ำ ({vix:.1f}) - ตลาดสงบ'))
+        
+        # Clamp score to 0-100
+        score = max(0, min(100, score))
+        
+        # Determine action
+        if score >= 70:
+            action = 'STRONG_BUY'
+            action_th = 'แนะนำซื้อ'
+        elif score >= 55:
+            action = 'BUY'
+            action_th = 'น่าซื้อ'
+        elif score <= 30:
+            action = 'STRONG_SELL'
+            action_th = 'แนะนำขาย/ทำกำไร'
+        elif score <= 45:
+            action = 'SELL'
+            action_th = 'พิจารณาขาย'
+        else:
+            action = 'HOLD'
+            action_th = 'รอดู'
+        
+        # Calculate confidence
+        buy_reasons = len([r for r in reasons if r[0] == 'BUY'])
+        sell_reasons = len([r for r in reasons if r[0] == 'SELL'])
+        total_reasons = buy_reasons + sell_reasons
+        
+        if total_reasons > 0:
+            confidence = abs(buy_reasons - sell_reasons) / total_reasons
+        else:
+            confidence = 0
+        
+        return {
+            'score': score,
+            'action': action,
+            'action_th': action_th,
+            'confidence': round(confidence, 2),
+            'buy_factors': buy_reasons,
+            'sell_factors': sell_reasons,
+            'reasons': [{'type': r[0], 'message': r[1]} for r in reasons],
+            'summary': self._generate_position_summary(score, action_th, reasons)
+        }
+    
+    def _generate_position_summary(self, score: int, action: str, reasons: List) -> str:
+        """Generate human-readable summary for position trading"""
+        buy_reasons = [r[1] for r in reasons if r[0] == 'BUY']
+        sell_reasons = [r[1] for r in reasons if r[0] == 'SELL']
+        
+        if score >= 70:
+            summary = f"🟢 จุดเข้าที่ดี! "
+            if buy_reasons:
+                summary += buy_reasons[0]
+        elif score >= 55:
+            summary = f"🟡 น่าสนใจ "
+            if buy_reasons:
+                summary += buy_reasons[0]
+        elif score <= 30:
+            summary = f"🔴 ควรทำกำไร! "
+            if sell_reasons:
+                summary += sell_reasons[0]
+        elif score <= 45:
+            summary = f"🟠 ระวัง "
+            if sell_reasons:
+                summary += sell_reasons[0]
+        else:
+            summary = "⚪ รอจังหวะที่ดีกว่านี้"
+        
+        return summary
+
+    
     # ==================== Main Analysis ====================
     
     def analyze(self) -> Optional[Dict]:
@@ -1430,6 +1651,17 @@ class SMCCalculator:
         vol_confirmed_obs = [ob for ob in order_blocks if ob.get('volume', {}).get('confirmed', False)]
         trend_aligned_obs = [ob for ob in order_blocks if ob.get('trend_aligned', False)]
         
+        # Calculate Position Score (for position traders)
+        # Note: market_sentiment will be added later by run_analysis.py
+        position_score = self.calculate_position_score(
+            trend=trend,
+            zones=zones,
+            indicators=indicators,
+            order_blocks=order_blocks,
+            structure=structure,
+            market_sentiment=None  # Will be updated by run_analysis
+        )
+        
         return {
             'symbol': self.symbol,
             'current_price': round(price, 2),
@@ -1437,6 +1669,9 @@ class SMCCalculator:
             'data_source': self.data_source,
             'candles_analyzed': len(self.df),
             'last_updated': datetime.now().isoformat(),
+            
+            # Position Trading Score (NEW!)
+            'position_score': position_score,
             
             # Trend Analysis
             'trend': trend,
@@ -1479,7 +1714,7 @@ class SMCCalculator:
             'alerts': alerts,
             'alert_count': len(alerts),
             
-            # Trade Setups (NEW) - Calculate for top OBs
+            # Trade Setups - Calculate for top OBs
             'trade_setups': self._generate_trade_setups(order_blocks[:3], zones, indicators, trend, structure)
         }
     
@@ -1517,7 +1752,7 @@ class SMCCalculator:
 
 # ==================== Batch Analysis ====================
 
-def analyze_single(symbol: str, interval: str = '1h') -> Tuple[str, Optional[Dict]]:
+def analyze_single(symbol: str, interval: str = '1d') -> Tuple[str, Optional[Dict]]:
     """Analyze a single symbol - for parallel processing"""
     try:
         smc = SMCCalculator(symbol, interval=interval)
@@ -1527,13 +1762,13 @@ def analyze_single(symbol: str, interval: str = '1h') -> Tuple[str, Optional[Dic
         print(f'  [ERROR] {symbol}: {e}')
         return (symbol, None)
 
-def analyze_watchlist(symbols: List[str], interval: str = '1h', parallel: bool = True) -> Dict:
+def analyze_watchlist(symbols: List[str], interval: str = '1d', parallel: bool = True) -> Dict:
     """
     Analyze multiple symbols
     
     Args:
         symbols: List of stock symbols
-        interval: Timeframe (1h, 4h, 1d)
+        interval: Timeframe (1d recommended for position trading, 1h for swing)
         parallel: Use parallel processing (faster for large watchlists)
     """
     results = {}
@@ -1571,25 +1806,26 @@ if __name__ == '__main__':
     
     # Load watchlist
     watchlist = []
-    interval = '1h'
+    # Default to Daily for Position Trading
+    interval = '1d'
     
     try:
         with open('data/watchlist.json', 'r') as f:
             d = json.load(f)
             watchlist = d.get('symbols', [])
-            interval = d.get('interval', '1h')
+            interval = d.get('interval', '1d')
     except:
         pass
     
     if not watchlist:
         watchlist = os.environ.get('WATCHLIST', 'AAPL,TSLA,NVDA').split(',')
-        interval = os.environ.get('INTERVAL', '1h')
+        interval = os.environ.get('INTERVAL', '1d')
     
     print(f'{"=" * 60}')
-    print(f'🤖 SMC Calculator v2.1 - Professional Grade')
+    print(f'🤖 SMC Calculator v2.2 - Position Trading Mode')
     print(f'{"=" * 60}')
     print(f'Watchlist: {watchlist}')
-    print(f'Interval: {interval}')
+    print(f'Interval: {interval} (Daily for Position Trading)')
     print(f'{"=" * 60}\n')
     
     results = analyze_watchlist(watchlist, interval)

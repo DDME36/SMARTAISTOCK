@@ -1367,6 +1367,19 @@ body.lang-th .target-price {
   padding: 4px;
   background: var(--glass-surface);
   border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+
+/* Desktop: filters don't need to stretch */
+@media (min-width: 768px) {
+  .alerts-filters {
+    width: fit-content;
+  }
+  
+  .filter-btn {
+    flex: none;
+    padding: 10px 20px;
+  }
 }
 
 .filter-btn {
@@ -5115,15 +5128,20 @@ body.lang-th .target-price {
 
 
 /* === Alerts Page V2 - Smart Summary Design === */
+.alerts-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
 .alerts-summary-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 16px 20px;
   background: var(--glass-surface);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 
 .alerts-highlight {
@@ -5300,9 +5318,24 @@ body.lang-th .target-price {
 }
 
 .alerts-list-v2 {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 12px;
+}
+
+/* Desktop: 2 columns for better space usage */
+@media (min-width: 768px) {
+  .alerts-list-v2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Large desktop: can do 3 columns if many alerts */
+@media (min-width: 1200px) {
+  .alerts-list-v2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Alert Card V2 */
@@ -5316,6 +5349,8 @@ body.lang-th .target-price {
 
 .alert-card-v2:hover {
   border-color: var(--glass-highlight);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .alert-card-v2.buy {
@@ -5342,7 +5377,7 @@ body.lang-th .target-price {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px;
+  padding: 16px;
   gap: 12px;
 }
 
@@ -5639,4 +5674,126 @@ body.lang-th .target-price {
   .confidence-bar {
     width: 80px;
   }
+}
+
+/* Trend Icon & Value Styles */
+.trend-icon.bullish {
+  color: var(--accent-success);
+}
+
+.trend-icon.bearish {
+  color: var(--accent-danger);
+}
+
+.trend-icon.neutral {
+  color: var(--text-tertiary);
+}
+
+.trend-value {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.trend-value.bullish {
+  color: var(--accent-success);
+}
+
+.trend-value.bearish {
+  color: var(--accent-danger);
+}
+
+.trend-value.neutral {
+  color: var(--text-tertiary);
+}
+
+/* iOS PWA Safe Area Improvements */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .app-wrapper {
+    padding-top: calc(var(--space-6) + env(safe-area-inset-top));
+    padding-left: calc(var(--space-6) + env(safe-area-inset-left));
+    padding-right: calc(var(--space-6) + env(safe-area-inset-right));
+  }
+  
+  .bottom-nav {
+    bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  
+  /* Floating refresh button safe area */
+  .floating-refresh-btn {
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    right: calc(16px + env(safe-area-inset-right));
+  }
+}
+
+/* iOS PWA Standalone Mode */
+@media (display-mode: standalone) {
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in inputs */
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
+  /* Prevent overscroll bounce */
+  html, body {
+    overscroll-behavior: none;
+  }
+}
+
+/* MIXED Signal Card Highlight */
+.alert-card-v2.mixed {
+  border-left: 4px solid var(--accent-warning);
+  background: linear-gradient(135deg, rgba(255, 178, 36, 0.08) 0%, var(--glass-surface) 100%);
+}
+
+.alert-card-v2.mixed .consensus-tag {
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Improved Indicator Grid */
+.indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.indicator-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.indicator-item span:last-child {
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.indicator-item .oversold {
+  color: var(--accent-success) !important;
+}
+
+.indicator-item .overbought {
+  color: var(--accent-danger) !important;
+}
+
+.indicator-item .high {
+  color: var(--accent-warning) !important;
 }

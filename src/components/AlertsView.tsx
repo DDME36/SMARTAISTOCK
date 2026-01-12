@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, TrendingUp, TrendingDown, Activity, BarChart3, Volume2, ChevronDown, ChevronUp, Target, AlertTriangle, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
+import { Bell, TrendingUp, TrendingDown, Activity, Volume2, ChevronDown, ChevronUp, Target, AlertTriangle, CheckCircle, XCircle, MinusCircle, Minus } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useState } from 'react'
@@ -519,15 +519,24 @@ export default function AlertsView() {
                           </span>
                         </div>
                       )}
-                      {group.trend && (
-                        <div className="indicator-item">
-                          {group.trend === 'bullish' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                          <span>{language === 'th' ? 'เทรนด์' : 'Trend'}</span>
-                          <span className={group.trend}>
-                            {group.trend === 'bullish' ? '↑' : group.trend === 'bearish' ? '↓' : '—'}
-                          </span>
-                        </div>
-                      )}
+                      <div className="indicator-item">
+                        {group.trend === 'bullish' ? (
+                          <TrendingUp size={14} className="trend-icon bullish" />
+                        ) : group.trend === 'bearish' ? (
+                          <TrendingDown size={14} className="trend-icon bearish" />
+                        ) : (
+                          <Minus size={14} className="trend-icon neutral" />
+                        )}
+                        <span>{language === 'th' ? 'เทรนด์' : 'Trend'}</span>
+                        <span className={`trend-value ${group.trend || 'neutral'}`}>
+                          {group.trend === 'bullish' 
+                            ? (language === 'th' ? 'ขาขึ้น' : 'Up')
+                            : group.trend === 'bearish' 
+                            ? (language === 'th' ? 'ขาลง' : 'Down')
+                            : (language === 'th' ? 'ทรงตัว' : 'Flat')
+                          }
+                        </span>
+                      </div>
                       {group.volumeRatio !== undefined && (
                         <div className="indicator-item">
                           <Volume2 size={14} />
