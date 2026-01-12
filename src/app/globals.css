@@ -6157,6 +6157,43 @@ body.lang-th .target-price {
 .acc-change.up { color: var(--accent-success); }
 .acc-change.down { color: var(--accent-danger); }
 
+/* Desktop: larger text for readability */
+@media (min-width: 768px) {
+  .acc-score {
+    font-size: 16px;
+  }
+  
+  .acc-price {
+    font-size: 14px;
+  }
+  
+  .acc-change {
+    font-size: 12px;
+  }
+  
+  .acc-symbol {
+    font-size: 15px;
+  }
+  
+  .acc-tag {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  
+  .acc-signal-row {
+    font-size: 12px;
+  }
+  
+  .acc-logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .alert-card-compact {
+    padding: 12px 14px;
+  }
+}
+
 .acc-arrow {
   color: var(--text-tertiary);
   opacity: 0.4;
