@@ -242,8 +242,8 @@ export default function WatchlistView() {
                         <span className="wl-view-exchange">{exchange}</span>
                         {hasAnalysis && (
                           <>
-                            <span className="wl-view-zone buy">{buyZones} {t('buy').toLowerCase()}</span>
-                            <span className="wl-view-zone sell">{sellZones} {t('sell').toLowerCase()}</span>
+                            <span className="wl-view-zone buy">{buyZones} {t('buy_zone')}</span>
+                            <span className="wl-view-zone sell">{sellZones} {t('sell_zone')}</span>
                             {alertCount > 0 && (
                               <span className="wl-view-alert">{alertCount} {t('alerts').toLowerCase()}</span>
                             )}

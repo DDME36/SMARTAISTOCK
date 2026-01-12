@@ -35,19 +35,19 @@ export default function QuickStatsCard() {
   const stats = [
     {
       icon: TrendingUp,
-      label: t('buy'),
+      label: t('buy_zone'),
       value: totalBuyZones,
       color: 'var(--accent-success)'
     },
     {
       icon: TrendingDown,
-      label: t('sell'),
+      label: t('sell_zone'),
       value: totalSellZones,
       color: 'var(--accent-danger)'
     },
     {
       icon: Target,
-      label: t('near'),
+      label: t('alerts'),
       value: nearAlerts,
       color: 'var(--accent-warning)'
     },

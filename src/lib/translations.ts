@@ -32,6 +32,8 @@ export const translations: Record<Language, Record<string, string>> = {
     // Stats
     buy: "Buy",
     sell: "Sell",
+    buy_zone: "buy zone",
+    sell_zone: "sell zone",
     near: "Near",
     bull: "Bull",
     add_stocks_stats: "Add stocks to see stats",
@@ -289,6 +291,8 @@ export const translations: Record<Language, Record<string, string>> = {
     // Stats
     buy: "ซื้อ",
     sell: "ขาย",
+    buy_zone: "โซนซื้อ",
+    sell_zone: "โซนขาย",
     near: "ใกล้",
     bull: "ขาขึ้น",
     add_stocks_stats: "เพิ่มหุ้นเพื่อดูสถิติ",

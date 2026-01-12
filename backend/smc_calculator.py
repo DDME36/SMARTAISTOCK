@@ -1575,23 +1575,23 @@ class SMCCalculator:
         sell_reasons = [r[1] for r in reasons if r[0] == 'SELL']
         
         if score >= 70:
-            summary = f"🟢 จุดเข้าที่ดี! "
+            summary = "จุดเข้าที่ดี! "
             if buy_reasons:
                 summary += buy_reasons[0]
         elif score >= 55:
-            summary = f"🟡 น่าสนใจ "
+            summary = "น่าสนใจ "
             if buy_reasons:
                 summary += buy_reasons[0]
         elif score <= 30:
-            summary = f"🔴 ควรทำกำไร! "
+            summary = "ควรทำกำไร! "
             if sell_reasons:
                 summary += sell_reasons[0]
         elif score <= 45:
-            summary = f"🟠 ระวัง "
+            summary = "ระวัง "
             if sell_reasons:
                 summary += sell_reasons[0]
         else:
-            summary = "⚪ รอจังหวะที่ดีกว่านี้"
+            summary = "รอจังหวะที่ดีกว่านี้"
         
         return summary
 

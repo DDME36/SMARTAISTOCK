@@ -1670,24 +1670,24 @@ class MarketSentimentAnalyzer:
         # Generate recommendation with confidence
         if final_score >= 75:
             recommendation = "STRONG_BUY"
-            message = "🟢 Excellent conditions - Extreme Fear = Opportunity"
-            message_th = "🟢 สภาวะดีเยี่ยม - Extreme Fear = โอกาสซื้อ"
+            message = "Excellent conditions - Extreme Fear = Opportunity"
+            message_th = "สภาวะดีเยี่ยม - Extreme Fear = โอกาสซื้อ"
         elif final_score >= 60:
             recommendation = "BUY"
-            message = "🟢 Good conditions, consider buying"
-            message_th = "🟢 สภาวะค่อนข้างดี พิจารณาเข้าซื้อได้"
+            message = "Good conditions, consider buying"
+            message_th = "สภาวะค่อนข้างดี พิจารณาเข้าซื้อได้"
         elif final_score >= 45:
             recommendation = "HOLD"
-            message = "🟡 Normal conditions, wait for better opportunity"
-            message_th = "🟡 สภาวะปกติ รอจังหวะที่ดีกว่า"
+            message = "Normal conditions, wait for better opportunity"
+            message_th = "สภาวะปกติ รอจังหวะที่ดีกว่า"
         elif final_score >= 30:
             recommendation = "CAUTIOUS"
-            message = "🟠 Caution! Market has risks"
-            message_th = "🟠 ระวัง! ตลาดมีความเสี่ยง"
+            message = "Caution! Market has risks"
+            message_th = "ระวัง! ตลาดมีความเสี่ยง"
         else:
             recommendation = "AVOID"
-            message = "🔴 Avoid buying, high risk"
-            message_th = "🔴 หลีกเลี่ยงการซื้อ ความเสี่ยงสูง"
+            message = "Avoid buying, high risk"
+            message_th = "หลีกเลี่ยงการซื้อ ความเสี่ยงสูง"
         
         # Add confidence qualifier
         if confidence["level"] == "low" or confidence["level"] == "very_low":
