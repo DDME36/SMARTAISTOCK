@@ -47,13 +47,13 @@ export default function SignalsCard() {
     const type = alert.type || ''
     
     if (language === 'th') {
-      if (type.startsWith('ob_entry_')) return `ราคาเข้าโซน Order Block`
-      if (type.startsWith('ob_near_')) return `ใกล้โซน ${alert.signal} (${alert.distance_pct?.toFixed(1)}%)`
-      if (type.includes('choch')) return type.includes('bullish') ? 'CHoCH: อาจกลับตัวขึ้น' : 'CHoCH: อาจกลับตัวลง'
-      if (type.includes('bos')) return type.includes('bullish') ? 'BOS: ทะลุแนวต้าน' : 'BOS: ทะลุแนวรับ'
-      if (type.includes('fvg')) return `FVG ${alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'}`
-      if (type === 'zone_premium') return 'อยู่ในโซน Premium'
-      if (type === 'zone_discount') return 'อยู่ในโซน Discount'
+      if (type.startsWith('ob_entry_')) return `ราคาเข้าโซนแนวรับ/ต้าน`
+      if (type.startsWith('ob_near_')) return `ใกล้โซน ${alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'} (${alert.distance_pct?.toFixed(1)}%)`
+      if (type.includes('choch')) return type.includes('bullish') ? 'สัญญาณกลับตัวขึ้น' : 'สัญญาณกลับตัวลง'
+      if (type.includes('bos')) return type.includes('bullish') ? 'ทะลุแนวต้าน' : 'ทะลุแนวรับ'
+      if (type.includes('fvg')) return `ช่องว่างราคา ${alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'}`
+      if (type === 'zone_premium') return 'อยู่ในโซนราคาสูง'
+      if (type === 'zone_discount') return 'อยู่ในโซนราคาถูก'
     }
     
     // English

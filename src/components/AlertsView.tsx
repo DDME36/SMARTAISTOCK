@@ -98,13 +98,13 @@ function getAlertInfo(alert: SingleAlert, language: string) {
   const type = alert.type
   const isBuy = alert.signal === 'BUY'
   
-  if (type.startsWith('ob_entry_')) return { Icon: Crosshair, label: language === 'th' ? 'เข้า Order Block' : 'OB Entry', color: isBuy ? '#10b981' : '#ef4444' }
-  if (type.startsWith('ob_near_')) return { Icon: Target, label: language === 'th' ? `ใกล้ OB (${alert.distancePct?.toFixed(1)}%)` : `Near OB (${alert.distancePct?.toFixed(1)}%)`, color: '#f59e0b' }
-  if (type.includes('choch')) return { Icon: RefreshCw, label: language === 'th' ? 'CHoCH กลับตัว' : 'CHoCH Reversal', color: '#8b5cf6' }
-  if (type.includes('bos')) return { Icon: Zap, label: language === 'th' ? 'BOS ทะลุ' : 'BOS Break', color: '#3b82f6' }
-  if (type.includes('fvg')) return { Icon: BarChart3, label: 'FVG', color: '#6366f1' }
-  if (type === 'zone_premium') return { Icon: ArrowUpRight, label: language === 'th' ? 'โซน Premium' : 'Premium Zone', color: '#ef4444' }
-  if (type === 'zone_discount') return { Icon: DollarSign, label: language === 'th' ? 'โซน Discount' : 'Discount Zone', color: '#10b981' }
+  if (type.startsWith('ob_entry_')) return { Icon: Crosshair, label: language === 'th' ? 'เข้าโซนแนวรับ/ต้าน' : 'OB Entry', color: isBuy ? '#10b981' : '#ef4444' }
+  if (type.startsWith('ob_near_')) return { Icon: Target, label: language === 'th' ? `ใกล้โซน (${alert.distancePct?.toFixed(1)}%)` : `Near OB (${alert.distancePct?.toFixed(1)}%)`, color: '#f59e0b' }
+  if (type.includes('choch')) return { Icon: RefreshCw, label: language === 'th' ? 'สัญญาณกลับตัว' : 'CHoCH Reversal', color: '#8b5cf6' }
+  if (type.includes('bos')) return { Icon: Zap, label: language === 'th' ? 'ทะลุแนว' : 'BOS Break', color: '#3b82f6' }
+  if (type.includes('fvg')) return { Icon: BarChart3, label: language === 'th' ? 'ช่องว่างราคา' : 'FVG', color: '#6366f1' }
+  if (type === 'zone_premium') return { Icon: ArrowUpRight, label: language === 'th' ? 'โซนราคาสูง' : 'Premium Zone', color: '#ef4444' }
+  if (type === 'zone_discount') return { Icon: DollarSign, label: language === 'th' ? 'โซนราคาถูก' : 'Discount Zone', color: '#10b981' }
   return { Icon: MapPin, label: type, color: '#6b7280' }
 }
 
