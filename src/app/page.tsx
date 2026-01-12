@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getThemeByTime } from '@/lib/utils'
@@ -36,30 +35,28 @@ function PageTransition({ children, viewKey }: { children: React.ReactNode; view
   )
 }
 
-// Main content component that uses searchParams
-function HomeContent() {
-  const { activeView, theme, setTheme, setSmcData, setActiveView, watchlist, smcData, language } = useStore()
+export default function Home() {
+  const { activeView, theme, setTheme, setSmcData, setActiveView, language } = useStore()
   const { isAuthenticated, isLoading: authLoading, checkAuth } = useAuthStore()
   const [isLoading, setIsLoading] = useState(true)
-  const searchParams = useSearchParams()
+  const [mounted, setMounted] = useState(false)
 
-  // Sync URL with activeView on mount
+  // Handle initial URL and browser back/forward
   useEffect(() => {
-    const viewFromUrl = searchParams.get('view') as typeof activeView | null
+    setMounted(true)
+    
+    // Read initial URL on mount
+    const params = new URLSearchParams(window.location.search)
+    const viewFromUrl = params.get('view') as typeof activeView | null
     const validViews = ['dashboard', 'watchlist', 'alerts', 'settings']
     if (viewFromUrl && validViews.includes(viewFromUrl)) {
       setActiveView(viewFromUrl)
-    } else if (!searchParams.get('view')) {
-      setActiveView('dashboard')
     }
-  }, [searchParams, setActiveView])
-
-  // Handle browser back/forward buttons
-  useEffect(() => {
+    
+    // Handle browser back/forward buttons
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search)
       const view = params.get('view') as typeof activeView | null
-      const validViews = ['dashboard', 'watchlist', 'alerts', 'settings']
       if (view && validViews.includes(view)) {
         setActiveView(view)
       } else {
@@ -171,8 +168,8 @@ function HomeContent() {
     document.documentElement.lang = language
   }, [theme, language])
 
-  // Show loading screen on first load
-  if (authLoading || isLoading) {
+  // Show loading screen on first load only
+  if (!mounted || authLoading || isLoading) {
     return <LoadingScreen />
   }
 
@@ -202,14 +199,5 @@ function HomeContent() {
       <Toast />
       <PWAInstallBanner />
     </>
-  )
-}
-
-// Main export with Suspense boundary for useSearchParams
-export default function Home() {
-  return (
-    <Suspense fallback={<LoadingScreen />}>
-      <HomeContent />
-    </Suspense>
   )
 }

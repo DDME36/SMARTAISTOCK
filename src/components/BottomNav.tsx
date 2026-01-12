@@ -3,7 +3,6 @@
 import { LayoutGrid, List, Bell, Settings } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 
 type View = 'dashboard' | 'watchlist' | 'alerts' | 'settings'
 
@@ -16,19 +15,7 @@ const navItems: { view: View; icon: typeof LayoutGrid }[] = [
 
 export default function BottomNav() {
   const { activeView, setActiveView } = useStore()
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const [itemSize, setItemSize] = useState(48) // 44px button + 4px gap
-  
-  // Sync URL with activeView on mount and URL changes
-  useEffect(() => {
-    const viewFromUrl = searchParams.get('view') as View | null
-    if (viewFromUrl && navItems.some(item => item.view === viewFromUrl)) {
-      if (viewFromUrl !== activeView) {
-        setActiveView(viewFromUrl)
-      }
-    }
-  }, [searchParams, setActiveView, activeView])
   
   // Adjust for mobile
   useEffect(() => {
@@ -48,7 +35,7 @@ export default function BottomNav() {
     setActiveView(view)
     // Update URL without full page reload (enables back button)
     const url = view === 'dashboard' ? '/' : `/?view=${view}`
-    router.push(url, { scroll: false })
+    window.history.pushState({}, '', url)
   }
   
   const activeIndex = navItems.findIndex(item => item.view === activeView)
