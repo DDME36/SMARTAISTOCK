@@ -1517,18 +1517,50 @@ class SMCCalculator:
 
 # ==================== Batch Analysis ====================
 
-def analyze_watchlist(symbols: List[str], interval: str = '1h') -> Dict:
-    """Analyze multiple symbols"""
+def analyze_single(symbol: str, interval: str = '1h') -> Tuple[str, Optional[Dict]]:
+    """Analyze a single symbol - for parallel processing"""
+    try:
+        smc = SMCCalculator(symbol, interval=interval)
+        result = smc.analyze()
+        return (symbol, result)
+    except Exception as e:
+        print(f'  [ERROR] {symbol}: {e}')
+        return (symbol, None)
+
+def analyze_watchlist(symbols: List[str], interval: str = '1h', parallel: bool = True) -> Dict:
+    """
+    Analyze multiple symbols
+    
+    Args:
+        symbols: List of stock symbols
+        interval: Timeframe (1h, 4h, 1d)
+        parallel: Use parallel processing (faster for large watchlists)
+    """
     results = {}
     
-    for symbol in symbols:
-        try:
-            smc = SMCCalculator(symbol, interval=interval)
-            result = smc.analyze()
+    if parallel and len(symbols) > 3:
+        # Use ThreadPoolExecutor for I/O-bound tasks (API calls)
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        
+        max_workers = min(10, len(symbols))  # Limit concurrent requests
+        print(f'  [PARALLEL] Using {max_workers} workers for {len(symbols)} symbols')
+        
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                executor.submit(analyze_single, symbol, interval): symbol 
+                for symbol in symbols
+            }
+            
+            for future in as_completed(futures):
+                symbol, result = future.result()
+                if result:
+                    results[symbol] = result
+    else:
+        # Sequential processing for small watchlists
+        for symbol in symbols:
+            symbol, result = analyze_single(symbol, interval)
             if result:
                 results[symbol] = result
-        except Exception as e:
-            print(f'  [ERROR] {symbol}: {e}')
     
     return results
 

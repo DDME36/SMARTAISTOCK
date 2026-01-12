@@ -6,12 +6,14 @@ import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useLivePrices } from '@/hooks/useLivePrices'
 import { formatPrice } from '@/lib/utils'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default function WatchlistCard() {
   const { watchlist, smcData, removeSymbol, showToast } = useStore()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const { prices: livePrices, loading, refresh } = useLivePrices(watchlist)
   const [failedSymbols, setFailedSymbols] = useState<Set<string>>(new Set())
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   // Check for failed symbols
   useEffect(() => {
@@ -48,6 +50,18 @@ export default function WatchlistCard() {
       return { price, change, trend: dir, hasSmc: false, failed: false, name, exchange }
     }
     return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, name, exchange }
+  }
+
+  const handleRemove = (symbol: string) => {
+    setDeleteConfirm(symbol)
+  }
+
+  const confirmRemove = () => {
+    if (deleteConfirm) {
+      removeSymbol(deleteConfirm)
+      showToast(t('removed') + ' ' + deleteConfirm)
+      setDeleteConfirm(null)
+    }
   }
 
   const getTrendText = (trend: string) => {
@@ -134,7 +148,7 @@ export default function WatchlistCard() {
                     </>
                   )}
                 </div>
-                <button className="wl-remove" onClick={() => { removeSymbol(symbol); showToast(t('removed') + ' ' + symbol) }}>
+                <button className="wl-remove" onClick={() => handleRemove(symbol)}>
                   <X size={14} />
                 </button>
               </div>
@@ -142,6 +156,20 @@ export default function WatchlistCard() {
           )
         })}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirm !== null}
+        title={language === 'th' ? 'ลบหุ้นออกจาก Watchlist?' : 'Remove from Watchlist?'}
+        message={language === 'th' 
+          ? `คุณต้องการลบ ${deleteConfirm} ออกจาก Watchlist ใช่หรือไม่?` 
+          : `Are you sure you want to remove ${deleteConfirm} from your watchlist?`}
+        confirmText={language === 'th' ? 'ลบ' : 'Remove'}
+        cancelText={language === 'th' ? 'ยกเลิก' : 'Cancel'}
+        variant="danger"
+        onConfirm={confirmRemove}
+        onCancel={() => setDeleteConfirm(null)}
+      />
     </article>
   )
 }

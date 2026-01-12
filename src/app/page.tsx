@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getThemeByTime } from '@/lib/utils'
@@ -35,10 +36,40 @@ function PageTransition({ children, viewKey }: { children: React.ReactNode; view
   )
 }
 
-export default function Home() {
-  const { activeView, theme, setTheme, setSmcData, watchlist, smcData, language } = useStore()
+// Main content component that uses searchParams
+function HomeContent() {
+  const { activeView, theme, setTheme, setSmcData, setActiveView, watchlist, smcData, language } = useStore()
   const { isAuthenticated, isLoading: authLoading, checkAuth } = useAuthStore()
   const [isLoading, setIsLoading] = useState(true)
+  const searchParams = useSearchParams()
+
+  // Sync URL with activeView on mount
+  useEffect(() => {
+    const viewFromUrl = searchParams.get('view') as typeof activeView | null
+    const validViews = ['dashboard', 'watchlist', 'alerts', 'settings']
+    if (viewFromUrl && validViews.includes(viewFromUrl)) {
+      setActiveView(viewFromUrl)
+    } else if (!searchParams.get('view')) {
+      setActiveView('dashboard')
+    }
+  }, [searchParams, setActiveView])
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search)
+      const view = params.get('view') as typeof activeView | null
+      const validViews = ['dashboard', 'watchlist', 'alerts', 'settings']
+      if (view && validViews.includes(view)) {
+        setActiveView(view)
+      } else {
+        setActiveView('dashboard')
+      }
+    }
+    
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [setActiveView])
 
   // Check auth on mount
   useEffect(() => {
@@ -171,5 +202,14 @@ export default function Home() {
       <Toast />
       <PWAInstallBanner />
     </>
+  )
+}
+
+// Main export with Suspense boundary for useSearchParams
+export default function Home() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <HomeContent />
+    </Suspense>
   )
 }

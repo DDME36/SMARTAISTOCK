@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { AlertTriangle, Trash2, X } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
+import styles from './ConfirmDialog.module.css'
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -47,32 +48,42 @@ export default function ConfirmDialog({
   if (!isOpen) return null
 
   const Icon = variant === 'danger' ? Trash2 : AlertTriangle
+  
+  const iconClass = `${styles.icon} ${
+    variant === 'warning' ? styles.iconWarning : 
+    variant === 'default' ? styles.iconDefault : ''
+  }`
+  
+  const confirmBtnClass = `${styles.confirmBtn} ${
+    variant === 'warning' ? styles.confirmBtnWarning : 
+    variant === 'default' ? styles.confirmBtnDefault : ''
+  }`
 
   return (
-    <div className="confirm-overlay" onClick={onCancel}>
+    <div className={styles.overlay} onClick={onCancel}>
       <div 
         ref={dialogRef}
-        className={`confirm-dialog ${variant}`}
+        className={styles.dialog}
         onClick={(e) => e.stopPropagation()}
         tabIndex={-1}
       >
-        <button className="confirm-close" onClick={onCancel}>
+        <button className={styles.closeBtn} onClick={onCancel}>
           <X size={18} />
         </button>
         
-        <div className={`confirm-icon ${variant}`}>
+        <div className={iconClass}>
           <Icon size={24} />
         </div>
         
-        <h3 className="confirm-title">{title}</h3>
-        <p className="confirm-message">{message}</p>
+        <h3 className={styles.title}>{title}</h3>
+        <p className={styles.message}>{message}</p>
         
-        <div className="confirm-actions">
-          <button className="btn confirm-cancel" onClick={onCancel}>
+        <div className={styles.actions}>
+          <button className={styles.cancelBtn} onClick={onCancel}>
             {cancelText || t('cancel')}
           </button>
           <button 
-            className={`btn confirm-btn ${variant}`}
+            className={confirmBtnClass}
             onClick={onConfirm}
           >
             {confirmText || t('confirm')}
