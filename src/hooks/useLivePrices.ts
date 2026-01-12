@@ -5,6 +5,8 @@ import { useState, useEffect, useCallback } from 'react'
 interface LivePrice {
   price: number
   change: number
+  changeAmount?: number
+  previousClose?: number
   name?: string
   exchange?: string
 }
