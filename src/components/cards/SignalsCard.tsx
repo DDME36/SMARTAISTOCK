@@ -1,8 +1,9 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { BarChart3, TrendingUp as TrendIcon } from 'lucide-react'
+import { BarChart3, TrendingUp as TrendIcon, ChevronDown } from 'lucide-react'
 
 interface Alert {
   symbol: string
@@ -31,6 +32,15 @@ const getQualityInfo = (score: number, language: string) => {
 export default function SignalsCard() {
   const { watchlist, smcData, onDemandSMC } = useStore()
   const { t, language } = useTranslation()
+  const [isMobile, setIsMobile] = useState(false)
+  const [showAll, setShowAll] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 600)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Translate alert messages
   const translateMessage = (alert: Alert): string => {
@@ -128,6 +138,10 @@ export default function SignalsCard() {
 
   const isOBAlert = (type?: string) => type?.includes('ob_entry_') || type?.includes('ob_near_')
 
+  // Determine how many alerts to show
+  const maxAlerts = isMobile && !showAll ? 3 : 6
+  const hasMore = alerts.length > maxAlerts
+
   return (
     <article className="card">
       <div className="card-title">{t('recent_signals')}</div>
@@ -138,54 +152,73 @@ export default function SignalsCard() {
             {t('no_signals')}
           </div>
         ) : (
-          alerts.slice(0, 6).map((alert, i) => {
-            const isCritical = isCriticalAlert(alert)
-            const isSell = alert.signal === 'SELL'
-            const translatedMessage = translateMessage(alert)
-            const isOB = isOBAlert(alert.type)
-            const qualityInfo = isOB ? getQualityInfo(alert.qualityScore || 50, language) : null
-            
-            if (isCritical) {
-              return (
-                <div key={i} className={`ob-entry-alert ${isSell ? 'sell' : ''}`}>
-                  <span className="ob-entry-icon">{isSell ? '🔴' : '🟢'}</span>
-                  <div className="ob-entry-text">
-                    <div className="ob-entry-title">
-                      {alert.symbol}
-                      {qualityInfo && (
-                        <span style={{ marginLeft: 6, fontSize: 11, color: qualityInfo.color }}>
-                          {'★'.repeat(qualityInfo.stars)}{'☆'.repeat(3 - qualityInfo.stars)}
-                        </span>
-                      )}
+          <>
+            {alerts.slice(0, maxAlerts).map((alert, i) => {
+              const isCritical = isCriticalAlert(alert)
+              const isSell = alert.signal === 'SELL'
+              const translatedMessage = translateMessage(alert)
+              const isOB = isOBAlert(alert.type)
+              const qualityInfo = isOB ? getQualityInfo(alert.qualityScore || 50, language) : null
+              
+              if (isCritical) {
+                return (
+                  <div key={i} className={`ob-entry-alert ${isSell ? 'sell' : ''}`}>
+                    <span className="ob-entry-icon">{isSell ? '🔴' : '🟢'}</span>
+                    <div className="ob-entry-text">
+                      <div className="ob-entry-title">
+                        {alert.symbol}
+                        {qualityInfo && (
+                          <span style={{ marginLeft: 6, fontSize: 11, color: qualityInfo.color }}>
+                            {'★'.repeat(qualityInfo.stars)}{'☆'.repeat(3 - qualityInfo.stars)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="ob-entry-subtitle">
+                        {translatedMessage}
+                        {isOB && (
+                          <span className="signal-quality-badges">
+                            {alert.volumeConfirmed && <span className="sq-badge"><BarChart3 size={8} /></span>}
+                            {alert.trendAligned && <span className="sq-badge"><TrendIcon size={8} /></span>}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="ob-entry-subtitle">
-                      {translatedMessage}
-                      {isOB && (
-                        <span className="signal-quality-badges">
-                          {alert.volumeConfirmed && <span className="sq-badge"><BarChart3 size={8} /></span>}
-                          {alert.trendAligned && <span className="sq-badge"><TrendIcon size={8} /></span>}
-                        </span>
-                      )}
-                    </div>
+                    <span className={`signal-badge-critical ${isSell ? 'sell' : ''}`}>
+                      {isSell ? t('sell') : t('buy')}
+                    </span>
                   </div>
-                  <span className={`signal-badge-critical ${isSell ? 'sell' : ''}`}>
-                    {isSell ? t('sell') : t('buy')}
+                )
+              }
+              
+              return (
+                <div key={i} style={{ padding: 8, borderBottom: '1px solid var(--glass-border)' }}>
+                  <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
+                    {alert.symbol}
+                  </span>
+                  <span style={{ fontSize: 12, color: 'var(--text-secondary)', marginLeft: 8 }}>
+                    {translatedMessage}
                   </span>
                 </div>
               )
-            }
+            })}
             
-            return (
-              <div key={i} style={{ padding: 8, borderBottom: '1px solid var(--glass-border)' }}>
-                <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
-                  {alert.symbol}
-                </span>
-                <span style={{ fontSize: 12, color: 'var(--text-secondary)', marginLeft: 8 }}>
-                  {translatedMessage}
-                </span>
-              </div>
-            )
-          })
+            {/* Show more button on mobile */}
+            {isMobile && hasMore && (
+              <button 
+                className="show-more-btn"
+                onClick={() => setShowAll(!showAll)}
+              >
+                {showAll ? (
+                  language === 'th' ? 'แสดงน้อยลง' : 'Show less'
+                ) : (
+                  <>
+                    {language === 'th' ? `ดูเพิ่มอีก ${alerts.length - maxAlerts}` : `Show ${alerts.length - maxAlerts} more`}
+                    <ChevronDown size={14} />
+                  </>
+                )}
+              </button>
+            )}
+          </>
         )}
       </div>
     </article>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Clock, Wifi, WifiOff, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -12,6 +12,49 @@ import WatchlistCard from './cards/WatchlistCard'
 import SignalsCard from './cards/SignalsCard'
 import QuickStatsCard from './cards/QuickStatsCard'
 import PriceTargetCard from './cards/PriceTargetCard'
+
+// Floating Refresh Button for Mobile
+function MobileRefreshButton() {
+  const [refreshing, setRefreshing] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const { showToast } = useStore()
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 600)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const handleRefresh = useCallback(async () => {
+    if (refreshing) return
+    setRefreshing(true)
+    showToast('🔄 ' + t('refreshing'))
+    
+    // Trigger a page-wide refresh event
+    window.dispatchEvent(new CustomEvent('dashboard-refresh'))
+    
+    // Wait a bit then stop
+    setTimeout(() => {
+      setRefreshing(false)
+      showToast('✅ ' + t('data_refreshed'))
+    }, 1500)
+  }, [refreshing, showToast, t])
+
+  if (!isMobile) return null
+
+  return (
+    <button 
+      className={`mobile-refresh-fab ${refreshing ? 'refreshing' : ''}`}
+      onClick={handleRefresh}
+      disabled={refreshing}
+      aria-label="Refresh"
+    >
+      <RefreshCw size={20} className={refreshing ? 'icon-spin' : ''} />
+    </button>
+  )
+}
 
 // Connection Status Component
 function ConnectionIndicator() {
@@ -177,6 +220,7 @@ export default function Dashboard() {
         <SignalsCard />
       </div>
       <SMCUpdateInfo />
+      <MobileRefreshButton />
     </main>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2 } from 'lucide-react'
+import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2, ChevronDown, ChevronUp, Settings2 } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -20,6 +20,7 @@ export default function SettingsView() {
   const [clearing, setClearing] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -240,48 +241,63 @@ export default function SettingsView() {
         <AlertSettingsCard />
       )}
 
-      {/* Data Management */}
-      <div className="settings-card">
-        <div className="settings-card-header">
-          <Shield size={20} />
-          <div>
-            <h3>{t('data_management')}</h3>
-            <p>{t('export_clear_data')}</p>
-          </div>
-        </div>
-        <div className="settings-actions">
-          <button className="action-btn" onClick={exportWatchlist}>
-            <Download size={18} />
-            <span>{t('export_watchlist')}</span>
-          </button>
-          <button className="action-btn" onClick={refreshData}>
-            <RefreshCw size={18} />
-            <span>{t('refresh_data')}</span>
-          </button>
-          <button className="action-btn danger" onClick={() => setShowClearConfirm(true)} disabled={clearing}>
-            <Trash2 size={18} />
-            <span>{clearing ? t('clearing') : t('clear_all_data')}</span>
-          </button>
-        </div>
-      </div>
+      {/* Advanced Settings Toggle */}
+      <button 
+        className="settings-advanced-toggle"
+        onClick={() => setShowAdvanced(!showAdvanced)}
+      >
+        <Settings2 size={18} />
+        <span>{language === 'th' ? 'การตั้งค่าขั้นสูง' : 'Advanced Settings'}</span>
+        {showAdvanced ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+      </button>
 
-      {/* Stats Card */}
-      <div className="settings-card stats-card">
-        <div className="stat-item">
-          <span className="stat-number">{watchlist.length}</span>
-          <span className="stat-label">{t('full_watchlist')}</span>
-        </div>
-        <div className="stat-divider"></div>
-        <div className="stat-item">
-          <span className="stat-number">{notificationStatus === 'granted' && pushSubscribed ? '🔔' : '🔕'}</span>
-          <span className="stat-label">{t('alerts')}</span>
-        </div>
-        <div className="stat-divider"></div>
-        <div className="stat-item">
-          <span className="stat-number">v2.1</span>
-          <span className="stat-label">{t('version')}</span>
-        </div>
-      </div>
+      {/* Advanced Settings - Collapsible */}
+      {showAdvanced && (
+        <>
+          {/* Data Management */}
+          <div className="settings-card">
+            <div className="settings-card-header">
+              <Shield size={20} />
+              <div>
+                <h3>{t('data_management')}</h3>
+                <p>{t('export_clear_data')}</p>
+              </div>
+            </div>
+            <div className="settings-actions">
+              <button className="action-btn" onClick={exportWatchlist}>
+                <Download size={18} />
+                <span>{t('export_watchlist')}</span>
+              </button>
+              <button className="action-btn" onClick={refreshData}>
+                <RefreshCw size={18} />
+                <span>{t('refresh_data')}</span>
+              </button>
+              <button className="action-btn danger" onClick={() => setShowClearConfirm(true)} disabled={clearing}>
+                <Trash2 size={18} />
+                <span>{clearing ? t('clearing') : t('clear_all_data')}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Stats Card */}
+          <div className="settings-card stats-card">
+            <div className="stat-item">
+              <span className="stat-number">{watchlist.length}</span>
+              <span className="stat-label">{t('full_watchlist')}</span>
+            </div>
+            <div className="stat-divider"></div>
+            <div className="stat-item">
+              <span className="stat-number">{notificationStatus === 'granted' && pushSubscribed ? '🔔' : '🔕'}</span>
+              <span className="stat-label">{t('alerts')}</span>
+            </div>
+            <div className="stat-divider"></div>
+            <div className="stat-item">
+              <span className="stat-number">v2.1</span>
+              <span className="stat-label">{t('version')}</span>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* App Info */}
       <div className="settings-card app-info">
