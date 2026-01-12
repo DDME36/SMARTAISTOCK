@@ -1640,9 +1640,17 @@ body.lang-th .target-price {
 }
 
 .watchlist-items {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 8px;
+}
+
+/* Desktop: 2 columns */
+@media (min-width: 768px) {
+  .watchlist-items {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
 }
 
 .watchlist-item {
@@ -5955,4 +5963,374 @@ body.lang-th .target-price {
 .alert-card-v2.expanded.sell {
   border-color: var(--accent-danger);
   box-shadow: 0 0 0 1px var(--accent-danger), 0 8px 24px rgba(255, 79, 94, 0.15);
+}
+
+/* ===== Alerts Grid - Compact Cards ===== */
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.alert-card-compact {
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid var(--glass-border);
+}
+
+.alert-card-compact:hover {
+  border-color: var(--glass-highlight);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.alert-card-compact.buy { border-left-color: var(--accent-success); }
+.alert-card-compact.sell { border-left-color: var(--accent-danger); }
+.alert-card-compact.mixed { border-left-color: var(--accent-warning); }
+
+.alert-card-compact.entry {
+  background: linear-gradient(135deg, rgba(110, 86, 207, 0.08) 0%, var(--glass-surface) 100%);
+}
+
+.acc-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.acc-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--glass-surface);
+  object-fit: contain;
+}
+
+.acc-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.acc-symbol {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.acc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+.acc-right {
+  text-align: right;
+}
+
+.acc-score {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.acc-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.acc-change {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+}
+
+.acc-change.up { color: var(--accent-success); }
+.acc-change.down { color: var(--accent-danger); }
+
+.acc-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--glass-border);
+  font-size: 12px;
+}
+
+.zone-tag {
+  font-size: 11px;
+}
+
+/* ===== Alert Detail Modal ===== */
+.alert-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.alert-modal {
+  background: var(--bg-main);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: modalSlideUp 0.2s ease;
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-main);
+}
+
+.alert-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-modal-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--glass-surface);
+}
+
+.alert-modal-symbol {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.alert-modal-price {
+  font-size: 14px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.alert-modal-price .up { color: var(--accent-success); }
+.alert-modal-price .down { color: var(--accent-danger); }
+
+.alert-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--glass-surface);
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert-modal-close:hover {
+  background: var(--glass-highlight);
+  color: var(--text-primary);
+}
+
+/* Position Score Compact */
+.position-score-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid var(--text-tertiary);
+}
+
+.position-score-compact.strong-buy,
+.position-score-compact.buy {
+  border-left-color: var(--accent-success);
+  background: rgba(39, 215, 150, 0.08);
+}
+
+.position-score-compact.strong-sell,
+.position-score-compact.sell {
+  border-left-color: var(--accent-danger);
+  background: rgba(255, 79, 94, 0.08);
+}
+
+.psc-action {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.position-score-compact.strong-buy .psc-action,
+.position-score-compact.buy .psc-action { color: var(--accent-success); }
+
+.position-score-compact.strong-sell .psc-action,
+.position-score-compact.sell .psc-action { color: var(--accent-danger); }
+
+.psc-summary {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.psc-score {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.psc-score span {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Modal Sections */
+.alert-modal-section {
+  padding: 12px 16px;
+}
+
+.alert-modal-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.signal-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.signal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.signal-icon { font-size: 14px; }
+.signal-name { flex: 1; font-size: 13px; color: var(--text-primary); }
+
+.signal-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.signal-badge.buy {
+  background: rgba(39, 215, 150, 0.15);
+  color: var(--accent-success);
+}
+
+.signal-badge.sell {
+  background: rgba(255, 79, 94, 0.15);
+  color: var(--accent-danger);
+}
+
+/* Modal Indicators */
+.alert-modal-indicators {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
+.ind-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ind-item span:last-child {
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.ind-item .bullish { color: var(--accent-success); }
+.ind-item .bearish { color: var(--accent-danger); }
+.ind-item .oversold { color: var(--accent-success) !important; }
+.ind-item .overbought { color: var(--accent-danger) !important; }
+.ind-item .high { color: var(--accent-warning) !important; }
+
+/* Modal Reasons */
+.alert-modal-reasons {
+  padding: 0 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reason-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.reason-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.reason-row.buy .reason-dot { background: var(--accent-success); }
+.reason-row.sell .reason-dot { background: var(--accent-danger); }
+
+/* Modal Warning */
+.alert-modal-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 16px 16px;
+  padding: 10px 12px;
+  background: rgba(255, 178, 36, 0.1);
+  border: 1px solid rgba(255, 178, 36, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--accent-warning);
+  font-size: 12px;
 }
