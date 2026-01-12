@@ -37,6 +37,24 @@ export default function WatchlistView() {
     return trend.direction || 'neutral'
   }
 
+  // Count meaningful alerts (filter out redundant zone alerts if OB entry exists)
+  const countAlerts = (alerts: Array<{ type?: string; signal?: string }> | undefined): number => {
+    if (!alerts || alerts.length === 0) return 0
+    
+    // Check if there's an OB entry alert (highest priority)
+    const hasOBEntry = alerts.some(a => a.type?.startsWith('ob_entry_'))
+    
+    // Filter out zone_premium/zone_discount if we have OB entry (they're redundant)
+    const meaningfulAlerts = alerts.filter(a => {
+      if (hasOBEntry && (a.type === 'zone_premium' || a.type === 'zone_discount')) {
+        return false
+      }
+      return true
+    })
+    
+    return meaningfulAlerts.length
+  }
+
   // Get stock data (SMC or live) - ALWAYS prefer live price
   const getStockData = (symbol: string) => {
     const smcStock = smcData?.stocks?.[symbol]
@@ -58,7 +76,7 @@ export default function WatchlistView() {
         hasAnalysis: true,
         buyZones: smcStock.ob_summary?.total_buy || 0,
         sellZones: smcStock.ob_summary?.total_sell || 0,
-        alertCount: smcStock.alerts?.length || 0,
+        alertCount: countAlerts(smcStock.alerts),
         name,
         exchange
       }
