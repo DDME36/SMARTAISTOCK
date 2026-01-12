@@ -53,19 +53,25 @@ export default function WatchlistCard() {
     }
   }
 
-  // Fetch prices for all watchlist items (to get names)
+  // Fetch prices on mount and auto-refresh every 30 seconds
   useEffect(() => {
-    if (fetchedRef.current || watchlist.length === 0) return
+    if (watchlist.length === 0) return
     
-    // Fetch all symbols to get names
-    const need = watchlist.filter(s => !livePrices[s])
-    if (need.length === 0) return
+    // Initial fetch
+    if (!fetchedRef.current) {
+      fetchedRef.current = true
+      setTimeout(() => fetchPrices(watchlist), 300)
+    }
     
-    fetchedRef.current = true
-    setTimeout(() => fetchPrices(need), 300)
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      if (watchlist.length > 0) {
+        fetchPrices(watchlist)
+      }
+    }, 30000)
     
-    setTimeout(() => { fetchedRef.current = false }, 60000)
-  }, [watchlist, livePrices])
+    return () => clearInterval(interval)
+  }, [watchlist])
 
   // Retry countdown
   useEffect(() => {
@@ -115,10 +121,19 @@ export default function WatchlistCard() {
     <article className="card col-span-2 watchlist-card">
       <div className="card-title">
         <span>{t('active_watchlist')}</span>
-        <span className="watchlist-count">
-          {loading && <Loader2 size={12} className="icon-spin" style={{ marginRight: 4 }} />}
-          {watchlist.length} {t('assets')}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button 
+            onClick={() => fetchPrices(watchlist)} 
+            disabled={loading}
+            className="refresh-btn"
+            title="Refresh prices"
+          >
+            <RefreshCw size={14} className={loading ? 'icon-spin' : ''} />
+          </button>
+          <span className="watchlist-count">
+            {watchlist.length} {t('assets')}
+          </span>
+        </div>
       </div>
       
       <div className="watchlist-list">
