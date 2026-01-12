@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { X, TrendingUp, TrendingDown, Minus, Search, SortAsc } from 'lucide-react'
+import { X, TrendingUp, TrendingDown, Minus, Search, SortAsc, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { formatPrice } from '@/lib/utils'
@@ -26,39 +26,44 @@ export default function WatchlistView() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const hasFetchedRef = useRef(false)
 
-  // Fetch live prices and names for all stocks
+  // Fetch prices function
+  const fetchPrices = async () => {
+    if (watchlist.length === 0) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/stock-price', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symbols: watchlist })
+      })
+      const data = await res.json()
+      if (data.prices) {
+        setLivePrices(prev => ({ ...prev, ...data.prices }))
+      }
+    } catch (e) {
+      console.error('Price fetch error:', e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch live prices and names for all stocks - auto refresh every 30s
   useEffect(() => {
     if (watchlist.length === 0) return
 
-    // Fetch all to get names
-    const needPrices = watchlist.filter(s => !livePrices[s])
-    if (needPrices.length === 0) return
-
-    if (hasFetchedRef.current) return
-    hasFetchedRef.current = true
-
-    const fetchPrices = async () => {
-      setLoading(true)
-      try {
-        const res = await fetch('/api/stock-price', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ symbols: needPrices })
-        })
-        const data = await res.json()
-        if (data.prices) {
-          setLivePrices(prev => ({ ...prev, ...data.prices }))
-        }
-      } catch (e) {
-        console.error('Price fetch error:', e)
-      } finally {
-        setLoading(false)
-        setTimeout(() => { hasFetchedRef.current = false }, 60000)
-      }
+    // Initial fetch
+    if (!hasFetchedRef.current) {
+      hasFetchedRef.current = true
+      fetchPrices()
     }
 
-    fetchPrices()
-  }, [watchlist, livePrices])
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchPrices()
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [watchlist])
 
   const handleRemove = (symbol: string) => {
     setDeleteConfirm(symbol)
@@ -200,7 +205,15 @@ export default function WatchlistView() {
       {/* Stats */}
       <div className="watchlist-stats">
         <span>{filteredList.length} {t('of')} {watchlist.length} {t('stocks')}</span>
-        {loading && <span className="loading-dot" style={{ marginLeft: 8 }} />}
+        <button 
+          onClick={fetchPrices} 
+          disabled={loading}
+          className="refresh-btn"
+          title="Refresh prices"
+          style={{ marginLeft: 'auto' }}
+        >
+          <RefreshCw size={14} className={loading ? 'icon-spin' : ''} />
+        </button>
       </div>
 
       {/* List */}
