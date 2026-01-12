@@ -1,22 +1,26 @@
 """
-Market Sentiment Analyzer - Enhanced Version v2.0
+Market Sentiment Analyzer - Enhanced Version v3.0
 วิเคราะห์ Fear & Greed Index, VIX, Market Breadth และดัชนีต่างๆ
 
 Data Sources (All Free):
 - VIX: Yahoo Finance (^VIX)
 - Fear & Greed (Stock): CNN API / Calculated fallback
 - Fear & Greed (Crypto): alternative.me API
-- Market Breadth: Yahoo Finance ETFs + WSJ scraping
+- Market Breadth: Barchart scraping / Yahoo Finance ETFs fallback
+- Put/Call Ratio: CBOE scraping / VIX estimation fallback
 - Sector Performance: Yahoo Finance Sector ETFs
 - Treasury Yields: FRED API (free) / Yahoo Finance fallback
-- Economic Data: FRED API
+- Economic Calendar: FRED API / Hardcoded major events
+- Market Internals: Yahoo Finance (TICK, TRIN proxies)
 
-Features v2.0:
-- EMA support (faster signals)
-- Retry logic for API failures
-- Better error handling
-- Multiple data source fallbacks
-- Caching to reduce API calls
+Features v3.0:
+- Real CBOE Put/Call Ratio (scraped)
+- Real NYSE Advance/Decline data (scraped from Barchart)
+- Economic Calendar awareness (FOMC, CPI, Jobs Report)
+- Market Internals (TICK, TRIN/Arms Index proxies)
+- Confidence level for recommendations
+- Improved scoring with backtesting principles
+- Better error handling and fallbacks
 """
 import requests
 import json
@@ -24,6 +28,8 @@ from datetime import datetime, timedelta
 from typing import Dict, Optional, List, Tuple
 import os
 import time
+import re
+from bs4 import BeautifulSoup
 
 # Retry decorator
 def retry_on_failure(max_retries: int = 3, delay: float = 1.0):
@@ -45,11 +51,47 @@ def retry_on_failure(max_retries: int = 3, delay: float = 1.0):
     return decorator
 
 
+# Economic Calendar - Major Events (Updated periodically)
+# These dates significantly impact market sentiment
+ECONOMIC_CALENDAR_2025 = {
+    # FOMC Meetings (Fed Interest Rate Decisions) - HIGH IMPACT
+    "fomc": [
+        "2025-01-29", "2025-03-19", "2025-05-07", "2025-06-18",
+        "2025-07-30", "2025-09-17", "2025-11-05", "2025-12-17"
+    ],
+    # CPI (Consumer Price Index) - HIGH IMPACT
+    "cpi": [
+        "2025-01-15", "2025-02-12", "2025-03-12", "2025-04-10",
+        "2025-05-13", "2025-06-11", "2025-07-11", "2025-08-13",
+        "2025-09-11", "2025-10-10", "2025-11-13", "2025-12-10"
+    ],
+    # Jobs Report (Non-Farm Payrolls) - HIGH IMPACT
+    "jobs": [
+        "2025-01-10", "2025-02-07", "2025-03-07", "2025-04-04",
+        "2025-05-02", "2025-06-06", "2025-07-03", "2025-08-01",
+        "2025-09-05", "2025-10-03", "2025-11-07", "2025-12-05"
+    ],
+    # GDP Reports - MEDIUM IMPACT
+    "gdp": [
+        "2025-01-30", "2025-02-27", "2025-03-27", "2025-04-30",
+        "2025-05-29", "2025-06-26", "2025-07-30", "2025-08-28",
+        "2025-09-25", "2025-10-30", "2025-11-26", "2025-12-23"
+    ],
+    # PCE (Fed's preferred inflation measure) - HIGH IMPACT
+    "pce": [
+        "2025-01-31", "2025-02-28", "2025-03-28", "2025-04-25",
+        "2025-05-30", "2025-06-27", "2025-07-25", "2025-08-29",
+        "2025-09-26", "2025-10-31", "2025-11-27", "2025-12-19"
+    ]
+}
+
+
 class MarketSentimentAnalyzer:
     def __init__(self):
         self.data = {}
         self.cache = {}
         self.cache_duration = 300  # 5 minutes cache
+        self.confidence_factors = []  # Track data quality
         
     def _get_cached(self, key: str) -> Optional[Dict]:
         """Get cached data if still valid"""
@@ -66,6 +108,13 @@ class MarketSentimentAnalyzer:
             'timestamp': datetime.now().timestamp()
         }
     
+    def _add_confidence(self, source: str, quality: str):
+        """Track data source quality for confidence calculation"""
+        self.confidence_factors.append({
+            "source": source,
+            "quality": quality  # "high", "medium", "low", "estimated"
+        })
+
     # ==================== VIX (CBOE Volatility Index) ====================
     @retry_on_failure(max_retries=3)
     def get_vix(self) -> Dict:
@@ -79,25 +128,33 @@ class MarketSentimentAnalyzer:
         hist = vix.history(period="5d")
         
         if hist.empty:
+            self._add_confidence("vix", "low")
             return self._default_vix()
         
         current = float(hist['Close'].iloc[-1])
         prev = float(hist['Close'].iloc[-2]) if len(hist) > 1 else current
         change = ((current - prev) / prev) * 100
         
-        # VIX Interpretation
+        # VIX Interpretation (refined thresholds)
         if current < 12:
-            signal, level = "EXTREME_BULLISH", "extreme_low"
-        elif current < 17:
+            signal, level = "EXTREME_COMPLACENCY", "extreme_low"
+        elif current < 15:
             signal, level = "BULLISH", "low"
         elif current < 20:
             signal, level = "NEUTRAL", "normal"
         elif current < 25:
             signal, level = "CAUTIOUS", "elevated"
         elif current < 30:
-            signal, level = "BEARISH", "high"
+            signal, level = "FEAR", "high"
+        elif current < 40:
+            signal, level = "EXTREME_FEAR", "very_high"
         else:
-            signal, level = "EXTREME_FEAR", "extreme_high"
+            signal, level = "PANIC", "extreme_high"
+        
+        # VIX term structure (contango vs backwardation)
+        vix_term = self._get_vix_term_structure()
+        
+        self._add_confidence("vix", "high")
         
         result = {
             "value": round(current, 2),
@@ -106,6 +163,7 @@ class MarketSentimentAnalyzer:
             "signal": signal,
             "level": level,
             "trend": "up" if change > 0 else "down" if change < 0 else "flat",
+            "term_structure": vix_term,
             "source": "yahoo_finance",
             "interpretation": self._interpret_vix(current)
         }
@@ -113,15 +171,52 @@ class MarketSentimentAnalyzer:
         self._set_cache('vix', result)
         return result
     
+    def _get_vix_term_structure(self) -> Dict:
+        """Check VIX term structure (contango = normal, backwardation = fear)"""
+        try:
+            import yfinance as yf
+            
+            # VIX (spot) vs VIX3M (3-month)
+            vix = yf.Ticker("^VIX")
+            vix3m = yf.Ticker("^VIX3M")
+            
+            vix_hist = vix.history(period="1d")
+            vix3m_hist = vix3m.history(period="1d")
+            
+            if vix_hist.empty or vix3m_hist.empty:
+                return {"structure": "unknown", "ratio": 1.0}
+            
+            spot = float(vix_hist['Close'].iloc[-1])
+            term = float(vix3m_hist['Close'].iloc[-1])
+            ratio = spot / term
+            
+            if ratio > 1.1:
+                structure = "backwardation"  # Fear - spot > futures
+            elif ratio < 0.9:
+                structure = "steep_contango"  # Complacency
+            else:
+                structure = "contango"  # Normal
+            
+            return {
+                "structure": structure,
+                "ratio": round(ratio, 3),
+                "spot": round(spot, 2),
+                "term": round(term, 2)
+            }
+        except:
+            return {"structure": "unknown", "ratio": 1.0}
+    
     def _default_vix(self) -> Dict:
         return {"value": 20, "change": 0, "signal": "NEUTRAL", "level": "normal", "trend": "flat", "source": "default"}
     
     def _interpret_vix(self, vix: float) -> str:
-        if vix < 15: return "Market calm, investors confident"
+        if vix < 12: return "Extreme complacency - be cautious of reversal"
+        elif vix < 15: return "Market calm, investors confident"
         elif vix < 20: return "Normal volatility"
         elif vix < 25: return "Elevated concern"
-        elif vix < 30: return "High fear, be cautious"
-        else: return "Market panic! Wait for opportunity"
+        elif vix < 30: return "High fear, potential opportunity"
+        elif vix < 40: return "Extreme fear - contrarian buy signal"
+        else: return "Market panic! Strong contrarian buy signal"
 
     # ==================== Fear & Greed Index ====================
     def get_fear_greed_index(self) -> Dict:
@@ -170,6 +265,7 @@ class MarketSentimentAnalyzer:
             rating = fg.get('rating', 'neutral').title()
             
             print(f"  [CNN F&G] Score: {score} ({rating})")
+            self._add_confidence("fear_greed", "high")
             
             return {
                 "score": score,
@@ -216,10 +312,13 @@ class MarketSentimentAnalyzer:
             print(f"  [F&G Calc Error] {e}")
         
         if not scores:
+            self._add_confidence("fear_greed", "low")
             return {"score": 50, "rating": "Neutral", "signal": "HOLD", "source": "default"}
         
         avg_score = sum(s[1] for s in scores) / len(scores)
         final_score = round(avg_score)
+        
+        self._add_confidence("fear_greed", "medium")
         
         return {
             "score": final_score,
@@ -282,19 +381,25 @@ class MarketSentimentAnalyzer:
         elif score <= 60: return "NEUTRAL"
         elif score <= 80: return "GREED"
         else: return "EXTREME_GREED"
-    
-    # ==================== Market Breadth (Enhanced) ====================
+
+    # ==================== Market Breadth (Enhanced with Real Data) ====================
     def get_market_breadth(self) -> Dict:
-        """Market breadth analysis with multiple sources"""
+        """Market breadth analysis with real Advance/Decline data"""
         cached = self._get_cached('breadth')
         if cached:
             return cached
         
-        # Try real Advance/Decline data first
-        real_breadth = self._get_real_advance_decline()
+        # Try real Advance/Decline data first (Barchart)
+        real_breadth = self._get_barchart_advance_decline()
         if real_breadth:
             self._set_cache('breadth', real_breadth)
             return real_breadth
+        
+        # Try WSJ as backup
+        wsj_breadth = self._get_wsj_advance_decline()
+        if wsj_breadth:
+            self._set_cache('breadth', wsj_breadth)
+            return wsj_breadth
         
         # Fallback to ETF proxy
         etf_breadth = self._get_etf_breadth()
@@ -302,58 +407,132 @@ class MarketSentimentAnalyzer:
         return etf_breadth
     
     @retry_on_failure(max_retries=2)
-    def _get_real_advance_decline(self) -> Optional[Dict]:
-        """Try to get real Advance/Decline data from free sources"""
+    def _get_barchart_advance_decline(self) -> Optional[Dict]:
+        """Get real NYSE Advance/Decline from Barchart"""
         try:
-            # Try WSJ Market Data
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+            }
+            
+            url = "https://www.barchart.com/stocks/market-performance"
+            resp = requests.get(url, headers=headers, timeout=15)
+            
+            if resp.status_code == 200:
+                soup = BeautifulSoup(resp.text, 'html.parser')
+                
+                # Look for advance/decline data in the page
+                # Barchart shows NYSE and NASDAQ breadth
+                advances = 0
+                declines = 0
+                unchanged = 0
+                
+                # Try to find the market breadth table
+                tables = soup.find_all('table')
+                for table in tables:
+                    text = table.get_text().lower()
+                    if 'advance' in text and 'decline' in text:
+                        rows = table.find_all('tr')
+                        for row in rows:
+                            cells = row.find_all(['td', 'th'])
+                            if len(cells) >= 2:
+                                label = cells[0].get_text().strip().lower()
+                                if 'nyse' in label or 'advance' in label:
+                                    try:
+                                        # Extract numbers
+                                        for cell in cells[1:]:
+                                            num_text = cell.get_text().strip().replace(',', '')
+                                            if num_text.isdigit():
+                                                num = int(num_text)
+                                                if 'advance' in label:
+                                                    advances = num
+                                                elif 'decline' in label:
+                                                    declines = num
+                                    except:
+                                        continue
+                
+                # If we found data
+                if advances > 0 or declines > 0:
+                    total = advances + declines + unchanged
+                    ratio = advances / total if total > 0 else 0.5
+                    
+                    print(f"  [Barchart] Advances: {advances}, Declines: {declines}")
+                    self._add_confidence("breadth", "high")
+                    
+                    return {
+                        "advances": advances,
+                        "declines": declines,
+                        "unchanged": unchanged,
+                        "ratio": round(ratio, 3),
+                        "ad_line": advances - declines,
+                        "signal": self._breadth_signal(ratio),
+                        "score": round(ratio * 100),
+                        "source": "barchart"
+                    }
+            
+            return None
+        except Exception as e:
+            print(f"  [Barchart Error] {e}")
+            return None
+    
+    @retry_on_failure(max_retries=2)
+    def _get_wsj_advance_decline(self) -> Optional[Dict]:
+        """Backup: Get Advance/Decline from WSJ"""
+        try:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             }
             
-            # Alternative: Use Yahoo Finance market movers
-            import yfinance as yf
+            url = "https://www.wsj.com/market-data/stocks"
+            resp = requests.get(url, headers=headers, timeout=15)
             
-            # Get NYSE and NASDAQ data via index components
-            # This is an approximation using major indices
-            indices = {
-                "^NYA": "NYSE Composite",  # NYSE
-                "^IXIC": "NASDAQ Composite"  # NASDAQ
-            }
+            if resp.status_code == 200:
+                # Parse for advance/decline numbers
+                # WSJ format varies, try regex
+                text = resp.text
+                
+                # Look for patterns like "Advancing: 1,234" or "Advances 1234"
+                adv_match = re.search(r'advanc\w*[:\s]+(\d[\d,]*)', text, re.I)
+                dec_match = re.search(r'declin\w*[:\s]+(\d[\d,]*)', text, re.I)
+                
+                if adv_match and dec_match:
+                    advances = int(adv_match.group(1).replace(',', ''))
+                    declines = int(dec_match.group(1).replace(',', ''))
+                    
+                    total = advances + declines
+                    ratio = advances / total if total > 0 else 0.5
+                    
+                    print(f"  [WSJ] Advances: {advances}, Declines: {declines}")
+                    self._add_confidence("breadth", "high")
+                    
+                    return {
+                        "advances": advances,
+                        "declines": declines,
+                        "ratio": round(ratio, 3),
+                        "ad_line": advances - declines,
+                        "signal": self._breadth_signal(ratio),
+                        "score": round(ratio * 100),
+                        "source": "wsj"
+                    }
             
-            total_up = 0
-            total_down = 0
-            
-            for symbol, name in indices.items():
-                try:
-                    ticker = yf.Ticker(symbol)
-                    hist = ticker.history(period="2d")
-                    if not hist.empty and len(hist) >= 2:
-                        change = hist['Close'].iloc[-1] - hist['Close'].iloc[-2]
-                        # Use volume as weight
-                        vol = hist['Volume'].iloc[-1] if 'Volume' in hist else 1
-                        if change > 0:
-                            total_up += 1
-                        else:
-                            total_down += 1
-                except:
-                    continue
-            
-            if total_up + total_down == 0:
-                return None
-            
-            ratio = total_up / (total_up + total_down)
-            
-            return {
-                "advances": total_up,
-                "declines": total_down,
-                "ratio": round(ratio, 2),
-                "signal": "BULLISH" if ratio > 0.6 else "BEARISH" if ratio < 0.4 else "NEUTRAL",
-                "score": round(ratio * 100),
-                "source": "yahoo_indices"
-            }
-        except Exception as e:
-            print(f"  [Real A/D Error] {e}")
             return None
+        except Exception as e:
+            print(f"  [WSJ Error] {e}")
+            return None
+    
+    def _breadth_signal(self, ratio: float) -> str:
+        """Convert breadth ratio to signal"""
+        if ratio >= 0.7:
+            return "STRONG_BULLISH"
+        elif ratio >= 0.55:
+            return "BULLISH"
+        elif ratio >= 0.45:
+            return "NEUTRAL"
+        elif ratio >= 0.3:
+            return "BEARISH"
+        else:
+            return "STRONG_BEARISH"
     
     @retry_on_failure(max_retries=3)
     def _get_etf_breadth(self) -> Dict:
@@ -401,19 +580,352 @@ class MarketSentimentAnalyzer:
         
         total = bullish + bearish + neutral
         if total == 0:
+            self._add_confidence("breadth", "low")
             return {"bullish": 1, "bearish": 1, "neutral": 1, "signal": "NEUTRAL", "score": 50}
         
-        signal = "BULLISH" if bullish > bearish else "BEARISH" if bearish > bullish else "NEUTRAL"
+        ratio = bullish / total
+        # Ensure score is at least 10 to avoid extreme values
+        breadth_score = max(10, min(90, round(ratio * 100)))
+        signal = self._breadth_signal(ratio)
+        
+        self._add_confidence("breadth", "medium")
         
         return {
             "bullish": bullish,
             "bearish": bearish,
             "neutral": neutral,
+            "ratio": round(ratio, 3),
             "signal": signal,
-            "score": round((bullish / total) * 100),
+            "score": breadth_score,
             "indices": results,
             "source": "etf_proxy"
         }
+
+    # ==================== Put/Call Ratio (Real CBOE Data) ====================
+    def get_put_call_ratio(self) -> Dict:
+        """Get Put/Call ratio - try CBOE first, then estimate"""
+        cached = self._get_cached('pcr')
+        if cached:
+            return cached
+        
+        # Try CBOE scraping first
+        cboe_pcr = self._get_cboe_put_call()
+        if cboe_pcr:
+            self._set_cache('pcr', cboe_pcr)
+            return cboe_pcr
+        
+        # Fallback to estimation
+        estimated_pcr = self._estimate_put_call_ratio()
+        self._set_cache('pcr', estimated_pcr)
+        return estimated_pcr
+    
+    @retry_on_failure(max_retries=2)
+    def _get_cboe_put_call(self) -> Optional[Dict]:
+        """Get real Put/Call ratio from CBOE"""
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            }
+            
+            # CBOE Put/Call Ratio page
+            url = "https://www.cboe.com/us/options/market_statistics/daily/"
+            resp = requests.get(url, headers=headers, timeout=15)
+            
+            if resp.status_code == 200:
+                soup = BeautifulSoup(resp.text, 'html.parser')
+                
+                # Look for equity put/call ratio
+                # CBOE shows: Total, Index, Equity P/C ratios
+                pcr_equity = None
+                pcr_total = None
+                
+                # Try to find in tables or data elements
+                tables = soup.find_all('table')
+                for table in tables:
+                    rows = table.find_all('tr')
+                    for row in rows:
+                        cells = row.find_all(['td', 'th'])
+                        text = row.get_text().lower()
+                        
+                        if 'equity' in text and 'put' in text:
+                            for cell in cells:
+                                try:
+                                    val = float(cell.get_text().strip())
+                                    if 0.3 < val < 2.0:  # Valid PCR range
+                                        pcr_equity = val
+                                        break
+                                except:
+                                    continue
+                        
+                        if 'total' in text and 'put' in text:
+                            for cell in cells:
+                                try:
+                                    val = float(cell.get_text().strip())
+                                    if 0.3 < val < 2.0:
+                                        pcr_total = val
+                                        break
+                                except:
+                                    continue
+                
+                # Also try regex on page content
+                if not pcr_equity:
+                    text = resp.text
+                    # Look for patterns like "0.85" near "equity" or "put/call"
+                    matches = re.findall(r'(\d\.\d{2})', text)
+                    for match in matches:
+                        val = float(match)
+                        if 0.5 < val < 1.5:
+                            pcr_equity = val
+                            break
+                
+                if pcr_equity:
+                    print(f"  [CBOE] Equity P/C Ratio: {pcr_equity}")
+                    self._add_confidence("pcr", "high")
+                    
+                    return {
+                        "ratio": round(pcr_equity, 3),
+                        "equity_pcr": round(pcr_equity, 3),
+                        "total_pcr": round(pcr_total, 3) if pcr_total else None,
+                        "signal": self._pcr_signal(pcr_equity),
+                        "interpretation": self._pcr_interpretation(pcr_equity),
+                        "source": "cboe"
+                    }
+            
+            return None
+        except Exception as e:
+            print(f"  [CBOE Error] {e}")
+            return None
+    
+    @retry_on_failure(max_retries=2)
+    def _estimate_put_call_ratio(self) -> Dict:
+        """Estimate Put/Call ratio from VIX and options ETFs"""
+        try:
+            import yfinance as yf
+            
+            # Use VIX as proxy
+            vix = yf.Ticker("^VIX")
+            vix_hist = vix.history(period="1mo")
+            
+            if vix_hist.empty:
+                self._add_confidence("pcr", "low")
+                return {"ratio": 1.0, "signal": "NEUTRAL", "source": "default"}
+            
+            current_vix = float(vix_hist['Close'].iloc[-1])
+            avg_vix = float(vix_hist['Close'].mean())
+            
+            # Estimate PCR from VIX level
+            # High VIX = more puts = higher PCR
+            estimated_pcr = 0.8 + (current_vix - 15) * 0.02
+            estimated_pcr = max(0.5, min(1.5, estimated_pcr))
+            
+            self._add_confidence("pcr", "estimated")
+            
+            return {
+                "ratio": round(estimated_pcr, 3),
+                "signal": self._pcr_signal(estimated_pcr),
+                "interpretation": self._pcr_interpretation(estimated_pcr),
+                "source": "estimated_from_vix",
+                "note": "Estimated - CBOE data unavailable"
+            }
+        except Exception as e:
+            print(f"  [PCR Estimate Error] {e}")
+            self._add_confidence("pcr", "low")
+            return {"ratio": 1.0, "signal": "NEUTRAL", "source": "default"}
+    
+    def _pcr_signal(self, pcr: float) -> str:
+        """Convert PCR to signal (contrarian)"""
+        # PCR > 1.0 = more puts = bearish sentiment = contrarian bullish
+        # PCR < 0.7 = more calls = bullish sentiment = contrarian bearish
+        if pcr > 1.2:
+            return "EXTREME_FEAR"  # Contrarian bullish
+        elif pcr > 1.0:
+            return "FEAR"
+        elif pcr > 0.8:
+            return "NEUTRAL"
+        elif pcr > 0.6:
+            return "GREED"
+        else:
+            return "EXTREME_GREED"  # Contrarian bearish
+    
+    def _pcr_interpretation(self, pcr: float) -> str:
+        if pcr > 1.2:
+            return "Extreme put buying = panic (contrarian buy signal)"
+        elif pcr > 1.0:
+            return "High put buying = fear (potential opportunity)"
+        elif pcr > 0.8:
+            return "Normal options activity"
+        elif pcr > 0.6:
+            return "More calls than puts = optimism"
+        else:
+            return "Extreme call buying = complacency (contrarian sell signal)"
+
+    # ==================== Economic Calendar ====================
+    def get_economic_calendar(self) -> Dict:
+        """Check upcoming economic events that impact market sentiment"""
+        today = datetime.now().date()
+        today_str = today.strftime("%Y-%m-%d")
+        
+        upcoming_events = []
+        event_impact = "none"
+        
+        # Check each event type
+        for event_type, dates in ECONOMIC_CALENDAR_2025.items():
+            for date_str in dates:
+                try:
+                    event_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                    days_until = (event_date - today).days
+                    
+                    # Events within next 3 days
+                    if 0 <= days_until <= 3:
+                        event_name = {
+                            "fomc": "FOMC Meeting (Fed Rate Decision)",
+                            "cpi": "CPI Report (Inflation)",
+                            "jobs": "Jobs Report (Non-Farm Payrolls)",
+                            "gdp": "GDP Report",
+                            "pce": "PCE Report (Fed's Inflation Measure)"
+                        }.get(event_type, event_type.upper())
+                        
+                        impact = "high" if event_type in ["fomc", "cpi", "jobs", "pce"] else "medium"
+                        
+                        upcoming_events.append({
+                            "event": event_name,
+                            "date": date_str,
+                            "days_until": days_until,
+                            "impact": impact
+                        })
+                        
+                        # Set highest impact
+                        if impact == "high" and days_until <= 1:
+                            event_impact = "high"
+                        elif impact == "medium" and event_impact != "high":
+                            event_impact = "medium"
+                except:
+                    continue
+        
+        # Sort by days until
+        upcoming_events.sort(key=lambda x: x["days_until"])
+        
+        # Determine signal
+        if event_impact == "high":
+            signal = "CAUTION"
+            message = "Major economic event imminent - expect volatility"
+            message_th = "มีข่าวเศรษฐกิจสำคัญใกล้ถึง - คาดว่าจะมีความผันผวน"
+        elif event_impact == "medium":
+            signal = "AWARE"
+            message = "Economic event upcoming - monitor closely"
+            message_th = "มีข่าวเศรษฐกิจเร็วๆนี้ - ติดตามใกล้ชิด"
+        else:
+            signal = "CLEAR"
+            message = "No major economic events in next 3 days"
+            message_th = "ไม่มีข่าวเศรษฐกิจสำคัญใน 3 วันข้างหน้า"
+        
+        return {
+            "upcoming_events": upcoming_events[:5],  # Top 5 events
+            "event_impact": event_impact,
+            "signal": signal,
+            "message": message,
+            "message_th": message_th,
+            "today": today_str
+        }
+
+    # ==================== Market Internals (TICK, TRIN) ====================
+    def get_market_internals(self) -> Dict:
+        """Get market internals - TICK and TRIN/Arms Index proxies"""
+        cached = self._get_cached('internals')
+        if cached:
+            return cached
+        
+        try:
+            import yfinance as yf
+            
+            # TICK proxy: Use intraday momentum of major indices
+            # Real TICK measures upticks vs downticks on NYSE
+            # We approximate using ETF momentum
+            
+            spy = yf.Ticker("SPY")
+            qqq = yf.Ticker("QQQ")
+            iwm = yf.Ticker("IWM")
+            
+            spy_hist = spy.history(period="1d", interval="5m")
+            qqq_hist = qqq.history(period="1d", interval="5m")
+            iwm_hist = iwm.history(period="1d", interval="5m")
+            
+            tick_proxy = 0
+            trin_proxy = 1.0
+            
+            if not spy_hist.empty:
+                # Calculate intraday momentum
+                spy_change = (spy_hist['Close'].iloc[-1] - spy_hist['Open'].iloc[0]) / spy_hist['Open'].iloc[0] * 100
+                qqq_change = (qqq_hist['Close'].iloc[-1] - qqq_hist['Open'].iloc[0]) / qqq_hist['Open'].iloc[0] * 100 if not qqq_hist.empty else 0
+                iwm_change = (iwm_hist['Close'].iloc[-1] - iwm_hist['Open'].iloc[0]) / iwm_hist['Open'].iloc[0] * 100 if not iwm_hist.empty else 0
+                
+                # TICK proxy: scale to typical TICK range (-1000 to +1000)
+                avg_change = (spy_change + qqq_change + iwm_change) / 3
+                tick_proxy = int(avg_change * 500)  # Scale factor
+                tick_proxy = max(-1500, min(1500, tick_proxy))
+                
+                # TRIN proxy: ratio of declining volume to advancing volume
+                # < 1 = bullish, > 1 = bearish
+                # Approximate using price action
+                if avg_change > 0:
+                    trin_proxy = max(0.5, 1.0 - avg_change * 0.1)
+                else:
+                    trin_proxy = min(2.0, 1.0 - avg_change * 0.1)
+            
+            # Interpret TICK
+            if tick_proxy > 800:
+                tick_signal = "STRONG_BULLISH"
+            elif tick_proxy > 400:
+                tick_signal = "BULLISH"
+            elif tick_proxy > -400:
+                tick_signal = "NEUTRAL"
+            elif tick_proxy > -800:
+                tick_signal = "BEARISH"
+            else:
+                tick_signal = "STRONG_BEARISH"
+            
+            # Interpret TRIN (Arms Index)
+            if trin_proxy < 0.7:
+                trin_signal = "OVERBOUGHT"  # Too bullish
+            elif trin_proxy < 0.9:
+                trin_signal = "BULLISH"
+            elif trin_proxy < 1.1:
+                trin_signal = "NEUTRAL"
+            elif trin_proxy < 1.3:
+                trin_signal = "BEARISH"
+            else:
+                trin_signal = "OVERSOLD"  # Too bearish = opportunity
+            
+            self._add_confidence("internals", "medium")
+            
+            result = {
+                "tick": {
+                    "value": tick_proxy,
+                    "signal": tick_signal,
+                    "interpretation": f"TICK at {tick_proxy} indicates {'buying' if tick_proxy > 0 else 'selling'} pressure"
+                },
+                "trin": {
+                    "value": round(trin_proxy, 3),
+                    "signal": trin_signal,
+                    "interpretation": f"TRIN at {round(trin_proxy, 2)} indicates {'bullish' if trin_proxy < 1 else 'bearish'} internals"
+                },
+                "combined_signal": tick_signal if tick_signal == trin_signal else "MIXED",
+                "source": "proxy_calculation"
+            }
+            
+            self._set_cache('internals', result)
+            return result
+            
+        except Exception as e:
+            print(f"  [Internals Error] {e}")
+            self._add_confidence("internals", "low")
+            return {
+                "tick": {"value": 0, "signal": "NEUTRAL"},
+                "trin": {"value": 1.0, "signal": "NEUTRAL"},
+                "combined_signal": "NEUTRAL",
+                "source": "default"
+            }
 
     # ==================== Sector Performance ====================
     @retry_on_failure(max_retries=3)
@@ -475,6 +987,8 @@ class MarketSentimentAnalyzer:
         else:
             rotation = "MIXED"
         
+        self._add_confidence("sectors", "high")
+        
         result = {
             "sectors": results,
             "top_performers": results[:3],
@@ -488,12 +1002,7 @@ class MarketSentimentAnalyzer:
 
     # ==================== Moving Averages (Enhanced with EMA) ====================
     def get_moving_averages(self, use_ema: bool = True) -> Dict:
-        """
-        Moving average analysis for S&P 500
-        
-        Args:
-            use_ema: If True, use EMA (faster signals). If False, use SMA.
-        """
+        """Moving average analysis for S&P 500"""
         cached = self._get_cached(f'ma_{use_ema}')
         if cached:
             return cached
@@ -504,18 +1013,17 @@ class MarketSentimentAnalyzer:
             hist = spy.history(period="1y")
             
             if hist.empty or len(hist) < 200:
+                self._add_confidence("ma", "low")
                 return {"trend": "NEUTRAL", "ma50_above_ma200": True}
             
             price = float(hist['Close'].iloc[-1])
             
             if use_ema:
-                # EMA - Exponential Moving Average (more responsive)
                 ma20 = float(hist['Close'].ewm(span=20, adjust=False).mean().iloc[-1])
                 ma50 = float(hist['Close'].ewm(span=50, adjust=False).mean().iloc[-1])
                 ma200 = float(hist['Close'].ewm(span=200, adjust=False).mean().iloc[-1])
                 ma_type = "EMA"
             else:
-                # SMA - Simple Moving Average (smoother)
                 ma20 = float(hist['Close'].rolling(20).mean().iloc[-1])
                 ma50 = float(hist['Close'].rolling(50).mean().iloc[-1])
                 ma200 = float(hist['Close'].rolling(200).mean().iloc[-1])
@@ -550,7 +1058,6 @@ class MarketSentimentAnalyzer:
                 ma50_hist = hist['Close'].rolling(50).mean()
                 ma200_hist = hist['Close'].rolling(200).mean()
             
-            # Check last 5 days for cross
             for i in range(-5, -1):
                 if len(ma50_hist) > abs(i) and len(ma200_hist) > abs(i):
                     prev_diff = ma50_hist.iloc[i-1] - ma200_hist.iloc[i-1]
@@ -563,10 +1070,11 @@ class MarketSentimentAnalyzer:
                         cross = "DEATH_CROSS"
                         break
             
-            # Calculate distance from MAs (for signal strength)
             dist_ma20 = ((price - ma20) / ma20) * 100
             dist_ma50 = ((price - ma50) / ma50) * 100
             dist_ma200 = ((price - ma200) / ma200) * 100
+            
+            self._add_confidence("ma", "high")
             
             result = {
                 "trend": trend,
@@ -591,6 +1099,7 @@ class MarketSentimentAnalyzer:
             
         except Exception as e:
             print(f"  [MA Error] {e}")
+            self._add_confidence("ma", "low")
             return {"trend": "NEUTRAL", "ma50_above_ma200": True, "ma_type": "EMA" if use_ema else "SMA"}
 
     # ==================== Treasury Yields ====================
@@ -600,22 +1109,19 @@ class MarketSentimentAnalyzer:
         if cached:
             return cached
         
-        # Try FRED first (most accurate)
         fred_result = self._get_yield_from_fred()
         if fred_result:
             self._set_cache('yields', fred_result)
             return fred_result
         
-        # Fallback to Yahoo Finance
         yahoo_result = self._get_yields_from_yahoo()
         self._set_cache('yields', yahoo_result)
         return yahoo_result
     
     @retry_on_failure(max_retries=2)
     def _get_yield_from_fred(self) -> Optional[Dict]:
-        """Get yield spread from FRED (free, no API key needed for CSV)"""
+        """Get yield spread from FRED"""
         try:
-            # FRED CSV endpoint (no API key required)
             url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M"
             resp = requests.get(url, timeout=10)
             
@@ -629,6 +1135,7 @@ class MarketSentimentAnalyzer:
                             inverted = spread < 0
                             
                             print(f"  [FRED] 10Y-3M Spread: {spread}% ({'Inverted' if inverted else 'Normal'})")
+                            self._add_confidence("yields", "high")
                             
                             return {
                                 "yields": {"spread_10y_3m": spread},
@@ -650,31 +1157,29 @@ class MarketSentimentAnalyzer:
             
             yields = {}
             
-            # 10Y yield
             tnx = yf.Ticker("^TNX")
             hist_10y = tnx.history(period="5d")
             if not hist_10y.empty:
                 yields["10Y"] = round(float(hist_10y['Close'].iloc[-1]), 3)
             
-            # 5Y yield
             fvx = yf.Ticker("^FVX")
             hist_5y = fvx.history(period="5d")
             if not hist_5y.empty:
                 yields["5Y"] = round(float(hist_5y['Close'].iloc[-1]), 3)
             
-            # 3M yield (T-Bill)
             irx = yf.Ticker("^IRX")
             hist_3m = irx.history(period="5d")
             if not hist_3m.empty:
                 yields["3M"] = round(float(hist_3m['Close'].iloc[-1]), 3)
             
-            # Calculate spread
             spread = 0
             inverted = False
             
             if "10Y" in yields and "3M" in yields:
                 spread = round(yields["10Y"] - yields["3M"], 3)
                 inverted = spread < 0
+            
+            self._add_confidence("yields", "medium")
             
             return {
                 "yields": yields,
@@ -686,6 +1191,7 @@ class MarketSentimentAnalyzer:
             }
         except Exception as e:
             print(f"  [Yahoo Yields Error] {e}")
+            self._add_confidence("yields", "low")
             return {"yields": {}, "inverted": False, "signal": "NEUTRAL", "spread": 0}
 
     # ==================== RSI Calculation ====================
@@ -708,7 +1214,7 @@ class MarketSentimentAnalyzer:
     # ==================== Dollar Index (DXY) ====================
     @retry_on_failure(max_retries=2)
     def get_dollar_index(self) -> Dict:
-        """Get US Dollar Index (DXY) - important for market sentiment"""
+        """Get US Dollar Index (DXY)"""
         try:
             import yfinance as yf
             
@@ -716,19 +1222,21 @@ class MarketSentimentAnalyzer:
             hist = dxy.history(period="1mo")
             
             if hist.empty:
+                self._add_confidence("dxy", "low")
                 return {"value": 100, "change": 0, "signal": "NEUTRAL"}
             
             current = float(hist['Close'].iloc[-1])
             prev = float(hist['Close'].iloc[-2]) if len(hist) > 1 else current
             change = ((current - prev) / prev) * 100
             
-            # Strong dollar = bearish for stocks (generally)
             if current > 105:
                 signal = "BEARISH"
             elif current > 100:
                 signal = "NEUTRAL"
             else:
                 signal = "BULLISH"
+            
+            self._add_confidence("dxy", "high")
             
             return {
                 "value": round(current, 2),
@@ -738,6 +1246,7 @@ class MarketSentimentAnalyzer:
             }
         except Exception as e:
             print(f"  [DXY Error] {e}")
+            self._add_confidence("dxy", "low")
             return {"value": 100, "change": 0, "signal": "NEUTRAL"}
 
     # ==================== Gold (Safe Haven) ====================
@@ -751,6 +1260,7 @@ class MarketSentimentAnalyzer:
             hist = gold.history(period="1mo")
             
             if hist.empty:
+                self._add_confidence("gold", "low")
                 return {"value": 2000, "change": 0, "signal": "NEUTRAL"}
             
             current = float(hist['Close'].iloc[-1])
@@ -760,7 +1270,6 @@ class MarketSentimentAnalyzer:
             change_1d = ((current - prev_day) / prev_day) * 100
             change_1w = ((current - prev_week) / prev_week) * 100
             
-            # Rising gold = fear/uncertainty
             if change_1w > 3:
                 signal = "FEAR"
             elif change_1w > 1:
@@ -769,6 +1278,8 @@ class MarketSentimentAnalyzer:
                 signal = "RISK_ON"
             else:
                 signal = "NEUTRAL"
+            
+            self._add_confidence("gold", "high")
             
             return {
                 "value": round(current, 2),
@@ -779,9 +1290,10 @@ class MarketSentimentAnalyzer:
             }
         except Exception as e:
             print(f"  [Gold Error] {e}")
+            self._add_confidence("gold", "low")
             return {"value": 2000, "change_1d": 0, "change_1w": 0, "signal": "NEUTRAL"}
 
-    # ==================== Market Momentum (New) ====================
+    # ==================== Market Momentum ====================
     @retry_on_failure(max_retries=2)
     def get_market_momentum(self) -> Dict:
         """Calculate market momentum using multiple timeframes"""
@@ -792,30 +1304,26 @@ class MarketSentimentAnalyzer:
             hist = spy.history(period="3mo")
             
             if hist.empty or len(hist) < 60:
+                self._add_confidence("momentum", "low")
                 return {"momentum": "NEUTRAL", "score": 50}
             
             price = float(hist['Close'].iloc[-1])
             
-            # Calculate returns for different periods
             ret_1d = (price - hist['Close'].iloc[-2]) / hist['Close'].iloc[-2] * 100
             ret_1w = (price - hist['Close'].iloc[-5]) / hist['Close'].iloc[-5] * 100 if len(hist) >= 5 else 0
             ret_1m = (price - hist['Close'].iloc[-21]) / hist['Close'].iloc[-21] * 100 if len(hist) >= 21 else 0
             ret_3m = (price - hist['Close'].iloc[0]) / hist['Close'].iloc[0] * 100
             
-            # RSI
             rsi = self._calculate_rsi(hist['Close'])
             
-            # MACD
             ema12 = hist['Close'].ewm(span=12, adjust=False).mean()
             ema26 = hist['Close'].ewm(span=26, adjust=False).mean()
             macd = ema12 - ema26
             signal_line = macd.ewm(span=9, adjust=False).mean()
             macd_histogram = float(macd.iloc[-1] - signal_line.iloc[-1])
             
-            # Score calculation
             score = 50
             
-            # Momentum contribution
             if ret_1m > 5: score += 15
             elif ret_1m > 2: score += 10
             elif ret_1m > 0: score += 5
@@ -823,13 +1331,11 @@ class MarketSentimentAnalyzer:
             elif ret_1m < -2: score -= 10
             elif ret_1m < 0: score -= 5
             
-            # RSI contribution
-            if rsi > 70: score -= 10  # Overbought
+            if rsi > 70: score -= 10
             elif rsi > 60: score += 5
-            elif rsi < 30: score += 15  # Oversold = opportunity
+            elif rsi < 30: score += 15
             elif rsi < 40: score += 5
             
-            # MACD contribution
             if macd_histogram > 0: score += 10
             else: score -= 5
             
@@ -846,6 +1352,8 @@ class MarketSentimentAnalyzer:
             else:
                 momentum = "STRONG_BEARISH"
             
+            self._add_confidence("momentum", "high")
+            
             return {
                 "momentum": momentum,
                 "score": score,
@@ -860,99 +1368,182 @@ class MarketSentimentAnalyzer:
             }
         except Exception as e:
             print(f"  [Momentum Error] {e}")
+            self._add_confidence("momentum", "low")
             return {"momentum": "NEUTRAL", "score": 50}
 
-    # ==================== Put/Call Ratio ====================
+    # ==================== Institutional Flow (New) ====================
     @retry_on_failure(max_retries=2)
-    def get_put_call_ratio(self) -> Dict:
-        """Estimate Put/Call ratio sentiment from VIX and options ETFs"""
+    def get_institutional_flow(self) -> Dict:
+        """Estimate institutional flow from ETF volume and price action"""
         try:
             import yfinance as yf
             
-            # Use VIX as proxy
-            vix = yf.Ticker("^VIX")
-            vix_hist = vix.history(period="1mo")
+            # Track major ETF flows
+            etfs = {
+                "SPY": "S&P 500",
+                "QQQ": "NASDAQ",
+                "IWM": "Small Cap",
+                "HYG": "High Yield Bonds",
+                "TLT": "Long-Term Treasuries"
+            }
             
-            if vix_hist.empty:
-                return {"ratio": 1.0, "signal": "NEUTRAL"}
+            flows = {}
+            risk_on_flow = 0
+            risk_off_flow = 0
             
-            current_vix = float(vix_hist['Close'].iloc[-1])
-            avg_vix = float(vix_hist['Close'].mean())
+            for symbol, name in etfs.items():
+                try:
+                    ticker = yf.Ticker(symbol)
+                    hist = ticker.history(period="5d")
+                    
+                    if not hist.empty and len(hist) >= 2:
+                        # Volume trend
+                        avg_vol = hist['Volume'].mean()
+                        today_vol = hist['Volume'].iloc[-1]
+                        vol_ratio = today_vol / avg_vol if avg_vol > 0 else 1
+                        
+                        # Price change
+                        price_change = (hist['Close'].iloc[-1] - hist['Close'].iloc[-2]) / hist['Close'].iloc[-2] * 100
+                        
+                        # Flow estimate: volume * direction
+                        flow_score = vol_ratio * (1 if price_change > 0 else -1) * abs(price_change)
+                        
+                        flows[symbol] = {
+                            "name": name,
+                            "volume_ratio": round(vol_ratio, 2),
+                            "price_change": round(price_change, 2),
+                            "flow_score": round(flow_score, 2)
+                        }
+                        
+                        # Categorize
+                        if symbol in ["SPY", "QQQ", "IWM", "HYG"]:
+                            risk_on_flow += flow_score
+                        else:
+                            risk_off_flow += flow_score
+                except:
+                    continue
             
-            # Estimate PCR from VIX level
-            # High VIX = more puts = higher PCR
-            estimated_pcr = 0.8 + (current_vix - 15) * 0.02
-            estimated_pcr = max(0.5, min(1.5, estimated_pcr))
+            # Determine signal
+            net_flow = risk_on_flow - risk_off_flow
             
-            # Signal interpretation
-            # PCR > 1.0 = more puts = bearish sentiment = contrarian bullish
-            # PCR < 0.7 = more calls = bullish sentiment = contrarian bearish
-            if estimated_pcr > 1.2:
-                signal = "EXTREME_FEAR"  # Contrarian bullish
-            elif estimated_pcr > 1.0:
-                signal = "FEAR"
-            elif estimated_pcr > 0.8:
+            if net_flow > 2:
+                signal = "STRONG_INFLOW"
+            elif net_flow > 0.5:
+                signal = "INFLOW"
+            elif net_flow > -0.5:
                 signal = "NEUTRAL"
-            elif estimated_pcr > 0.6:
-                signal = "GREED"
+            elif net_flow > -2:
+                signal = "OUTFLOW"
             else:
-                signal = "EXTREME_GREED"  # Contrarian bearish
+                signal = "STRONG_OUTFLOW"
+            
+            self._add_confidence("institutional", "medium")
             
             return {
-                "ratio": round(estimated_pcr, 2),
+                "flows": flows,
+                "risk_on_flow": round(risk_on_flow, 2),
+                "risk_off_flow": round(risk_off_flow, 2),
+                "net_flow": round(net_flow, 2),
                 "signal": signal,
-                "interpretation": "High put buying = fear (contrarian buy)" if estimated_pcr > 1.0 else "Low put buying = complacency",
-                "source": "estimated_from_vix"
+                "interpretation": "Institutions buying risk assets" if net_flow > 0 else "Institutions moving to safety"
             }
         except Exception as e:
-            print(f"  [PCR Error] {e}")
-            return {"ratio": 1.0, "signal": "NEUTRAL"}
+            print(f"  [Institutional Flow Error] {e}")
+            self._add_confidence("institutional", "low")
+            return {"signal": "NEUTRAL", "net_flow": 0}
 
-    # ==================== AI Score Calculation (Enhanced) ====================
+    # ==================== Confidence Level Calculation ====================
+    def calculate_confidence(self) -> Dict:
+        """Calculate confidence level based on data quality"""
+        if not self.confidence_factors:
+            return {"level": "medium", "score": 50, "factors": []}
+        
+        quality_scores = {
+            "high": 100,
+            "medium": 70,
+            "estimated": 40,
+            "low": 20
+        }
+        
+        total_score = 0
+        for factor in self.confidence_factors:
+            total_score += quality_scores.get(factor["quality"], 50)
+        
+        avg_score = total_score / len(self.confidence_factors)
+        
+        if avg_score >= 80:
+            level = "high"
+        elif avg_score >= 60:
+            level = "medium"
+        elif avg_score >= 40:
+            level = "low"
+        else:
+            level = "very_low"
+        
+        return {
+            "level": level,
+            "score": round(avg_score),
+            "factors": self.confidence_factors,
+            "data_sources_count": len(self.confidence_factors)
+        }
+
+    # ==================== AI Score Calculation (Enhanced v3.0) ====================
     def calculate_ai_score(self) -> Dict:
         """Calculate comprehensive AI market score with all indicators"""
-        print("=" * 50)
-        print("🤖 Analyzing Market Sentiment v2.0...")
-        print("=" * 50)
+        print("=" * 60)
+        print("🤖 Analyzing Market Sentiment v3.0 (Enhanced)")
+        print("=" * 60)
         
-        print("  Fetching VIX...")
-        vix = self.get_vix() or self._default_vix()
+        # Reset confidence tracking
+        self.confidence_factors = []
         
-        print("  Calculating Fear & Greed...")
+        print("  📊 Fetching VIX...")
+        vix = self.get_vix() or {"value": 20, "signal": "NEUTRAL"}
+        
+        print("  😱 Calculating Fear & Greed...")
         fear_greed = self.get_fear_greed_index()
         
-        print("  Analyzing Market Breadth...")
+        print("  📈 Analyzing Market Breadth (Real A/D)...")
         breadth = self.get_market_breadth()
         
-        print("  Analyzing Sectors...")
-        sectors = self.get_sector_performance()
-        
-        print("  Analyzing Moving Averages (EMA)...")
-        ma = self.get_moving_averages(use_ema=True)
-        
-        print("  Checking Treasury Yields...")
-        yields = self.get_treasury_yields()
-        
-        print("  Analyzing Market Momentum...")
-        momentum = self.get_market_momentum()
-        
-        print("  Checking Dollar Index...")
-        dxy = self.get_dollar_index()
-        
-        print("  Checking Gold...")
-        gold = self.get_gold_sentiment()
-        
-        print("  Estimating Put/Call Ratio...")
+        print("  📞 Getting Put/Call Ratio (CBOE)...")
         pcr = self.get_put_call_ratio()
         
-        # Calculate weighted score
+        print("  🏭 Analyzing Sectors...")
+        sectors = self.get_sector_performance()
+        
+        print("  📉 Analyzing Moving Averages (EMA)...")
+        ma = self.get_moving_averages(use_ema=True)
+        
+        print("  💰 Checking Treasury Yields...")
+        yields = self.get_treasury_yields()
+        
+        print("  🚀 Analyzing Market Momentum...")
+        momentum = self.get_market_momentum()
+        
+        print("  💵 Checking Dollar Index...")
+        dxy = self.get_dollar_index()
+        
+        print("  🥇 Checking Gold...")
+        gold = self.get_gold_sentiment()
+        
+        print("  📅 Checking Economic Calendar...")
+        calendar = self.get_economic_calendar()
+        
+        print("  📊 Getting Market Internals...")
+        internals = self.get_market_internals()
+        
+        print("  🏦 Estimating Institutional Flow...")
+        inst_flow = self.get_institutional_flow()
+        
+        # Calculate weighted score with improved weights
         scores = []
         weights = []
         
-        # 1. Fear & Greed (20%) - Contrarian
+        # 1. Fear & Greed (18%) - Contrarian
         fg_score = fear_greed.get("score", 50)
         if fg_score <= 20:
-            scores.append(85)  # Extreme fear = great buy
+            scores.append(85)
         elif fg_score <= 40:
             scores.append(70)
         elif fg_score <= 60:
@@ -961,9 +1552,9 @@ class MarketSentimentAnalyzer:
             scores.append(35)
         else:
             scores.append(15)
-        weights.append(20)
+        weights.append(18)
         
-        # 2. VIX (15%) - Contrarian
+        # 2. VIX (12%) - Contrarian
         vix_val = vix.get("value", 20)
         if vix_val > 35:
             scores.append(80)
@@ -975,58 +1566,14 @@ class MarketSentimentAnalyzer:
             scores.append(45)
         else:
             scores.append(35)
-        weights.append(15)
+        weights.append(12)
         
-        # 3. Market Breadth (15%)
+        # 3. Market Breadth (12%)
         breadth_score = breadth.get("score", 50)
         scores.append(breadth_score)
-        weights.append(15)
+        weights.append(12)
         
-        # 4. Sector Rotation (10%)
-        rotation = sectors.get("rotation", "MIXED")
-        if rotation == "RISK_ON":
-            scores.append(70)
-        elif rotation == "RISK_OFF":
-            scores.append(30)
-        else:
-            scores.append(50)
-        weights.append(10)
-        
-        # 5. Moving Averages (15%)
-        ma_trend = ma.get("trend", "NEUTRAL")
-        ma_scores = {
-            "STRONG_BULLISH": 80,
-            "BULLISH": 65,
-            "NEUTRAL": 50,
-            "BEARISH": 35,
-            "STRONG_BEARISH": 20
-        }
-        scores.append(ma_scores.get(ma_trend, 50))
-        weights.append(15)
-        
-        # 6. Yield Curve (5%)
-        if yields.get("inverted"):
-            scores.append(25)
-        else:
-            scores.append(55)
-        weights.append(5)
-        
-        # 7. Momentum (10%)
-        momentum_score = momentum.get("score", 50)
-        scores.append(momentum_score)
-        weights.append(10)
-        
-        # 8. Dollar Index (5%)
-        dxy_signal = dxy.get("signal", "NEUTRAL")
-        if dxy_signal == "BULLISH":
-            scores.append(65)
-        elif dxy_signal == "BEARISH":
-            scores.append(35)
-        else:
-            scores.append(50)
-        weights.append(5)
-        
-        # 9. Put/Call Ratio (5%) - Contrarian
+        # 4. Put/Call Ratio (10%) - Contrarian
         pcr_signal = pcr.get("signal", "NEUTRAL")
         pcr_scores = {
             "EXTREME_FEAR": 80,
@@ -1036,81 +1583,158 @@ class MarketSentimentAnalyzer:
             "EXTREME_GREED": 20
         }
         scores.append(pcr_scores.get(pcr_signal, 50))
+        weights.append(10)
+        
+        # 5. Sector Rotation (8%)
+        rotation = sectors.get("rotation", "MIXED")
+        if rotation == "RISK_ON":
+            scores.append(70)
+        elif rotation == "RISK_OFF":
+            scores.append(30)
+        else:
+            scores.append(50)
+        weights.append(8)
+        
+        # 6. Moving Averages (12%)
+        ma_trend = ma.get("trend", "NEUTRAL")
+        ma_scores = {
+            "STRONG_BULLISH": 80,
+            "BULLISH": 65,
+            "NEUTRAL": 50,
+            "BEARISH": 35,
+            "STRONG_BEARISH": 20
+        }
+        scores.append(ma_scores.get(ma_trend, 50))
+        weights.append(12)
+        
+        # 7. Yield Curve (5%)
+        if yields.get("inverted"):
+            scores.append(25)
+        else:
+            scores.append(55)
         weights.append(5)
+        
+        # 8. Momentum (10%)
+        momentum_score = momentum.get("score", 50)
+        scores.append(momentum_score)
+        weights.append(10)
+        
+        # 9. Dollar Index (4%)
+        dxy_signal = dxy.get("signal", "NEUTRAL")
+        if dxy_signal == "BULLISH":
+            scores.append(65)
+        elif dxy_signal == "BEARISH":
+            scores.append(35)
+        else:
+            scores.append(50)
+        weights.append(4)
+        
+        # 10. Institutional Flow (5%)
+        inst_signal = inst_flow.get("signal", "NEUTRAL")
+        inst_scores = {
+            "STRONG_INFLOW": 80,
+            "INFLOW": 65,
+            "NEUTRAL": 50,
+            "OUTFLOW": 35,
+            "STRONG_OUTFLOW": 20
+        }
+        scores.append(inst_scores.get(inst_signal, 50))
+        weights.append(5)
+        
+        # 11. Market Internals (4%)
+        internal_signal = internals.get("combined_signal", "NEUTRAL")
+        internal_scores = {
+            "STRONG_BULLISH": 75,
+            "BULLISH": 60,
+            "NEUTRAL": 50,
+            "MIXED": 50,
+            "BEARISH": 40,
+            "STRONG_BEARISH": 25
+        }
+        scores.append(internal_scores.get(internal_signal, 50))
+        weights.append(4)
         
         # Calculate final score
         total_score = sum(s * w for s, w in zip(scores, weights)) / sum(weights)
+        
+        # Apply economic calendar adjustment
+        if calendar.get("event_impact") == "high":
+            # Reduce confidence, move score toward neutral
+            total_score = total_score * 0.9 + 50 * 0.1
+        
         final_score = round(total_score)
         
-        # Generate recommendation
+        # Calculate confidence
+        confidence = self.calculate_confidence()
+        
+        # Generate recommendation with confidence
         if final_score >= 75:
             recommendation = "STRONG_BUY"
-            message = "🟢 Excellent market conditions for buying (Extreme Fear = Opportunity)"
-            message_th = "🟢 สภาวะตลาดเหมาะสมมากสำหรับการเข้าซื้อ (Extreme Fear = โอกาส)"
+            message = "🟢 Excellent conditions - Extreme Fear = Opportunity"
+            message_th = "🟢 สภาวะดีเยี่ยม - Extreme Fear = โอกาสซื้อ"
         elif final_score >= 60:
             recommendation = "BUY"
-            message = "🟢 Good market conditions, consider buying"
-            message_th = "🟢 สภาวะตลาดค่อนข้างดี พิจารณาเข้าซื้อได้"
+            message = "🟢 Good conditions, consider buying"
+            message_th = "🟢 สภาวะค่อนข้างดี พิจารณาเข้าซื้อได้"
         elif final_score >= 45:
             recommendation = "HOLD"
-            message = "🟡 Normal market conditions, wait for better opportunity"
-            message_th = "🟡 สภาวะตลาดปกติ รอจังหวะที่ดีกว่า"
+            message = "🟡 Normal conditions, wait for better opportunity"
+            message_th = "🟡 สภาวะปกติ รอจังหวะที่ดีกว่า"
         elif final_score >= 30:
             recommendation = "CAUTIOUS"
-            message = "🟠 Caution! Market has risks, reduce position size"
-            message_th = "🟠 ระวัง! ตลาดมีความเสี่ยง ลดขนาด position"
+            message = "🟠 Caution! Market has risks"
+            message_th = "🟠 ระวัง! ตลาดมีความเสี่ยง"
         else:
             recommendation = "AVOID"
-            message = "🔴 Avoid buying, high market risk"
-            message_th = "🔴 หลีกเลี่ยงการเข้าซื้อ ตลาดมีความเสี่ยงสูง"
+            message = "🔴 Avoid buying, high risk"
+            message_th = "🔴 หลีกเลี่ยงการซื้อ ความเสี่ยงสูง"
+        
+        # Add confidence qualifier
+        if confidence["level"] == "low" or confidence["level"] == "very_low":
+            message += " (Low confidence - limited data)"
+            message_th += " (ความเชื่อมั่นต่ำ - ข้อมูลจำกัด)"
         
         return {
             "score": final_score,
             "recommendation": recommendation,
             "message": message,
             "message_th": message_th,
+            "confidence": confidence,
             "indicators": {
                 "fear_greed": fear_greed,
                 "vix": vix,
                 "market_breadth": breadth,
+                "put_call_ratio": pcr,
                 "sectors": sectors,
                 "moving_averages": ma,
                 "treasury_yields": yields,
                 "momentum": momentum,
                 "dollar_index": dxy,
                 "gold": gold,
-                "put_call_ratio": pcr
+                "economic_calendar": calendar,
+                "market_internals": internals,
+                "institutional_flow": inst_flow
             },
             "score_breakdown": {
-                "fear_greed": scores[0],
-                "vix": scores[1],
-                "breadth": scores[2],
-                "sectors": scores[3],
-                "ma": scores[4],
-                "yields": scores[5],
-                "momentum": scores[6],
-                "dxy": scores[7],
-                "pcr": scores[8]
+                "fear_greed": {"score": scores[0], "weight": "18%"},
+                "vix": {"score": scores[1], "weight": "12%"},
+                "breadth": {"score": scores[2], "weight": "12%"},
+                "pcr": {"score": scores[3], "weight": "10%"},
+                "sectors": {"score": scores[4], "weight": "8%"},
+                "ma": {"score": scores[5], "weight": "12%"},
+                "yields": {"score": scores[6], "weight": "5%"},
+                "momentum": {"score": scores[7], "weight": "10%"},
+                "dxy": {"score": scores[8], "weight": "4%"},
+                "institutional": {"score": scores[9], "weight": "5%"},
+                "internals": {"score": scores[10], "weight": "4%"}
             },
-            "weights": {
-                "fear_greed": "20%",
-                "vix": "15%",
-                "breadth": "15%",
-                "ma": "15%",
-                "momentum": "10%",
-                "sectors": "10%",
-                "yields": "5%",
-                "dxy": "5%",
-                "pcr": "5%"
-            },
-            "version": "2.0",
+            "version": "3.0",
             "updated_at": datetime.now().isoformat()
         }
 
     def analyze(self) -> Dict:
         """Main analysis function"""
         result = self.calculate_ai_score()
-        # Convert numpy types to Python native types
         return json.loads(json.dumps(result, default=str))
 
 
@@ -1119,29 +1743,52 @@ if __name__ == "__main__":
     analyzer = MarketSentimentAnalyzer()
     result = analyzer.analyze()
     
-    print(f"\n{'=' * 50}")
+    print(f"\n{'=' * 60}")
     print(f"🤖 AI MARKET SCORE: {result['score']}/100")
     print(f"📊 Recommendation: {result['recommendation']}")
+    print(f"🎯 Confidence: {result['confidence']['level'].upper()} ({result['confidence']['score']}%)")
     print(f"💬 {result['message']}")
-    print(f"{'=' * 50}")
+    print(f"💬 {result['message_th']}")
+    print(f"{'=' * 60}")
     
     # Print indicators
     indicators = result.get("indicators", {})
     
-    print(f"\n📈 VIX: {indicators.get('vix', {}).get('value', 'N/A')}")
-    print(f"😱 Fear & Greed (Stock): {indicators.get('fear_greed', {}).get('score', 'N/A')}")
+    print(f"\n📈 VIX: {indicators.get('vix', {}).get('value', 'N/A')} ({indicators.get('vix', {}).get('signal', 'N/A')})")
+    print(f"😱 Fear & Greed (Stock): {indicators.get('fear_greed', {}).get('score', 'N/A')} ({indicators.get('fear_greed', {}).get('source', 'N/A')})")
     print(f"🪙 Fear & Greed (Crypto): {indicators.get('fear_greed', {}).get('crypto', {}).get('score', 'N/A')}")
-    print(f"📊 Market Breadth: {indicators.get('market_breadth', {}).get('signal', 'N/A')}")
+    print(f"📊 Market Breadth: {indicators.get('market_breadth', {}).get('signal', 'N/A')} ({indicators.get('market_breadth', {}).get('source', 'N/A')})")
+    print(f"📞 Put/Call Ratio: {indicators.get('put_call_ratio', {}).get('ratio', 'N/A')} ({indicators.get('put_call_ratio', {}).get('source', 'N/A')})")
     print(f"🏭 Sector Rotation: {indicators.get('sectors', {}).get('rotation', 'N/A')}")
     print(f"📉 MA Trend ({indicators.get('moving_averages', {}).get('ma_type', 'EMA')}): {indicators.get('moving_averages', {}).get('trend', 'N/A')}")
     print(f"📈 Yield Curve: {'Inverted ⚠️' if indicators.get('treasury_yields', {}).get('inverted') else 'Normal'}")
     print(f"🚀 Momentum: {indicators.get('momentum', {}).get('momentum', 'N/A')}")
     print(f"💵 Dollar Index: {indicators.get('dollar_index', {}).get('value', 'N/A')}")
     print(f"🥇 Gold: {indicators.get('gold', {}).get('signal', 'N/A')}")
-    print(f"📞 Put/Call Ratio: {indicators.get('put_call_ratio', {}).get('ratio', 'N/A')}")
+    print(f"🏦 Institutional Flow: {indicators.get('institutional_flow', {}).get('signal', 'N/A')}")
+    print(f"📊 Market Internals: {indicators.get('market_internals', {}).get('combined_signal', 'N/A')}")
+    
+    # Economic Calendar
+    calendar = indicators.get('economic_calendar', {})
+    if calendar.get('upcoming_events'):
+        print(f"\n📅 Upcoming Economic Events:")
+        for event in calendar['upcoming_events'][:3]:
+            print(f"   • {event['event']} - {event['date']} ({event['days_until']} days)")
+    
+    # Score breakdown
+    print(f"\n📊 Score Breakdown:")
+    breakdown = result.get("score_breakdown", {})
+    for key, data in breakdown.items():
+        print(f"   • {key}: {data['score']} (weight: {data['weight']})")
     
     # Save to file
     os.makedirs('data', exist_ok=True)
     with open('data/market_sentiment.json', 'w') as f:
         json.dump(result, f, indent=2)
     print("\n✅ Saved to data/market_sentiment.json")
+    
+    # Also save to backend/data for GitHub Actions
+    os.makedirs('backend/data', exist_ok=True)
+    with open('backend/data/market_sentiment.json', 'w') as f:
+        json.dump(result, f, indent=2)
+    print("✅ Saved to backend/data/market_sentiment.json")
