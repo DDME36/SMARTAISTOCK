@@ -138,9 +138,19 @@ export default function SignalsCard() {
 
   const isOBAlert = (type?: string) => type?.includes('ob_entry_') || type?.includes('ob_near_')
 
-  // Determine how many alerts to show
-  const maxAlerts = isMobile && !showAll ? 3 : 6
-  const hasMore = alerts.length > maxAlerts
+  // Mobile: show 3 initially, all when expanded
+  // Desktop: always show up to 6
+  const initialMobileCount = 3
+  const desktopCount = 6
+  
+  // Calculate display count
+  const displayCount = isMobile 
+    ? (showAll ? alerts.length : initialMobileCount)
+    : desktopCount
+  
+  // Has more only on mobile when not showing all
+  const remainingCount = alerts.length - initialMobileCount
+  const hasMore = isMobile && !showAll && remainingCount > 0
 
   return (
     <article className="card">
@@ -153,7 +163,7 @@ export default function SignalsCard() {
           </div>
         ) : (
           <>
-            {alerts.slice(0, maxAlerts).map((alert, i) => {
+            {alerts.slice(0, displayCount).map((alert, i) => {
               const isCritical = isCriticalAlert(alert)
               const isSell = alert.signal === 'SELL'
               const translatedMessage = translateMessage(alert)
@@ -208,14 +218,19 @@ export default function SignalsCard() {
                 className="show-more-btn"
                 onClick={() => setShowAll(!showAll)}
               >
-                {showAll ? (
-                  language === 'th' ? 'แสดงน้อยลง' : 'Show less'
-                ) : (
-                  <>
-                    {language === 'th' ? `ดูเพิ่มอีก ${alerts.length - maxAlerts}` : `Show ${alerts.length - maxAlerts} more`}
-                    <ChevronDown size={14} />
-                  </>
-                )}
+                {language === 'th' ? `ดูเพิ่มอีก ${remainingCount}` : `Show ${remainingCount} more`}
+                <ChevronDown size={14} />
+              </button>
+            )}
+            
+            {/* Show less button when expanded */}
+            {isMobile && showAll && alerts.length > initialMobileCount && (
+              <button 
+                className="show-more-btn"
+                onClick={() => setShowAll(false)}
+              >
+                {language === 'th' ? 'แสดงน้อยลง' : 'Show less'}
+                <ChevronDown size={14} style={{ transform: 'rotate(180deg)' }} />
               </button>
             )}
           </>

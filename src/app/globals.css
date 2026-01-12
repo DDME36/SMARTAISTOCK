@@ -4848,11 +4848,12 @@ body.lang-th .target-price {
 }
 
 .mobile-refresh-fab:hover {
-  transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(110, 86, 207, 0.5);
+  filter: brightness(1.1);
 }
 
 .mobile-refresh-fab:active {
-  transform: scale(0.95);
+  filter: brightness(0.9);
 }
 
 .mobile-refresh-fab.refreshing {
@@ -5103,6 +5104,9 @@ body.lang-th .target-price {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(110, 86, 207, 0.4);
-  z-index: 99 !important;
-  transition: all 0.2s ease;
+  z-index: 150 !important; /* Higher than bottom nav (100) */
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  /* Prevent any transform from affecting fixed position */
+  transform: none !important;
+  will-change: auto;
 }

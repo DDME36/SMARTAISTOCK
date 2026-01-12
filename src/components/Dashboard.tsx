@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Clock, Wifi, WifiOff, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -13,14 +14,16 @@ import SignalsCard from './cards/SignalsCard'
 import QuickStatsCard from './cards/QuickStatsCard'
 import PriceTargetCard from './cards/PriceTargetCard'
 
-// Floating Refresh Button for Mobile
+// Floating Refresh Button for Mobile - uses Portal to escape parent transforms
 function MobileRefreshButton() {
   const [refreshing, setRefreshing] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const { showToast } = useStore()
   const { t } = useTranslation()
 
   useEffect(() => {
+    setMounted(true)
     const checkMobile = () => setIsMobile(window.innerWidth <= 600)
     checkMobile()
     window.addEventListener('resize', checkMobile)
@@ -42,9 +45,11 @@ function MobileRefreshButton() {
     }, 1500)
   }, [refreshing, showToast, t])
 
-  if (!isMobile) return null
+  // Don't render on server or desktop
+  if (!mounted || !isMobile) return null
 
-  return (
+  // Use portal to render at document.body level - escapes any parent transforms
+  return createPortal(
     <button 
       className={`mobile-refresh-fab ${refreshing ? 'refreshing' : ''}`}
       onClick={handleRefresh}
@@ -52,7 +57,8 @@ function MobileRefreshButton() {
       aria-label="Refresh"
     >
       <RefreshCw size={20} className={refreshing ? 'icon-spin' : ''} />
-    </button>
+    </button>,
+    document.body
   )
 }
 
