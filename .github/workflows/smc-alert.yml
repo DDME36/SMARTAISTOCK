@@ -1,11 +1,12 @@
 name: SMC Stock Alert
 
 on:
-  # Position Trading: รันวันละ 2 ครั้ง (เปิดตลาด + ปิดตลาด)
+  # รันทุก 15 นาที ช่วงตลาดเปิด (9:30 AM - 4:00 PM ET = 14:30 - 21:00 UTC)
   schedule:
-    - cron: '35 14 * * 1-5'  # 9:35 AM ET (หลังตลาดเปิด 5 นาที)
-    - cron: '5 21 * * 1-5'   # 4:05 PM ET (หลังตลาดปิด 5 นาที)
-    - cron: '0 12 * * 0'     # Keep-alive: วันอาทิตย์ 12:00 UTC
+    - cron: '30,45 14 * * 1-5'  # 9:30, 9:45 AM ET
+    - cron: '0,15,30,45 15-20 * * 1-5'  # 10:00 AM - 3:45 PM ET
+    - cron: '0 21 * * 1-5'  # 4:00 PM ET (market close)
+    - cron: '0 12 * * 0'  # Keep-alive: วันอาทิตย์ 12:00 UTC
   
   # Manual trigger
   workflow_dispatch:
@@ -17,7 +18,7 @@ on:
       - 'backend/**'
       - '.github/workflows/smc-alert.yml'
 
-# Position Trading: ใช้ Daily timeframe
+# Position Trading: ใช้ Daily timeframe (มีแท่งเยอะพอสำหรับ EMA200)
 env:
   INTERVAL: '1d'
 
