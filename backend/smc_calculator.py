@@ -28,7 +28,7 @@ import numpy as np
 
 class DataCache:
     """Simple file-based cache for API responses"""
-    def __init__(self, cache_dir='data/cache', ttl_minutes=15):
+    def __init__(self, cache_dir='data/cache', ttl_minutes=240):  # 4 hours for position trading
         self.cache_dir = cache_dir
         self.ttl = timedelta(minutes=ttl_minutes)
         os.makedirs(cache_dir, exist_ok=True)
@@ -552,21 +552,31 @@ class SMCCalculator:
         return result
     
     def _calc_ob_strength(self, ob_idx: int, swing_idx: int, ob_type: str) -> str:
-        """Calculate Order Block strength based on the move after it"""
+        """Calculate Order Block strength based on ATR-normalized move"""
         if self.df is None:
             return 'weak'
         
+        highs = self.df['High'].values
+        lows = self.df['Low'].values
         closes = self.df['Close'].values
+        
+        # Calculate ATR for normalization
+        atr = self._calc_atr(highs, lows, closes, 14)
+        if atr <= 0:
+            atr = closes[ob_idx] * 0.02  # Fallback: 2% of price
         
         # Calculate the move from OB to swing point
         if ob_type == 'bullish':
-            move = (closes[swing_idx] - closes[ob_idx]) / closes[ob_idx] * 100
+            move = closes[swing_idx] - closes[ob_idx]
         else:
-            move = (closes[ob_idx] - closes[swing_idx]) / closes[ob_idx] * 100
+            move = closes[ob_idx] - closes[swing_idx]
         
-        if move > 5:
+        # ATR-based strength (normalized across different volatility stocks)
+        atr_multiple = move / atr
+        
+        if atr_multiple >= 2.0:  # Move >= 2 ATR = strong
             return 'strong'
-        elif move > 2:
+        elif atr_multiple >= 1.0:  # Move >= 1 ATR = moderate
             return 'moderate'
         else:
             return 'weak'
@@ -1669,6 +1679,15 @@ class SMCCalculator:
             'data_source': self.data_source,
             'candles_analyzed': len(self.df),
             'last_updated': datetime.now().isoformat(),
+            
+            # Data Quality Indicator (NEW!)
+            'data_quality': {
+                'bars': len(self.df),
+                'has_ema50': len(self.df) >= 50,
+                'has_ema200': len(self.df) >= 200,
+                'confidence': 'high' if len(self.df) >= 200 else 'medium' if len(self.df) >= 50 else 'low',
+                'note': None if len(self.df) >= 200 else 'EMA200 ใช้ข้อมูลไม่ครบ' if len(self.df) < 200 else None
+            },
             
             # Position Trading Score (NEW!)
             'position_score': position_score,

@@ -90,7 +90,7 @@ class MarketSentimentAnalyzer:
     def __init__(self):
         self.data = {}
         self.cache = {}
-        self.cache_duration = 300  # 5 minutes cache
+        self.cache_duration = 3600  # 1 hour cache for position trading
         self.confidence_factors = []  # Track data quality
         
     def _get_cached(self, key: str) -> Optional[Dict]:
