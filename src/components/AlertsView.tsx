@@ -41,6 +41,12 @@ interface StockAlertGroup {
     reasons: Array<{ type: string; message: string }>
   }
   zone?: string
+  dataQuality?: {
+    bars: number
+    has_ema200: boolean
+    confidence: string
+    note?: string
+  }
 }
 
 const ALERT_PRIORITY: Record<string, number> = {
@@ -222,6 +228,16 @@ function DetailModal({ group, language, onClose }: { group: StockAlertGroup; lan
           </div>
         )}
         
+        {/* Data Quality Warning */}
+        {group.dataQuality && group.dataQuality.confidence !== 'high' && (
+          <div className="alert-modal-warning" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>
+            <AlertTriangle size={14} />
+            {language === 'th' 
+              ? `ข้อมูล ${group.dataQuality.bars} แท่ง - ${group.dataQuality.note || 'ความเชื่อมั่นปานกลาง'}`
+              : `${group.dataQuality.bars} bars - ${group.dataQuality.confidence} confidence`
+            }
+          </div>
+        )}
         {/* Warning */}
         {group.consensus === 'MIXED' && (
           <div className="alert-modal-warning">
@@ -296,7 +312,9 @@ export default function AlertsView() {
       sellSignals: analysis.sellSignals,
       primaryAlert: alerts[0],
       positionScore,
-      zone: stock.zones?.current_zone
+      zone: stock.zones?.current_zone,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      dataQuality: (stock as any).data_quality
     })
   }
 
