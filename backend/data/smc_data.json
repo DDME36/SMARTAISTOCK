@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-01-14T14:13:11.772125",
+  "generated_at": "2026-01-14T14:50:23.925949",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
-    "score": 50,
+    "score": 51,
     "recommendation": "HOLD",
     "message": "Normal conditions, wait for better opportunity",
     "message_th": "\u0e2a\u0e20\u0e32\u0e27\u0e30\u0e1b\u0e01\u0e15\u0e34 \u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32",
@@ -65,8 +65,8 @@
     "indicators": {
       "fear_greed": {
         "stock": {
-          "score": 58,
-          "rating": "Greed",
+          "score": 54,
+          "rating": "Neutral",
           "signal": "NEUTRAL",
           "source": "cnn",
           "previous_close": 56.4,
@@ -79,75 +79,75 @@
           "signal": "NEUTRAL",
           "source": "alternative.me"
         },
-        "score": 58,
-        "rating": "Greed",
+        "score": 54,
+        "rating": "Neutral",
         "signal": "NEUTRAL",
         "source": "cnn"
       },
       "vix": {
-        "value": 17.23,
-        "change": 7.82,
-        "change_pct": 7.82,
+        "value": 17.01,
+        "change": 6.45,
+        "change_pct": 6.45,
         "signal": "NEUTRAL",
         "level": "normal",
         "trend": "up",
         "term_structure": {
-          "structure": "contango",
-          "ratio": 0.914,
-          "spot": 17.23,
-          "term": 18.85
+          "structure": "steep_contango",
+          "ratio": 0.875,
+          "spot": 17.01,
+          "term": 19.44
         },
         "source": "yahoo_finance",
         "interpretation": "Normal volatility"
       },
       "market_breadth": {
-        "bullish": 1,
+        "bullish": 2,
         "bearish": 4,
-        "neutral": 2,
-        "ratio": 0.143,
+        "neutral": 1,
+        "ratio": 0.286,
         "signal": "STRONG_BEARISH",
-        "score": 14,
+        "score": 29,
         "indices": {
           "SPY": {
             "name": "S&P 500",
-            "change_pct": -0.2,
+            "change_pct": -0.55,
             "status": "bearish"
           },
           "QQQ": {
             "name": "NASDAQ 100",
-            "change_pct": -0.15,
+            "change_pct": -0.97,
             "status": "bearish"
           },
           "DIA": {
             "name": "Dow Jones",
-            "change_pct": -0.8,
+            "change_pct": -0.2,
             "status": "bearish"
           },
           "IWM": {
             "name": "Russell 2000",
-            "change_pct": -0.06,
+            "change_pct": -0.05,
             "status": "neutral"
           },
           "VTI": {
             "name": "Total Market",
-            "change_pct": -0.2,
+            "change_pct": -0.48,
             "status": "bearish"
           },
           "MDY": {
             "name": "Mid Cap",
-            "change_pct": 0.22,
+            "change_pct": 0.13,
             "status": "bullish"
           },
           "IJR": {
             "name": "Small Cap",
-            "change_pct": -0.02,
-            "status": "neutral"
+            "change_pct": 0.18,
+            "status": "bullish"
           }
         },
         "source": "etf_proxy"
       },
       "put_call_ratio": {
-        "ratio": 0.845,
+        "ratio": 0.84,
         "signal": "NEUTRAL",
         "interpretation": "Normal options activity",
         "source": "estimated_from_vix",
@@ -158,108 +158,108 @@
           {
             "symbol": "XLE",
             "name": "Energy",
-            "change_1d": 1.42,
-            "change_5d": 4.14
-          },
-          {
-            "symbol": "XLP",
-            "name": "Consumer Staples",
-            "change_1d": 1.16,
-            "change_5d": 5.86
-          },
-          {
-            "symbol": "XLRE",
-            "name": "Real Estate",
-            "change_1d": 0.76,
-            "change_5d": 1.97
-          },
-          {
-            "symbol": "XLU",
-            "name": "Utilities",
-            "change_1d": 0.63,
-            "change_5d": 2.34
-          },
-          {
-            "symbol": "XLI",
-            "name": "Industrials",
-            "change_1d": 0.51,
-            "change_5d": 3.17
+            "change_1d": 1.96,
+            "change_5d": 2.94
           },
           {
             "symbol": "XLB",
             "name": "Materials",
-            "change_1d": 0.43,
-            "change_5d": 4.39
+            "change_1d": 0.76,
+            "change_5d": 3.37
           },
           {
-            "symbol": "XLK",
-            "name": "Technology",
-            "change_1d": -0.21,
-            "change_5d": -0.03
+            "symbol": "XLP",
+            "name": "Consumer Staples",
+            "change_1d": 0.65,
+            "change_5d": 4.08
           },
           {
-            "symbol": "XLY",
-            "name": "Consumer Disc.",
-            "change_1d": -0.25,
-            "change_5d": 2.74
+            "symbol": "XLRE",
+            "name": "Real Estate",
+            "change_1d": 0.49,
+            "change_5d": 1.71
+          },
+          {
+            "symbol": "XLU",
+            "name": "Utilities",
+            "change_1d": 0.39,
+            "change_5d": 2.44
+          },
+          {
+            "symbol": "XLI",
+            "name": "Industrials",
+            "change_1d": -0.08,
+            "change_5d": 2.32
           },
           {
             "symbol": "XLV",
             "name": "Healthcare",
-            "change_1d": -0.41,
-            "change_5d": -1.83
+            "change_1d": -0.11,
+            "change_5d": -0.98
           },
           {
             "symbol": "XLC",
             "name": "Communication",
-            "change_1d": -0.56,
-            "change_5d": -0.17
+            "change_1d": -0.24,
+            "change_5d": -0.74
           },
           {
             "symbol": "XLF",
             "name": "Financials",
-            "change_1d": -1.92,
-            "change_5d": -2.48
+            "change_1d": -0.5,
+            "change_5d": -3.47
+          },
+          {
+            "symbol": "XLY",
+            "name": "Consumer Disc.",
+            "change_1d": -0.96,
+            "change_5d": 0.08
+          },
+          {
+            "symbol": "XLK",
+            "name": "Technology",
+            "change_1d": -1.03,
+            "change_5d": 0.51
           }
         ],
         "top_performers": [
           {
             "symbol": "XLE",
             "name": "Energy",
-            "change_1d": 1.42,
-            "change_5d": 4.14
+            "change_1d": 1.96,
+            "change_5d": 2.94
+          },
+          {
+            "symbol": "XLB",
+            "name": "Materials",
+            "change_1d": 0.76,
+            "change_5d": 3.37
           },
           {
             "symbol": "XLP",
             "name": "Consumer Staples",
-            "change_1d": 1.16,
-            "change_5d": 5.86
-          },
-          {
-            "symbol": "XLRE",
-            "name": "Real Estate",
-            "change_1d": 0.76,
-            "change_5d": 1.97
+            "change_1d": 0.65,
+            "change_5d": 4.08
           }
         ],
         "bottom_performers": [
           {
-            "symbol": "XLV",
-            "name": "Healthcare",
-            "change_1d": -0.41,
-            "change_5d": -1.83
-          },
-          {
-            "symbol": "XLC",
-            "name": "Communication",
-            "change_1d": -0.56,
-            "change_5d": -0.17
-          },
-          {
             "symbol": "XLF",
             "name": "Financials",
-            "change_1d": -1.92,
-            "change_5d": -2.48
+            "change_1d": -0.5,
+            "change_5d": -3.47
+          },
+          {
+            "symbol": "XLY",
+            "name": "Consumer Disc.",
+            "change_1d": -0.96,
+            "change_5d": 0.08
+          },
+          {
+            "symbol": "XLK",
+            "name": "Technology",
+            "change_1d": -1.03,
+            "change_5d": 0.51
           }
         ],
         "rotation": "RISK_OFF",
@@ -268,16 +268,16 @@
       "moving_averages": {
         "trend": "STRONG_BULLISH",
         "ma_type": "EMA",
-        "price": 693.77,
-        "ma20": 687.17,
-        "ma50": 679.66,
-        "ma200": 642.49,
+        "price": 689.96,
+        "ma20": 687.43,
+        "ma50": 680.07,
+        "ma200": 642.96,
         "price_vs_ma20": "above",
         "price_vs_ma50": "above",
         "price_vs_ma200": "above",
-        "distance_from_ma20": 0.96,
-        "distance_from_ma50": 2.08,
-        "distance_from_ma200": 7.98,
+        "distance_from_ma20": 0.37,
+        "distance_from_ma50": 1.45,
+        "distance_from_ma200": 7.31,
         "ma50_above_ma200": true,
         "cross": null,
         "bullish_signals": 5
@@ -293,27 +293,27 @@
         "source": "FRED"
       },
       "momentum": {
-        "momentum": "STRONG_BULLISH",
-        "score": 75,
+        "momentum": "BULLISH",
+        "score": 65,
         "returns": {
-          "1d": -0.2,
-          "1w": 0.61,
-          "1m": 2.06,
-          "3m": 5.07
+          "1d": -0.57,
+          "1w": 0.05,
+          "1m": 1.64,
+          "3m": 4.48
         },
-        "rsi": 63.4,
-        "macd_histogram": 0.533
+        "rsi": 52.8,
+        "macd_histogram": 0.189
       },
       "dollar_index": {
-        "value": 99.07,
-        "change": -0.07,
+        "value": 99.0,
+        "change": -0.13,
         "signal": "BULLISH",
         "interpretation": "Dollar neutral"
       },
       "gold": {
-        "value": 4643.1,
-        "change_1d": 1.17,
-        "change_1w": 4.35,
+        "value": 4627.4,
+        "change_1d": 0.83,
+        "change_1w": 3.99,
         "signal": "FEAR",
         "interpretation": "Gold rising = flight to safety"
       },
@@ -327,14 +327,14 @@
       },
       "market_internals": {
         "tick": {
-          "value": -137,
+          "value": -80,
           "signal": "NEUTRAL",
-          "interpretation": "TICK at -137 indicates selling pressure"
+          "interpretation": "TICK at -80 indicates selling pressure"
         },
         "trin": {
-          "value": 1.028,
+          "value": 1.016,
           "signal": "NEUTRAL",
-          "interpretation": "TRIN at 1.03 indicates bearish internals"
+          "interpretation": "TRIN at 1.02 indicates bearish internals"
         },
         "combined_signal": "NEUTRAL",
         "source": "proxy_calculation"
@@ -343,39 +343,39 @@
         "flows": {
           "SPY": {
             "name": "S&P 500",
-            "volume_ratio": 1.08,
-            "price_change": -0.2,
-            "flow_score": -0.22
+            "volume_ratio": 0.16,
+            "price_change": -0.55,
+            "flow_score": -0.09
           },
           "QQQ": {
             "name": "NASDAQ",
-            "volume_ratio": 0.98,
-            "price_change": -0.15,
-            "flow_score": -0.15
+            "volume_ratio": 0.24,
+            "price_change": -0.97,
+            "flow_score": -0.24
           },
           "IWM": {
             "name": "Small Cap",
-            "volume_ratio": 1.0,
-            "price_change": -0.06,
-            "flow_score": -0.06
+            "volume_ratio": 0.14,
+            "price_change": -0.05,
+            "flow_score": -0.01
           },
           "HYG": {
             "name": "High Yield Bonds",
-            "volume_ratio": 0.96,
-            "price_change": 0.0,
-            "flow_score": -0.0
+            "volume_ratio": 0.07,
+            "price_change": -0.07,
+            "flow_score": -0.01
           },
           "TLT": {
             "name": "Long-Term Treasuries",
-            "volume_ratio": 0.79,
-            "price_change": 0.17,
-            "flow_score": 0.14
+            "volume_ratio": 0.13,
+            "price_change": 0.26,
+            "flow_score": 0.03
           }
         },
-        "risk_on_flow": -0.42,
-        "risk_off_flow": 0.14,
-        "net_flow": -0.55,
-        "signal": "OUTFLOW",
+        "risk_on_flow": -0.34,
+        "risk_off_flow": 0.03,
+        "net_flow": -0.37,
+        "signal": "NEUTRAL",
         "interpretation": "Institutions moving to safety"
       }
     },
@@ -389,7 +389,7 @@
         "weight": "12%"
       },
       "breadth": {
-        "score": 14,
+        "score": 29,
         "weight": "12%"
       },
       "pcr": {
@@ -409,7 +409,7 @@
         "weight": "5%"
       },
       "momentum": {
-        "score": 75,
+        "score": 65,
         "weight": "10%"
       },
       "dxy": {
@@ -417,7 +417,7 @@
         "weight": "4%"
       },
       "institutional": {
-        "score": 35,
+        "score": 50,
         "weight": "5%"
       },
       "internals": {
@@ -426,16 +426,16 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-01-14T14:13:09.421348"
+    "updated_at": "2026-01-14T14:50:23.806499"
   },
   "stocks": {
     "AAPL": {
       "symbol": "AAPL",
       "current_price": 261.05,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:09.619541",
+      "last_updated": "2026-01-14T14:50:23.815105",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -774,7 +774,7 @@
         "bos": [
           {
             "type": "bearish",
-            "level": 266.95001220703125,
+            "level": 266.950012207,
             "broken_at": 261.05,
             "signal": "SELL",
             "message": "Bearish BOS: Price broke below 266.95"
@@ -782,7 +782,7 @@
         ],
         "choch": {
           "type": "bearish",
-          "level": 266.95001220703125,
+          "level": 266.950012207,
           "signal": "SELL",
           "message": "Bearish CHoCH: Potential trend reversal to downside"
         }
@@ -914,7 +914,7 @@
           "signal": "SELL",
           "priority": "critical",
           "message": "Bearish CHoCH: Potential trend reversal to downside",
-          "level": 266.95001220703125,
+          "level": 266.950012207,
           "distance_pct": 0
         },
         {
@@ -922,7 +922,7 @@
           "signal": "SELL",
           "priority": "high",
           "message": "Bearish BOS: Price broke below 266.95",
-          "level": 266.95001220703125,
+          "level": 266.950012207,
           "distance_pct": 0
         },
         {
@@ -1092,9 +1092,9 @@
       "symbol": "ACHR",
       "current_price": 8.47,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:09.725396",
+      "last_updated": "2026-01-14T14:50:23.822066",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1521,9 +1521,9 @@
       "symbol": "BTC-USD",
       "current_price": 95287.38,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-01-14T14:13:09.834828",
+      "last_updated": "2026-01-14T14:50:23.831861",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -1996,9 +1996,9 @@
       "symbol": "ENVX",
       "current_price": 8.02,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:09.946924",
+      "last_updated": "2026-01-14T14:50:23.839404",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2554,9 +2554,9 @@
       "symbol": "EOSE",
       "current_price": 16.82,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:10.152908",
+      "last_updated": "2026-01-14T14:50:23.845866",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2804,7 +2804,7 @@
         "bos": [
           {
             "type": "bullish",
-            "level": 16.489999771118164,
+            "level": 16.4899997711,
             "broken_at": 16.82,
             "signal": "BUY",
             "message": "Bullish BOS: Price broke above 16.49"
@@ -2812,7 +2812,7 @@
         ],
         "choch": {
           "type": "bullish",
-          "level": 16.489999771118164,
+          "level": 16.4899997711,
           "signal": "BUY",
           "message": "Bullish CHoCH: Potential trend reversal to upside"
         }
@@ -2920,7 +2920,7 @@
           "signal": "BUY",
           "priority": "critical",
           "message": "Bullish CHoCH: Potential trend reversal to upside",
-          "level": 16.489999771118164,
+          "level": 16.4899997711,
           "distance_pct": 0
         },
         {
@@ -2928,7 +2928,7 @@
           "signal": "BUY",
           "priority": "high",
           "message": "Bullish BOS: Price broke above 16.49",
-          "level": 16.489999771118164,
+          "level": 16.4899997711,
           "distance_pct": 0
         },
         {
@@ -2990,9 +2990,9 @@
       "symbol": "GRAB",
       "current_price": 4.79,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:10.589213",
+      "last_updated": "2026-01-14T14:50:23.854693",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3343,7 +3343,7 @@
         "bos": [
           {
             "type": "bearish",
-            "level": 4.849999904632568,
+            "level": 4.8499999046,
             "broken_at": 4.79,
             "signal": "SELL",
             "message": "Bearish BOS: Price broke below 4.85"
@@ -3351,7 +3351,7 @@
         ],
         "choch": {
           "type": "bearish",
-          "level": 4.849999904632568,
+          "level": 4.8499999046,
           "signal": "SELL",
           "message": "Bearish CHoCH: Potential trend reversal to downside"
         }
@@ -3523,7 +3523,7 @@
           "signal": "SELL",
           "priority": "critical",
           "message": "Bearish CHoCH: Potential trend reversal to downside",
-          "level": 4.849999904632568,
+          "level": 4.8499999046,
           "distance_pct": 0
         },
         {
@@ -3531,7 +3531,7 @@
           "signal": "SELL",
           "priority": "high",
           "message": "Bearish BOS: Price broke below 4.85",
-          "level": 4.849999904632568,
+          "level": 4.8499999046,
           "distance_pct": 0
         },
         {
@@ -3685,9 +3685,9 @@
       "symbol": "HIMS",
       "current_price": 32.2,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:10.697278",
+      "last_updated": "2026-01-14T14:50:23.860727",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3915,7 +3915,7 @@
         "bos": [
           {
             "type": "bearish",
-            "level": 35.779998779296875,
+            "level": 35.7799987793,
             "broken_at": 32.2,
             "signal": "SELL",
             "message": "Bearish BOS: Price broke below 35.78"
@@ -3923,7 +3923,7 @@
         ],
         "choch": {
           "type": "bearish",
-          "level": 35.779998779296875,
+          "level": 35.7799987793,
           "signal": "SELL",
           "message": "Bearish CHoCH: Potential trend reversal to downside"
         }
@@ -4023,7 +4023,7 @@
           "signal": "SELL",
           "priority": "critical",
           "message": "Bearish CHoCH: Potential trend reversal to downside",
-          "level": 35.779998779296875,
+          "level": 35.7799987793,
           "distance_pct": 0
         },
         {
@@ -4031,7 +4031,7 @@
           "signal": "SELL",
           "priority": "high",
           "message": "Bearish BOS: Price broke below 35.78",
-          "level": 35.779998779296875,
+          "level": 35.7799987793,
           "distance_pct": 0
         },
         {
@@ -4093,9 +4093,9 @@
       "symbol": "IONQ",
       "current_price": 48.94,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:10.809412",
+      "last_updated": "2026-01-14T14:50:23.869939",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4767,9 +4767,9 @@
       "symbol": "IREN",
       "current_price": 52.99,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:10.918965",
+      "last_updated": "2026-01-14T14:50:23.877650",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5065,7 +5065,7 @@
         "bos": [
           {
             "type": "bullish",
-            "level": 43.52000045776367,
+            "level": 43.5200004578,
             "broken_at": 52.99,
             "signal": "BUY",
             "message": "Bullish BOS: Price broke above 43.52"
@@ -5073,7 +5073,7 @@
         ],
         "choch": {
           "type": "bullish",
-          "level": 43.52000045776367,
+          "level": 43.5200004578,
           "signal": "BUY",
           "message": "Bullish CHoCH: Potential trend reversal to upside"
         }
@@ -5173,7 +5173,7 @@
           "signal": "BUY",
           "priority": "critical",
           "message": "Bullish CHoCH: Potential trend reversal to upside",
-          "level": 43.52000045776367,
+          "level": 43.5200004578,
           "distance_pct": 0
         },
         {
@@ -5181,7 +5181,7 @@
           "signal": "BUY",
           "priority": "high",
           "message": "Bullish BOS: Price broke above 43.52",
-          "level": 43.52000045776367,
+          "level": 43.5200004578,
           "distance_pct": 0
         },
         {
@@ -5327,9 +5327,9 @@
       "symbol": "META",
       "current_price": 631.09,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.031173",
+      "last_updated": "2026-01-14T14:50:23.883785",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5565,7 +5565,7 @@
         "bos": [
           {
             "type": "bearish",
-            "level": 638.0896015354143,
+            "level": 638.0896015354,
             "broken_at": 631.09,
             "signal": "SELL",
             "message": "Bearish BOS: Price broke below 638.09"
@@ -5573,7 +5573,7 @@
         ],
         "choch": {
           "type": "bearish",
-          "level": 638.0896015354143,
+          "level": 638.0896015354,
           "signal": "SELL",
           "message": "Bearish CHoCH: Potential trend reversal to downside"
         }
@@ -5697,7 +5697,7 @@
           "signal": "SELL",
           "priority": "critical",
           "message": "Bearish CHoCH: Potential trend reversal to downside",
-          "level": 638.0896015354143,
+          "level": 638.0896015354,
           "distance_pct": 0
         },
         {
@@ -5705,7 +5705,7 @@
           "signal": "SELL",
           "priority": "high",
           "message": "Bearish BOS: Price broke below 638.09",
-          "level": 638.0896015354143,
+          "level": 638.0896015354,
           "distance_pct": 0
         },
         {
@@ -5775,9 +5775,9 @@
       "symbol": "NVDA",
       "current_price": 185.81,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.171607",
+      "last_updated": "2026-01-14T14:50:23.890361",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6210,9 +6210,9 @@
       "symbol": "PRME",
       "current_price": 4.16,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.278971",
+      "last_updated": "2026-01-14T14:50:23.899572",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6868,9 +6868,9 @@
       "symbol": "RBLX",
       "current_price": 84.8,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.385047",
+      "last_updated": "2026-01-14T14:50:23.905741",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7259,9 +7259,9 @@
       "symbol": "RDW",
       "current_price": 10.14,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.540178",
+      "last_updated": "2026-01-14T14:50:23.912806",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7570,7 +7570,7 @@
         "bos": [
           {
             "type": "bullish",
-            "level": 8.989999771118164,
+            "level": 8.9899997711,
             "broken_at": 10.14,
             "signal": "BUY",
             "message": "Bullish BOS: Price broke above 8.99"
@@ -7697,7 +7697,7 @@
           "signal": "BUY",
           "priority": "high",
           "message": "Bullish BOS: Price broke above 8.99",
-          "level": 8.989999771118164,
+          "level": 8.9899997711,
           "distance_pct": 0
         },
         {
@@ -7843,9 +7843,9 @@
       "symbol": "RKLB",
       "current_price": 86.58,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.665395",
+      "last_updated": "2026-01-14T14:50:23.919558",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8115,7 +8115,7 @@
         "bos": [
           {
             "type": "bullish",
-            "level": 79.83000183105469,
+            "level": 79.8300018311,
             "broken_at": 86.58,
             "signal": "BUY",
             "message": "Bullish BOS: Price broke above 79.83"
@@ -8218,7 +8218,7 @@
           "signal": "BUY",
           "priority": "high",
           "message": "Bullish BOS: Price broke above 79.83",
-          "level": 79.83000183105469,
+          "level": 79.8300018311,
           "distance_pct": 0
         },
         {
@@ -8322,9 +8322,9 @@
       "symbol": "TSLA",
       "current_price": 447.2,
       "interval": "1d",
-      "data_source": "yfinance",
+      "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-14T14:13:11.771932",
+      "last_updated": "2026-01-14T14:50:23.925794",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8738,7 +8738,7 @@
       "bearish": 5,
       "neutral": 4
     },
-    "sentiment_score": 50,
+    "sentiment_score": 51,
     "recommendation": "HOLD",
     "top_buy_opportunities": [
       {
