@@ -620,40 +620,6 @@ body.lang-th .target-price {
   background: var(--accent-danger);
 }
 
-/* Notification Test Buttons */
-.notification-test-buttons {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-}
-
-.test-btn {
-  flex: 1;
-  padding: var(--space-2) var(--space-3);
-  background: var(--glass-surface);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.test-btn:hover {
-  background: var(--glass-highlight);
-  color: var(--text-primary);
-}
-
-.test-btn.server {
-  background: rgba(110, 86, 207, 0.1);
-  border-color: rgba(110, 86, 207, 0.3);
-  color: var(--accent-primary);
-}
-
-.test-btn.server:hover {
-  background: rgba(110, 86, 207, 0.2);
-}
-
 .settings-hint {
   display: flex;
   align-items: center;

@@ -225,45 +225,6 @@ export default function SettingsView() {
           )}
         </button>
         
-        {/* Test buttons when notifications are enabled */}
-        {notificationStatus === 'granted' && pushSubscribed && (
-          <div className="notification-test-buttons">
-            <button 
-              className="test-btn"
-              onClick={async () => {
-                const { testNotification } = await import('@/lib/notifications')
-                const success = await testNotification()
-                showToast(success ? (language === 'th' ? 'ส่งแจ้งเตือนแล้ว (Local)' : 'Local notification sent') : 'Failed')
-              }}
-            >
-              {language === 'th' ? 'ทดสอบ Local' : 'Test Local'}
-            </button>
-            <button 
-              className="test-btn server"
-              onClick={async () => {
-                showToast(language === 'th' ? 'กำลังทดสอบ...' : 'Testing...')
-                try {
-                  const res = await fetch('/api/push/test', { 
-                    method: 'POST',
-                    credentials: 'include'
-                  })
-                  const data = await res.json()
-                  if (res.ok) {
-                    showToast(language === 'th' ? 'ส่งจาก Server สำเร็จ!' : 'Server push sent!')
-                  } else {
-                    console.error('Server test failed:', data)
-                    showToast(data.message || data.error || 'Failed')
-                  }
-                } catch (err) {
-                  console.error('Server test error:', err)
-                  showToast('Server error')
-                }
-              }}
-            >
-              {language === 'th' ? 'ทดสอบ Server' : 'Test Server'}
-            </button>
-          </div>
-        )}
         
         {notificationStatus === 'denied' && (
           <p className="settings-hint">
