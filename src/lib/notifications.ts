@@ -125,7 +125,7 @@ export async function subscribeToPush(): Promise<boolean> {
     }
 
     // Send subscription to server (uses cookie auth)
-    console.log('Sending to server...')
+    console.log('Sending subscription to server...')
     const response = await withTimeout(
       fetch('/api/push/subscribe', {
         method: 'POST',
@@ -137,8 +137,17 @@ export async function subscribeToPush(): Promise<boolean> {
       'Server request timeout'
     )
 
-    console.log('Server response:', response.status)
-    return response.ok
+    console.log('Server response status:', response.status)
+    
+    if (!response.ok) {
+      const errorBody = await response.text()
+      console.error('Subscribe failed:', response.status, errorBody)
+      return false
+    }
+    
+    const result = await response.json()
+    console.log('Subscribe success:', result)
+    return true
   } catch (error) {
     console.error('Push subscription failed:', error)
     return false

@@ -264,6 +264,16 @@ export async function getUserPushSubscriptions(userId: number) {
   return result.rows.map(row => JSON.parse(row.subscription_json as string))
 }
 
+// Get single push subscription for a user (for server-side push)
+export async function getPushSubscription(userId: number) {
+  const result = await db.execute({
+    sql: 'SELECT subscription_json FROM push_subscriptions WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1',
+    args: [userId]
+  })
+  if (result.rows.length === 0) return null
+  return JSON.parse(result.rows[0].subscription_json as string)
+}
+
 export async function getAllPushSubscriptions() {
   const result = await db.execute({
     sql: `SELECT ps.subscription_json, ps.user_id, u.username
