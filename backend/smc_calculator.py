@@ -171,9 +171,12 @@ class SMCCalculator:
     - Liquidity zones (stop hunts)
     """
     
-    def __init__(self, symbol: str, interval: str = '1h', period: str = '1mo'):
+    def __init__(self, symbol: str, interval: str = '1h', period: str = '1y'):
         self.symbol = symbol.upper()
         self.interval = interval
+        # Auto-adjust period based on interval for sufficient data
+        if interval in ['1d', '1wk'] and period == '1mo':
+            period = '1y'  # Need more data for daily/weekly
         self.period = period
         self.df: Optional[pd.DataFrame] = None
         self.data_source: Optional[str] = None

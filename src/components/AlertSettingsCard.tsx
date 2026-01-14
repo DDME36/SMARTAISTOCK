@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Bell, TrendingUp, TrendingDown, Zap, BarChart3, Loader2, Info, Volume2, Sparkles, Shield, Target, ChevronDown, ChevronUp } from 'lucide-react'
+import { Bell, Loader2, Shield, Target, Sparkles, ChevronDown, ChevronUp, Check } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useStore } from '@/store/useStore'
 
@@ -17,22 +17,12 @@ interface AlertSettings {
   trend_aligned_only: boolean
 }
 
-const DEFAULT_SETTINGS: AlertSettings = {
-  alert_buy_zone: true,
-  alert_sell_zone: true,
-  alert_ob_entry: true,
-  alert_fvg: false,
-  alert_bos: false,
-  alert_choch: true,
-  min_quality_score: 50,
-  volume_confirmed_only: false,
-  trend_aligned_only: false
-}
-
-// Presets for different user levels
+// Simplified presets - no complex % settings
 const PRESETS = {
-  beginner: {
-    name: 'beginner',
+  essential: {
+    name: 'essential',
+    icon: Shield,
+    color: '#10b981',
     settings: {
       alert_buy_zone: false,
       alert_sell_zone: false,
@@ -47,6 +37,8 @@ const PRESETS = {
   },
   balanced: {
     name: 'balanced',
+    icon: Target,
+    color: '#f59e0b',
     settings: {
       alert_buy_zone: true,
       alert_sell_zone: true,
@@ -59,8 +51,10 @@ const PRESETS = {
       trend_aligned_only: false
     }
   },
-  advanced: {
-    name: 'advanced',
+  all: {
+    name: 'all',
+    icon: Sparkles,
+    color: '#8b5cf6',
     settings: {
       alert_buy_zone: true,
       alert_sell_zone: true,
@@ -68,32 +62,31 @@ const PRESETS = {
       alert_fvg: true,
       alert_bos: true,
       alert_choch: true,
-      min_quality_score: 30,
+      min_quality_score: 0,
       volume_confirmed_only: false,
       trend_aligned_only: false
     }
   }
 }
 
+const DEFAULT_SETTINGS = PRESETS.balanced.settings
+
 export default function AlertSettingsCard() {
   const { t, language } = useTranslation()
   const { showToast, alertSettings, alertSettingsLoaded, fetchAlertSettings, setAlertSettings } = useStore()
   const [saving, setSaving] = useState(false)
-  const [activePreset, setActivePreset] = useState<string | null>(null)
-  const [showInfo, setShowInfo] = useState<string | null>(null)
+  const [activePreset, setActivePreset] = useState<string>('balanced')
   const [expanded, setExpanded] = useState(false)
   
-  // Use store settings or default
   const settings = alertSettings || DEFAULT_SETTINGS
 
   useEffect(() => {
-    // Fetch only if not loaded yet
     if (!alertSettingsLoaded) {
       fetchAlertSettings()
     }
   }, [alertSettingsLoaded, fetchAlertSettings])
 
-  // Check which preset matches current settings
+  // Detect which preset matches
   useEffect(() => {
     for (const [key, preset] of Object.entries(PRESETS)) {
       const matches = Object.keys(preset.settings).every(
@@ -109,7 +102,7 @@ export default function AlertSettingsCard() {
 
   const saveSettings = async (newSettings: AlertSettings) => {
     setSaving(true)
-    setAlertSettings(newSettings) // Update store immediately
+    setAlertSettings(newSettings)
     try {
       const res = await fetch('/api/user/alert-settings', {
         method: 'POST',
@@ -119,42 +112,56 @@ export default function AlertSettingsCard() {
       })
       
       if (res.ok) {
-        showToast(t('settings_saved'))
-      } else {
-        showToast(t('failed_save'))
+        showToast(language === 'th' ? 'บันทึกแล้ว' : 'Saved')
       }
     } catch (error) {
-      console.error('Failed to save settings:', error)
-      showToast(t('failed_save'))
+      console.error('Failed to save:', error)
     } finally {
       setSaving(false)
     }
   }
 
-  const handleToggle = (key: keyof AlertSettings) => {
-    const newSettings = { ...settings, [key]: !settings[key] }
-    saveSettings(newSettings)
-  }
-
-  const handleSliderChange = (value: number) => {
-    const newSettings = { ...settings, min_quality_score: value }
-    setAlertSettings(newSettings) // Update store for immediate UI feedback
-  }
-
-  const handleSliderCommit = () => {
-    saveSettings(settings)
-  }
-
   const applyPreset = (presetKey: string) => {
     const preset = PRESETS[presetKey as keyof typeof PRESETS]
     if (preset) {
-      const newSettings = { ...settings, ...preset.settings }
-      saveSettings(newSettings)
-      showToast(`${t(`preset_${presetKey}`)} ${t('preset_applied')}`)
+      saveSettings(preset.settings)
     }
   }
 
-  // Show loading only on first load
+  const getPresetLabel = (key: string) => {
+    if (language === 'th') {
+      switch (key) {
+        case 'essential': return 'เฉพาะสำคัญ'
+        case 'balanced': return 'สมดุล'
+        case 'all': return 'ทั้งหมด'
+        default: return 'กำหนดเอง'
+      }
+    }
+    switch (key) {
+      case 'essential': return 'Essential'
+      case 'balanced': return 'Balanced'
+      case 'all': return 'All Signals'
+      default: return 'Custom'
+    }
+  }
+
+  const getPresetDesc = (key: string) => {
+    if (language === 'th') {
+      switch (key) {
+        case 'essential': return 'แจ้งเตือนเฉพาะเมื่อราคาเข้าโซน OB คุณภาพสูง'
+        case 'balanced': return 'แจ้งเตือนโซนซื้อ/ขาย และสัญญาณกลับตัว'
+        case 'all': return 'แจ้งเตือนทุกสัญญาณ รวม FVG และ BOS'
+        default: return ''
+      }
+    }
+    switch (key) {
+      case 'essential': return 'Only high-quality OB entry alerts'
+      case 'balanced': return 'Buy/Sell zones + trend reversals'
+      case 'all': return 'All signals including FVG & BOS'
+      default: return ''
+    }
+  }
+
   if (!alertSettingsLoaded) {
     return (
       <div className="alert-settings-card loading">
@@ -165,260 +172,75 @@ export default function AlertSettingsCard() {
 
   return (
     <div className="alert-settings-card">
-      {/* Collapsible Header */}
+      {/* Header */}
       <button 
         className="alert-settings-header-toggle"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="settings-header">
           <Bell size={20} />
-          <h3>{t('alert_settings')}</h3>
+          <h3>{language === 'th' ? 'การแจ้งเตือน' : 'Notifications'}</h3>
         </div>
         <div className="alert-settings-summary">
-          <span className="preset-badge">
-            {activePreset === 'beginner' ? (language === 'th' ? 'มือใหม่' : 'Beginner') :
-             activePreset === 'balanced' ? (language === 'th' ? 'สมดุล' : 'Balanced') :
-             activePreset === 'advanced' ? (language === 'th' ? 'ขั้นสูง' : 'Advanced') :
-             (language === 'th' ? 'กำหนดเอง' : 'Custom')}
+          <span className="preset-badge" style={{ 
+            background: PRESETS[activePreset as keyof typeof PRESETS]?.color 
+              ? `${PRESETS[activePreset as keyof typeof PRESETS].color}20` 
+              : 'var(--bg-tertiary)',
+            color: PRESETS[activePreset as keyof typeof PRESETS]?.color || 'var(--text-secondary)'
+          }}>
+            {getPresetLabel(activePreset)}
           </span>
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </div>
       </button>
 
-      {/* Collapsible Content */}
+      {/* Content */}
       {expanded && (
-        <>
-          {/* Preset Selection */}
-          <div className="settings-section">
-            <h4>{t('quick_setup')}</h4>
-            <p className="settings-hint" style={{ marginBottom: 12 }}>
-              {t('preset_hint')}
-            </p>
-            
-            <div className="preset-buttons">
-              <button 
-                className={`preset-btn ${activePreset === 'beginner' ? 'active' : ''}`}
-                onClick={() => applyPreset('beginner')}
-              >
-                <Shield size={18} />
-                <div className="preset-info">
-                  <span className="preset-name">{t('preset_beginner')}</span>
-                  <span className="preset-desc">{t('preset_beginner_desc')}</span>
-                </div>
-              </button>
+        <div className="alert-settings-content">
+          <p className="settings-hint">
+            {language === 'th' 
+              ? 'เลือกระดับการแจ้งเตือนที่ต้องการ' 
+              : 'Choose your notification level'}
+          </p>
+          
+          <div className="preset-cards">
+            {Object.entries(PRESETS).map(([key, preset]) => {
+              const Icon = preset.icon
+              const isActive = activePreset === key
               
-              <button 
-                className={`preset-btn ${activePreset === 'balanced' ? 'active' : ''}`}
-                onClick={() => applyPreset('balanced')}
-              >
-                <Target size={18} />
-                <div className="preset-info">
-                  <span className="preset-name">{t('preset_balanced')}</span>
-                  <span className="preset-desc">{t('preset_balanced_desc')}</span>
-                </div>
-              </button>
-              
-              <button 
-                className={`preset-btn ${activePreset === 'advanced' ? 'active' : ''}`}
-                onClick={() => applyPreset('advanced')}
-              >
-                <Sparkles size={18} />
-                <div className="preset-info">
-                  <span className="preset-name">{t('preset_advanced')}</span>
-                  <span className="preset-desc">{t('preset_advanced_desc')}</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          {/* Alert Types */}
-          <div className="settings-section">
-            <h4>{t('alert_types')}</h4>
-
-            {/* OB Entry - Most Important */}
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <Zap size={18} className="icon-critical" />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('alert_ob_entry')}</span>
-                    <span className="toggle-desc">{t('alert_ob_entry_desc')}</span>
-                  </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.alert_ob_entry}
-                  onChange={() => handleToggle('alert_ob_entry')}
+              return (
+                <button
+                  key={key}
+                  className={`preset-card ${isActive ? 'active' : ''}`}
+                  onClick={() => applyPreset(key)}
                   disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-              <button className="info-btn" onClick={() => setShowInfo(showInfo === 'ob_entry' ? null : 'ob_entry')}>
-                <Info size={14} />
-              </button>
-            </div>
-            {showInfo === 'ob_entry' && (
-              <div className="info-box">
-                <p>{t('alert_ob_entry_info')}</p>
-              </div>
-            )}
-
-            {/* Buy Zone */}
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <TrendingUp size={18} className="icon-buy" />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('alert_buy_zone')}</span>
-                    <span className="toggle-desc">{t('alert_buy_zone_desc')}</span>
+                  style={{ 
+                    '--preset-color': preset.color,
+                    borderColor: isActive ? preset.color : 'transparent'
+                  } as React.CSSProperties}
+                >
+                  <div className="preset-card-icon" style={{ background: `${preset.color}20`, color: preset.color }}>
+                    <Icon size={20} />
                   </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.alert_buy_zone}
-                  onChange={() => handleToggle('alert_buy_zone')}
-                  disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-            </div>
-
-            {/* Sell Zone */}
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <TrendingDown size={18} className="icon-sell" />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('alert_sell_zone')}</span>
-                    <span className="toggle-desc">{t('alert_sell_zone_desc')}</span>
+                  <div className="preset-card-content">
+                    <div className="preset-card-title">
+                      {getPresetLabel(key)}
+                      {isActive && <Check size={14} style={{ color: preset.color }} />}
+                    </div>
+                    <div className="preset-card-desc">{getPresetDesc(key)}</div>
                   </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.alert_sell_zone}
-                  onChange={() => handleToggle('alert_sell_zone')}
-                  disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-            </div>
-
-            {/* CHoCH */}
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <Zap size={18} />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('alert_choch')}</span>
-                    <span className="toggle-desc">{t('alert_choch_desc')}</span>
-                  </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.alert_choch}
-                  onChange={() => handleToggle('alert_choch')}
-                  disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-            </div>
-
-            {/* FVG - Advanced */}
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <BarChart3 size={18} />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('alert_fvg')}</span>
-                    <span className="toggle-desc">{t('alert_fvg_desc')}</span>
-                  </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.alert_fvg}
-                  onChange={() => handleToggle('alert_fvg')}
-                  disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-            </div>
-          </div>
-
-          {/* Quality Filters */}
-          <div className="settings-section">
-            <h4>{t('quality_filters')}</h4>
-            <p className="settings-hint" style={{ marginBottom: 12 }}>
-              {t('quality_filters_hint')}
-            </p>
-
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <Volume2 size={18} />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('volume_confirmed_only')}</span>
-                    <span className="toggle-desc">{t('volume_confirmed_desc')}</span>
-                  </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.volume_confirmed_only}
-                  onChange={() => handleToggle('volume_confirmed_only')}
-                  disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-            </div>
-
-            <div className="toggle-row-wrapper">
-              <label className="toggle-row">
-                <div className="toggle-info">
-                  <TrendingUp size={18} />
-                  <div className="toggle-text">
-                    <span className="toggle-label">{t('trend_aligned_only')}</span>
-                    <span className="toggle-desc">{t('trend_aligned_desc')}</span>
-                  </div>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.trend_aligned_only}
-                  onChange={() => handleToggle('trend_aligned_only')}
-                  disabled={saving}
-                />
-                <span className="toggle-switch"></span>
-              </label>
-            </div>
-
-            <div className="slider-row">
-              <div className="slider-label">
-                <span>{t('min_quality_score')}</span>
-                <span className="slider-value">{settings.min_quality_score}%</span>
-              </div>
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                step="10"
-                value={settings.min_quality_score}
-                onChange={(e) => handleSliderChange(parseInt(e.target.value))}
-                onMouseUp={handleSliderCommit}
-                onTouchEnd={handleSliderCommit}
-                disabled={saving}
-              />
-              <div className="slider-labels">
-                <span>{t('more_alerts')}</span>
-                <span>{t('higher_quality')}</span>
-              </div>
-            </div>
+                </button>
+              )
+            })}
           </div>
 
           {saving && (
             <div className="saving-indicator">
               <Loader2 size={14} className="icon-spin" />
-              <span>{t('saving')}</span>
+              <span>{language === 'th' ? 'กำลังบันทึก...' : 'Saving...'}</span>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   )

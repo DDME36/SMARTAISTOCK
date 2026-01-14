@@ -63,12 +63,31 @@ jobs:
       - name: Check for alerts
         id: check_alerts
         run: |
-          if python -c "import json; data=json.load(open('public/data/smc_data.json')); alerts=[a for s in data['stocks'].values() for a in s.get('alerts',[]) if a.get('type','').startswith('ob_entry_')]; exit(0 if alerts else 1)"; then
+          python3 << 'EOF'
+          import json
+          data = json.load(open('public/data/smc_data.json'))
+          alerts = []
+          for symbol, stock in data.get('stocks', {}).items():
+              for alert in stock.get('alerts', []):
+                  if alert.get('type', '').startswith('ob_entry_'):
+                      alerts.append(f"{symbol}: {alert.get('message', 'OB Entry')}")
+          
+          if alerts:
+              print(f"📢 Found {len(alerts)} OB Entry alerts:")
+              for a in alerts[:5]:
+                  print(f"   • {a}")
+              with open('$GITHUB_OUTPUT', 'a') as f:
+                  f.write('has_alerts=true\n')
+          else:
+              print("✅ No OB entry alerts - prices not in Order Block zones")
+              with open('$GITHUB_OUTPUT', 'a') as f:
+                  f.write('has_alerts=false\n')
+          EOF
+          # Also write to GITHUB_OUTPUT properly
+          if python3 -c "import json; data=json.load(open('public/data/smc_data.json')); alerts=[a for s in data['stocks'].values() for a in s.get('alerts',[]) if a.get('type','').startswith('ob_entry_')]; exit(0 if alerts else 1)"; then
             echo "has_alerts=true" >> $GITHUB_OUTPUT
-            echo "📢 OB Entry alerts found!"
           else
             echo "has_alerts=false" >> $GITHUB_OUTPUT
-            echo "✅ No OB entry alerts"
           fi
       
       - name: Send Push Notifications
