@@ -69,10 +69,14 @@ class YFinanceProvider:
             import yfinance as yf
             ticker = yf.Ticker(symbol)
             
+            # For daily/weekly, we need at least 200 bars for EMA200
+            # For intraday, 50 bars is enough
+            min_bars = 200 if interval in ['1d', '1wk', '1mo'] else 50
+            
             # Try multiple periods if data is sparse
-            for p in [period, '3mo', '6mo', '1y']:
+            for p in [period, '3mo', '6mo', '1y', '2y']:
                 df = ticker.history(period=p, interval=interval)
-                if not df.empty and len(df) >= 50:
+                if not df.empty and len(df) >= min_bars:
                     break
             
             if df.empty:
@@ -140,17 +144,28 @@ class DataFetcher:
         ]
     
     def fetch(self, symbol: str, interval: str = '1h', period: str = '1mo') -> Tuple[Optional[pd.DataFrame], Optional[str]]:
+        # For daily/weekly, we need at least 200 bars for EMA200
+        min_bars = 200 if interval in ['1d', '1wk', '1mo'] else 50
+        
         # Check cache first
         cached = self.cache.get(symbol, interval)
-        if cached is not None and len(cached) >= 50:
-            print(f'  [CACHE] Using cached data for {symbol}')
+        if cached is not None and len(cached) >= min_bars:
+            print(f'  [CACHE] Using cached data for {symbol} ({len(cached)} bars)')
             return cached, 'cache'
         
         # Try providers
         for name, provider in self.providers:
             df = provider.fetch(symbol, interval, period)
-            if df is not None and not df.empty and len(df) >= 20:
+            if df is not None and not df.empty and len(df) >= min_bars:
                 print(f'  [OK] {name} - {len(df)} candles')
+                self.cache.set(symbol, interval, df)
+                return df, name
+        
+        # Fallback: accept less data if nothing else works
+        for name, provider in self.providers:
+            df = provider.fetch(symbol, interval, period)
+            if df is not None and not df.empty and len(df) >= 20:
+                print(f'  [OK] {name} - {len(df)} candles (less than ideal)')
                 self.cache.set(symbol, interval, df)
                 return df, name
         
