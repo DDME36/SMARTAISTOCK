@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-17T06:16:26.101115",
+  "generated_at": "2026-01-17T07:09:12.561999",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
@@ -327,14 +327,14 @@
       },
       "market_internals": {
         "tick": {
-          "value": -169,
+          "value": -177,
           "signal": "NEUTRAL",
-          "interpretation": "TICK at -169 indicates selling pressure"
+          "interpretation": "TICK at -177 indicates selling pressure"
         },
         "trin": {
-          "value": 1.034,
+          "value": 1.035,
           "signal": "NEUTRAL",
-          "interpretation": "TRIN at 1.03 indicates bearish internals"
+          "interpretation": "TRIN at 1.04 indicates bearish internals"
         },
         "combined_signal": "NEUTRAL",
         "source": "proxy_calculation"
@@ -426,7 +426,7 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-01-17T06:16:25.975728"
+    "updated_at": "2026-01-17T07:09:12.418928"
   },
   "stocks": {
     "AAPL": {
@@ -435,7 +435,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:25.984469",
+      "last_updated": "2026-01-17T07:09:12.428906",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -473,6 +473,58 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 30,
+        "prediction": "STRONG_BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "RSI Oversold (26) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (21)",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -9.4%)",
+          "\u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e01\u0e27\u0e48\u0e32 EMA20 \u0e41\u0e25\u0e30 EMA50"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 20.64,
+            "plus_di": 16.1,
+            "minus_di": 26.16,
+            "strength": "MODERATE",
+            "direction": "BEARISH",
+            "adx_trend": "RISING",
+            "signal": "MODERATE_BEARISH"
+          },
+          "macd": {
+            "macd": -3.6156,
+            "signal": -2.2225,
+            "histogram": -1.393,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.7935,
+            "slope_pct": -0.3,
+            "r_squared": 0.8695,
+            "confidence": "HIGH",
+            "prediction": "BEARISH",
+            "projected_30d": 236.54,
+            "projected_change_pct": -9.39
+          },
+          "rsi": 25.61
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -956,9 +1008,17 @@
           "message": "Price in Premium Zone - Look for sells",
           "level": 256.09,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "high",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+          "level": 261.049987793,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 6,
+      "alert_count": 7,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -1094,7 +1154,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:25.991742",
+      "last_updated": "2026-01-17T07:09:12.437328",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1120,6 +1180,55 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 60,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 1.0,
+        "confidence_level": "HIGH",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (15)",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +2.4%)"
+        ],
+        "bearish_factors": [],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 15.27,
+            "plus_di": 25.72,
+            "minus_di": 21.65,
+            "strength": "WEAK",
+            "direction": "BULLISH",
+            "adx_trend": "FALLING",
+            "signal": "WEAK_BULLISH"
+          },
+          "macd": {
+            "macd": 0.0893,
+            "signal": -0.0154,
+            "histogram": 0.1048,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 0.0098,
+            "slope_pct": 0.12,
+            "r_squared": 0.037,
+            "confidence": "LOW",
+            "prediction": "BULLISH",
+            "projected_30d": 8.68,
+            "projected_change_pct": 2.43
+          },
+          "rsi": 51.03
+        }
       },
       "trend": {
         "direction": "bearish",
@@ -1523,7 +1632,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-01-17T06:16:26.000980",
+      "last_updated": "2026-01-17T07:09:12.448254",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -1557,6 +1666,59 @@
           }
         ],
         "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
+      },
+      "trend_prediction": {
+        "score": 65,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.33,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 (30) - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +5.3%)"
+        ],
+        "bearish_factors": [
+          "RSI Overbought (76) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e25\u0e07"
+        ],
+        "warnings": [
+          "\u26a0\ufe0f RSI \u0e2a\u0e39\u0e07 (76) - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e10\u0e32\u0e19"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 29.68,
+            "plus_di": 31.66,
+            "minus_di": 9.91,
+            "strength": "STRONG",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "STRONG_BULLISH"
+          },
+          "macd": {
+            "macd": 1069.0761,
+            "signal": 539.5244,
+            "histogram": 529.5517,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 238.8481,
+            "slope_pct": 0.25,
+            "r_squared": 0.6685,
+            "confidence": "MEDIUM",
+            "prediction": "BULLISH",
+            "projected_30d": 100382.79,
+            "projected_change_pct": 5.35
+          },
+          "rsi": 76.21
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -1902,9 +2064,17 @@
           "message": "Price in Premium Zone - Look for sells",
           "level": 94044.04,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\u26a0\ufe0f RSI \u0e2a\u0e39\u0e07 (76) - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e10\u0e32\u0e19",
+          "level": 95287.375,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 2,
+      "alert_count": 3,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -1998,7 +2168,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.008597",
+      "last_updated": "2026-01-17T07:09:12.457190",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2020,6 +2190,61 @@
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 45,
+        "prediction": "BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "MACD Bullish Divergence - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (14)",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -8.6%)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 (Death Alignment)"
+        ],
+        "warnings": [
+          "\ud83d\udcc9 EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 - \u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e1a"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 14.27,
+            "plus_di": 22.36,
+            "minus_di": 24.46,
+            "strength": "WEAK",
+            "direction": "BEARISH",
+            "adx_trend": "FALLING",
+            "signal": "WEAK_BEARISH"
+          },
+          "macd": {
+            "macd": -0.1271,
+            "signal": -0.1751,
+            "histogram": 0.048,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_DECREASING",
+            "divergence": {
+              "type": "BULLISH",
+              "strength": 6.3210764683434135,
+              "message": "\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19: \u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e25\u0e07 \u0e41\u0e15\u0e48 MACD \u0e40\u0e23\u0e34\u0e48\u0e21\u0e41\u0e02\u0e47\u0e07",
+              "warning": false
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.0176,
+            "slope_pct": -0.22,
+            "r_squared": 0.0693,
+            "confidence": "LOW",
+            "prediction": "BEARISH",
+            "projected_30d": 7.33,
+            "projected_change_pct": -8.61
+          },
+          "rsi": 45.58
+        }
       },
       "trend": {
         "direction": "neutral",
@@ -2418,9 +2643,25 @@
           "message": "Price in Discount Zone - Look for buys",
           "level": 10.44,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcc9 EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 - \u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e1a",
+          "level": 8.0200004578,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "medium",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+          "level": 8.0200004578,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 1,
+      "alert_count": 3,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -2556,7 +2797,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.014890",
+      "last_updated": "2026-01-17T07:09:12.464891",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2590,6 +2831,59 @@
           }
         ],
         "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
+      },
+      "trend_prediction": {
+        "score": 60,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.33,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (20)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (Golden Alignment)"
+        ],
+        "bearish_factors": [
+          "RSI Overbought (76) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e25\u0e07"
+        ],
+        "warnings": [
+          "\u26a0\ufe0f RSI \u0e2a\u0e39\u0e07 (76) - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e10\u0e32\u0e19"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 20.26,
+            "plus_di": 38.85,
+            "minus_di": 13.46,
+            "strength": "MODERATE",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "MODERATE_BULLISH"
+          },
+          "macd": {
+            "macd": 0.45,
+            "signal": -0.0805,
+            "histogram": 0.5305,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.0097,
+            "slope_pct": -0.06,
+            "r_squared": 0.003,
+            "confidence": "LOW",
+            "prediction": "NEUTRAL",
+            "projected_30d": 13.27,
+            "projected_change_pct": -21.13
+          },
+          "rsi": 76.31
+        }
       },
       "trend": {
         "direction": "neutral",
@@ -2938,9 +3232,17 @@
           "message": "Price in Premium Zone - Look for sells",
           "level": 12.82,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\u26a0\ufe0f RSI \u0e2a\u0e39\u0e07 (76) - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e10\u0e32\u0e19",
+          "level": 16.8199996948,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 3,
+      "alert_count": 4,
       "trade_setups": [
         {
           "ob_type": "bullish",
@@ -2992,7 +3294,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.023876",
+      "last_updated": "2026-01-17T07:09:12.475152",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3034,6 +3336,60 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 55,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.2,
+        "confidence_level": "LOW",
+        "bullish_factors": [
+          "MACD Bullish Divergence - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19",
+          "RSI \u0e15\u0e48\u0e33 (33)"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (14)",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -3.6%)",
+          "\u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e01\u0e27\u0e48\u0e32 EMA20 \u0e41\u0e25\u0e30 EMA50"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 13.92,
+            "plus_di": 18.22,
+            "minus_di": 28.02,
+            "strength": "WEAK",
+            "direction": "BEARISH",
+            "adx_trend": "RISING",
+            "signal": "WEAK_BEARISH"
+          },
+          "macd": {
+            "macd": -0.0959,
+            "signal": -0.0827,
+            "histogram": -0.0132,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_INCREASING",
+            "divergence": {
+              "type": "BULLISH",
+              "strength": 28.056086757923534,
+              "message": "\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19: \u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e25\u0e07 \u0e41\u0e15\u0e48 MACD \u0e40\u0e23\u0e34\u0e48\u0e21\u0e41\u0e02\u0e47\u0e07",
+              "warning": false
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.0102,
+            "slope_pct": -0.21,
+            "r_squared": 0.3996,
+            "confidence": "LOW",
+            "prediction": "BEARISH",
+            "projected_30d": 4.62,
+            "projected_change_pct": -3.65
+          },
+          "rsi": 33.33
+        }
       },
       "trend": {
         "direction": "bearish",
@@ -3687,7 +4043,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.030089",
+      "last_updated": "2026-01-17T07:09:12.482660",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3725,6 +4081,63 @@
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 10,
+        "prediction": "STRONG_BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+        "confidence": 0.6,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "RSI \u0e15\u0e48\u0e33 (36)"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (17)",
+          "MACD \u0e15\u0e31\u0e14\u0e25\u0e07",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -20.7%)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 (Death Alignment)"
+        ],
+        "warnings": [
+          "\ud83d\udcc9 MACD \u0e15\u0e31\u0e14\u0e25\u0e07 - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e02\u0e32\u0e25\u0e07",
+          "\ud83d\udcca \u0e04\u0e32\u0e14\u0e01\u0e32\u0e23\u0e13\u0e4c 30 \u0e27\u0e31\u0e19: \u0e25\u0e14\u0e25\u0e07 20.7%",
+          "\ud83d\udcc9 EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 - \u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e1a"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 16.67,
+            "plus_di": 18.68,
+            "minus_di": 31.47,
+            "strength": "WEAK",
+            "direction": "BEARISH",
+            "adx_trend": "RISING",
+            "signal": "WEAK_BEARISH"
+          },
+          "macd": {
+            "macd": -1.4394,
+            "signal": -1.4364,
+            "histogram": -0.0029,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": "BEARISH_CROSS"
+          },
+          "linear_regression": {
+            "slope": -0.2209,
+            "slope_pct": -0.69,
+            "r_squared": 0.718,
+            "confidence": "HIGH",
+            "prediction": "STRONG_BEARISH",
+            "projected_30d": 25.54,
+            "projected_change_pct": -20.67
+          },
+          "rsi": 35.93
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -4041,9 +4454,41 @@
           "message": "Price in Discount Zone - Look for buys",
           "level": 49.09,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcc9 MACD \u0e15\u0e31\u0e14\u0e25\u0e07 - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e02\u0e32\u0e25\u0e07",
+          "level": 32.2000007629,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcca \u0e04\u0e32\u0e14\u0e01\u0e32\u0e23\u0e13\u0e4c 30 \u0e27\u0e31\u0e19: \u0e25\u0e14\u0e25\u0e07 20.7%",
+          "level": 32.2000007629,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcc9 EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 - \u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e1a",
+          "level": 32.2000007629,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "high",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+          "level": 32.2000007629,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 3,
+      "alert_count": 7,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -4095,7 +4540,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.039494",
+      "last_updated": "2026-01-17T07:09:12.493449",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4129,6 +4574,58 @@
           }
         ],
         "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07"
+      },
+      "trend_prediction": {
+        "score": 45,
+        "prediction": "BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (11)",
+          "RSI \u0e15\u0e48\u0e33 (38)"
+        ],
+        "bearish_factors": [
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -6.6%)",
+          "\u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e01\u0e27\u0e48\u0e32 EMA20 \u0e41\u0e25\u0e30 EMA50"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 10.62,
+            "plus_di": 19.29,
+            "minus_di": 19.23,
+            "strength": "WEAK",
+            "direction": "BULLISH",
+            "adx_trend": "FALLING",
+            "signal": "WEAK_BULLISH"
+          },
+          "macd": {
+            "macd": -0.2502,
+            "signal": -0.6649,
+            "histogram": 0.4146,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.0815,
+            "slope_pct": -0.17,
+            "r_squared": 0.0588,
+            "confidence": "LOW",
+            "prediction": "BEARISH",
+            "projected_30d": 45.7,
+            "projected_change_pct": -6.62
+          },
+          "rsi": 38.37
+        }
       },
       "trend": {
         "direction": "bearish",
@@ -4631,9 +5128,17 @@
           "message": "Price in Discount Zone - Look for buys",
           "level": 61.32,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "medium",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+          "level": 48.9399986267,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 2,
+      "alert_count": 3,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -4769,7 +5274,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.047330",
+      "last_updated": "2026-01-17T07:09:12.502534",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4807,6 +5312,57 @@
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 55,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.33,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (16)",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 -11.3%)"
+        ],
+        "bearish_factors": [
+          "RSI \u0e2a\u0e39\u0e07 (69)"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 15.7,
+            "plus_di": 27.64,
+            "minus_di": 15.75,
+            "strength": "WEAK",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "WEAK_BULLISH"
+          },
+          "macd": {
+            "macd": 1.0414,
+            "signal": -0.5836,
+            "histogram": 1.625,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 0.0914,
+            "slope_pct": 0.17,
+            "r_squared": 0.0309,
+            "confidence": "LOW",
+            "prediction": "BULLISH",
+            "projected_30d": 46.99,
+            "projected_change_pct": -11.33
+          },
+          "rsi": 69.02
+        }
       },
       "trend": {
         "direction": "bearish",
@@ -5329,7 +5885,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.053668",
+      "last_updated": "2026-01-17T07:09:12.510779",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5363,6 +5919,59 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 35,
+        "prediction": "BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+        "confidence": 0.33,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "RSI \u0e15\u0e48\u0e33 (33)"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (25)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 (Death Alignment)"
+        ],
+        "warnings": [
+          "\ud83d\udcc9 EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 - \u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e1a"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 24.71,
+            "plus_di": 21.29,
+            "minus_di": 26.23,
+            "strength": "MODERATE",
+            "direction": "BEARISH",
+            "adx_trend": "FALLING",
+            "signal": "MODERATE_BEARISH"
+          },
+          "macd": {
+            "macd": -2.2705,
+            "signal": 0.6894,
+            "histogram": -2.9599,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.0809,
+            "slope_pct": -0.01,
+            "r_squared": 0.0052,
+            "confidence": "LOW",
+            "prediction": "NEUTRAL",
+            "projected_30d": 650.92,
+            "projected_change_pct": 3.14
+          },
+          "rsi": 33.37
+        }
       },
       "trend": {
         "direction": "neutral",
@@ -5723,9 +6332,25 @@
           "message": "Price in Discount Zone - Look for buys",
           "level": 685.2,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcc9 EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e25\u0e07 - \u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e1a",
+          "level": 631.0900268555,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "medium",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+          "level": 631.0900268555,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 4,
+      "alert_count": 6,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -5777,7 +6402,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.060901",
+      "last_updated": "2026-01-17T07:09:12.518667",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5799,6 +6424,60 @@
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 65,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (12)",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +5.7%)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (Golden Alignment)"
+        ],
+        "bearish_factors": [
+          "MACD \u0e15\u0e31\u0e14\u0e25\u0e07"
+        ],
+        "warnings": [
+          "\ud83d\udcc9 MACD \u0e15\u0e31\u0e14\u0e25\u0e07 - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e02\u0e32\u0e25\u0e07"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 11.82,
+            "plus_di": 20.45,
+            "minus_di": 16.87,
+            "strength": "WEAK",
+            "direction": "BULLISH",
+            "adx_trend": "FALLING",
+            "signal": "WEAK_BULLISH"
+          },
+          "macd": {
+            "macd": 0.7959,
+            "signal": 0.8536,
+            "histogram": -0.0577,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": "BEARISH_CROSS"
+          },
+          "linear_regression": {
+            "slope": 0.2851,
+            "slope_pct": 0.15,
+            "r_squared": 0.2542,
+            "confidence": "LOW",
+            "prediction": "BULLISH",
+            "projected_30d": 196.48,
+            "projected_change_pct": 5.74
+          },
+          "rsi": 54.59
+        }
       },
       "trend": {
         "direction": "neutral",
@@ -6158,9 +6837,17 @@
           "message": "Price in Discount Zone - Look for buys",
           "level": 190.29,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcc9 MACD \u0e15\u0e31\u0e14\u0e25\u0e07 - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e02\u0e32\u0e25\u0e07",
+          "level": 185.8099975586,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 2,
+      "alert_count": 3,
       "trade_setups": [
         {
           "ob_type": "bullish",
@@ -6212,7 +6899,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.070342",
+      "last_updated": "2026-01-17T07:09:12.529408",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6246,6 +6933,56 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 50,
+        "prediction": "NEUTRAL",
+        "prediction_th": "\u0e17\u0e23\u0e07\u0e15\u0e31\u0e27",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e44\u0e21\u0e48\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19 \u0e23\u0e2d\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13",
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (20)"
+        ],
+        "bearish_factors": [
+          "RSI \u0e2a\u0e39\u0e07 (64)"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 19.6,
+            "plus_di": 26.2,
+            "minus_di": 12.3,
+            "strength": "WEAK",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "WEAK_BULLISH"
+          },
+          "macd": {
+            "macd": 0.0377,
+            "signal": -0.0502,
+            "histogram": 0.0879,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 0.0006,
+            "slope_pct": 0.01,
+            "r_squared": 0.0003,
+            "confidence": "LOW",
+            "prediction": "NEUTRAL",
+            "projected_30d": 3.82,
+            "projected_change_pct": -8.1
+          },
+          "rsi": 64.37
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -6870,7 +7607,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.076623",
+      "last_updated": "2026-01-17T07:09:12.537048",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6896,6 +7633,61 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 40,
+        "prediction": "BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+        "confidence": 0.33,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "MACD Bullish Divergence - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19"
+        ],
+        "bearish_factors": [
+          "ADX \u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 (43) - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -39.5%)"
+        ],
+        "warnings": [
+          "\u26a0\ufe0f ADX \u0e25\u0e14\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e40\u0e23\u0e34\u0e48\u0e21\u0e2d\u0e48\u0e2d\u0e19\u0e41\u0e2d",
+          "\ud83d\udcca \u0e04\u0e32\u0e14\u0e01\u0e32\u0e23\u0e13\u0e4c 30 \u0e27\u0e31\u0e19: \u0e25\u0e14\u0e25\u0e07 39.5%"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 43.47,
+            "plus_di": 28.82,
+            "minus_di": 29.74,
+            "strength": "VERY_STRONG",
+            "direction": "BEARISH",
+            "adx_trend": "FALLING",
+            "signal": "VERY_STRONG_BEARISH"
+          },
+          "macd": {
+            "macd": -4.4307,
+            "signal": -5.1657,
+            "histogram": 0.735,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_INCREASING",
+            "divergence": {
+              "type": "BULLISH",
+              "strength": 33.75979330321044,
+              "message": "\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19: \u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e25\u0e07 \u0e41\u0e15\u0e48 MACD \u0e40\u0e23\u0e34\u0e48\u0e21\u0e41\u0e02\u0e47\u0e07",
+              "warning": false
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.7518,
+            "slope_pct": -0.89,
+            "r_squared": 0.7983,
+            "confidence": "HIGH",
+            "prediction": "STRONG_BEARISH",
+            "projected_30d": 51.31,
+            "projected_change_pct": -39.5
+          },
+          "rsi": 55.72
+        }
       },
       "trend": {
         "direction": "bearish",
@@ -7207,9 +7999,33 @@
           "message": "Price in Discount Zone - Look for buys",
           "level": 111.15,
           "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\u26a0\ufe0f ADX \u0e25\u0e14\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e40\u0e23\u0e34\u0e48\u0e21\u0e2d\u0e48\u0e2d\u0e19\u0e41\u0e2d",
+          "level": 84.8000030518,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udcca \u0e04\u0e32\u0e14\u0e01\u0e32\u0e23\u0e13\u0e4c 30 \u0e27\u0e31\u0e19: \u0e25\u0e14\u0e25\u0e07 39.5%",
+          "level": 84.8000030518,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "medium",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+          "level": 84.8000030518,
+          "distance_pct": 0
         }
       ],
-      "alert_count": 1,
+      "alert_count": 4,
       "trade_setups": [
         {
           "ob_type": "bearish",
@@ -7261,7 +8077,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.083764",
+      "last_updated": "2026-01-17T07:09:12.545458",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7291,6 +8107,56 @@
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
+      },
+      "trend_prediction": {
+        "score": 90,
+        "prediction": "STRONG_BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 1.0,
+        "confidence_level": "HIGH",
+        "bullish_factors": [
+          "ADX \u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 (38) - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +53.7%)",
+          "\u0e23\u0e32\u0e04\u0e32\u0e2a\u0e39\u0e07\u0e01\u0e27\u0e48\u0e32 EMA20 \u0e41\u0e25\u0e30 EMA50"
+        ],
+        "bearish_factors": [],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 37.54,
+            "plus_di": 33.26,
+            "minus_di": 10.6,
+            "strength": "STRONG",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "STRONG_BULLISH"
+          },
+          "macd": {
+            "macd": 0.9983,
+            "signal": 0.7865,
+            "histogram": 0.2118,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 0.1698,
+            "slope_pct": 1.67,
+            "r_squared": 0.7976,
+            "confidence": "HIGH",
+            "prediction": "STRONG_BULLISH",
+            "projected_30d": 15.58,
+            "projected_change_pct": 53.68
+          },
+          "rsi": 59.37
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -7845,7 +8711,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.091610",
+      "last_updated": "2026-01-17T07:09:12.554119",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7879,6 +8745,58 @@
           }
         ],
         "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+      },
+      "trend_prediction": {
+        "score": 90,
+        "prediction": "STRONG_BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 (43) - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +58.9%)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (Golden Alignment)"
+        ],
+        "bearish_factors": [
+          "RSI \u0e2a\u0e39\u0e07 (63)"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 42.72,
+            "plus_di": 33.19,
+            "minus_di": 8.5,
+            "strength": "VERY_STRONG",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "VERY_STRONG_BULLISH"
+          },
+          "macd": {
+            "macd": 8.1204,
+            "signal": 7.2192,
+            "histogram": 0.9012,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 1.5665,
+            "slope_pct": 1.81,
+            "r_squared": 0.9006,
+            "confidence": "HIGH",
+            "prediction": "STRONG_BULLISH",
+            "projected_30d": 137.53,
+            "projected_change_pct": 58.85
+          },
+          "rsi": 63.35
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -8324,7 +9242,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-17T06:16:26.100828",
+      "last_updated": "2026-01-17T07:09:12.561806",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8354,6 +9272,56 @@
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
+      },
+      "trend_prediction": {
+        "score": 50,
+        "prediction": "NEUTRAL",
+        "prediction_th": "\u0e17\u0e23\u0e07\u0e15\u0e31\u0e27",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e44\u0e21\u0e48\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19 \u0e23\u0e2d\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13",
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "bullish_factors": [
+          "RSI \u0e15\u0e48\u0e33 (30)"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (20)"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 19.87,
+            "plus_di": 18.71,
+            "minus_di": 23.36,
+            "strength": "WEAK",
+            "direction": "BEARISH",
+            "adx_trend": "FALLING",
+            "signal": "WEAK_BEARISH"
+          },
+          "macd": {
+            "macd": -1.9648,
+            "signal": 1.0968,
+            "histogram": -3.0617,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.069,
+            "slope_pct": -0.02,
+            "r_squared": 0.001,
+            "confidence": "LOW",
+            "prediction": "NEUTRAL",
+            "projected_30d": 453.01,
+            "projected_change_pct": 1.3
+          },
+          "rsi": 30.0
+        }
       },
       "trend": {
         "direction": "bullish",
@@ -8732,7 +9700,7 @@
   },
   "summary": {
     "total_stocks": 16,
-    "total_alerts": 39,
+    "total_alerts": 55,
     "market_bias": {
       "bullish": 7,
       "bearish": 5,
@@ -8779,6 +9747,11 @@
         "distance_pct": 0
       },
       {
+        "symbol": "AAPL",
+        "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+        "distance_pct": 0
+      },
+      {
         "symbol": "GRAB",
         "message": "Bearish CHoCH: Potential trend reversal to downside",
         "distance_pct": 0
@@ -8786,11 +9759,6 @@
       {
         "symbol": "GRAB",
         "message": "Bearish BOS: Price broke below 4.85",
-        "distance_pct": 0
-      },
-      {
-        "symbol": "HIMS",
-        "message": "Bearish CHoCH: Potential trend reversal to downside",
         "distance_pct": 0
       }
     ],
