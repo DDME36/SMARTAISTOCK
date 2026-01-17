@@ -14,6 +14,7 @@ import SignalsCard from './cards/SignalsCard'
 import QuickStatsCard from './cards/QuickStatsCard'
 import PriceTargetCard from './cards/PriceTargetCard'
 import QuickSignalBanner from './QuickSignalBanner'
+import TrendPredictionCard from './cards/TrendPredictionCard'
 
 // Floating Refresh Button for Mobile - uses Portal to escape parent transforms
 function MobileRefreshButton() {
@@ -222,6 +223,7 @@ export default function Dashboard() {
         <SentimentCard />
         <AddSymbolCard />
         <MarketStatusCard />
+        <TrendPredictionCard />
         <QuickStatsCard />
         <WatchlistCard />
         <PriceTargetCard />

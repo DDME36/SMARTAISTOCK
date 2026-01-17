@@ -29,27 +29,41 @@ export default function WatchlistCard() {
     const smc = smcData?.stocks?.[symbol]
     const live = livePrices[symbol]
     const failed = failedSymbols.has(symbol)
-    
+
     // Get name from live data (API) or fallback to symbol
     const name = live?.name || symbol
     const exchange = live?.exchange || 'US'
-    
+
     // ALWAYS prefer live price over SMC cached price
     const price = live?.price || smc?.current_price || null
     const change = live?.change
-    
+
+    // Get trend prediction (NEW!)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const trendPrediction = (smc as any)?.trend_prediction
+
     if (smc) {
       // Use change value to determine color, not SMC trend
-      const dir = change !== undefined ? (change > 0 ? 'up' : change < 0 ? 'down' : 'flat') : 
-                  (typeof smc.trend === 'string' ? smc.trend : smc.trend?.direction || 'neutral')
-      return { price, change, trend: dir, hasSmc: true, failed: false, name, exchange }
+      const dir = change !== undefined ? (change > 0 ? 'up' : change < 0 ? 'down' : 'flat') :
+        (typeof smc.trend === 'string' ? smc.trend : smc.trend?.direction || 'neutral')
+      return { price, change, trend: dir, hasSmc: true, failed: false, name, exchange, trendPrediction }
     }
     if (live) {
       // Any positive = green, any negative = red
       const dir = live.change > 0 ? 'up' : live.change < 0 ? 'down' : 'flat'
-      return { price, change, trend: dir, hasSmc: false, failed: false, name, exchange }
+      return { price, change, trend: dir, hasSmc: false, failed: false, name, exchange, trendPrediction: null }
     }
-    return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, name, exchange }
+    return { price: null, change: undefined, trend: 'neutral', hasSmc: false, failed, name, exchange, trendPrediction: null }
+  }
+
+  // Get trend badge info
+  const getTrendBadge = (prediction: string | undefined, score: number | undefined) => {
+    if (!prediction) return null
+    if (prediction === 'STRONG_BULLISH') return { emoji: '🟢', label: '↑↑', color: '#10b981' }
+    if (prediction === 'BULLISH') return { emoji: '🟢', label: '↑', color: '#10b981' }
+    if (prediction === 'STRONG_BEARISH') return { emoji: '🔴', label: '↓↓', color: '#ef4444' }
+    if (prediction === 'BEARISH') return { emoji: '🔴', label: '↓', color: '#ef4444' }
+    return { emoji: '🟡', label: '→', color: '#f59e0b' }
   }
 
   const handleRemove = (symbol: string) => {
@@ -75,8 +89,8 @@ export default function WatchlistCard() {
       <div className="card-title">
         <span>{t('active_watchlist')}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button 
-            onClick={refresh} 
+          <button
+            onClick={refresh}
             disabled={loading}
             className="refresh-btn"
             title="Refresh prices"
@@ -88,19 +102,23 @@ export default function WatchlistCard() {
           </span>
         </div>
       </div>
-      
+
       <div className="watchlist-list">
         {watchlist.length === 0 ? (
           <div className="watchlist-empty">{t('empty_watchlist')}</div>
         ) : watchlist.map(symbol => {
-          const { price, change, trend, hasSmc, failed, name, exchange } = getData(symbol)
+          const { price, change, trend, hasSmc, failed, name, exchange, trendPrediction } = getData(symbol)
           const logo = 'https://assets.parqet.com/logos/symbol/' + symbol + '?format=png'
           const isLoading = loading && !price && !failed
-          
+
+          // Get trend prediction badge
+          const trendBadge = getTrendBadge(trendPrediction?.prediction, trendPrediction?.score)
+          const hasWarning = trendPrediction?.has_warning
+
           return (
-            <div key={symbol} className="watchlist-row-v2">
+            <div key={symbol} className={`watchlist-row-v2 ${hasWarning ? 'has-warning' : ''}`}>
               <div className="wl-left">
-                <img src={logo} alt="" className="wl-logo" 
+                <img src={logo} alt="" className="wl-logo"
                   onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                 <div className="wl-info">
                   <div className="wl-symbol-row">
@@ -108,6 +126,23 @@ export default function WatchlistCard() {
                     <span className={'wl-badge ' + (hasSmc ? 'smc' : 'live')}>
                       {hasSmc ? 'SMC' : 'LIVE'}
                     </span>
+                    {/* Trend Prediction Badge (NEW!) */}
+                    {trendBadge && (
+                      <span
+                        className="wl-trend-badge"
+                        style={{
+                          color: trendBadge.color,
+                          borderColor: trendBadge.color + '40'
+                        }}
+                        title={language === 'th' ? `แนวโน้ม 1 เดือน: ${trendPrediction?.prediction_th}` : `1-month outlook: ${trendPrediction?.prediction}`}
+                      >
+                        {trendBadge.label}
+                      </span>
+                    )}
+                    {/* Warning indicator */}
+                    {hasWarning && (
+                      <span className="wl-warning-dot" title={language === 'th' ? 'มีสัญญาณเตือน!' : 'Has warning!'}>⚠️</span>
+                    )}
                   </div>
                   <div className="wl-meta">
                     <span className="wl-name">{name}</span>
@@ -161,8 +196,8 @@ export default function WatchlistCard() {
       <ConfirmDialog
         isOpen={deleteConfirm !== null}
         title={language === 'th' ? 'ลบหุ้นออกจาก Watchlist?' : 'Remove from Watchlist?'}
-        message={language === 'th' 
-          ? `คุณต้องการลบ ${deleteConfirm} ออกจาก Watchlist ใช่หรือไม่?` 
+        message={language === 'th'
+          ? `คุณต้องการลบ ${deleteConfirm} ออกจาก Watchlist ใช่หรือไม่?`
           : `Are you sure you want to remove ${deleteConfirm} from your watchlist?`}
         confirmText={language === 'th' ? 'ลบ' : 'Remove'}
         cancelText={language === 'th' ? 'ยกเลิก' : 'Cancel'}

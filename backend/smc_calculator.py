@@ -1074,6 +1074,482 @@ class SMCCalculator:
         
         return np.mean(tr_list[-period:])
     
+    # ==================== Trend Prediction Indicators (NEW!) ====================
+    
+    def calc_adx(self, period: int = 14) -> Dict:
+        """
+        Calculate ADX (Average Directional Index) - Trend strength indicator
+        
+        ADX > 25 = Strong trend (good for trend-following)
+        ADX < 20 = Weak/No trend (avoid trend-following, use range strategies)
+        Rising ADX = Trend strengthening
+        Falling ADX = Trend weakening
+        """
+        if self.df is None or len(self.df) < period + 1:
+            return {'value': 0, 'signal': 'NO_DATA'}
+        
+        highs = self.df['High'].values
+        lows = self.df['Low'].values
+        closes = self.df['Close'].values
+        
+        # Calculate +DM and -DM
+        plus_dm = []
+        minus_dm = []
+        tr_list = []
+        
+        for i in range(1, len(highs)):
+            high_diff = highs[i] - highs[i-1]
+            low_diff = lows[i-1] - lows[i]
+            
+            # +DM
+            if high_diff > low_diff and high_diff > 0:
+                plus_dm.append(high_diff)
+            else:
+                plus_dm.append(0)
+            
+            # -DM
+            if low_diff > high_diff and low_diff > 0:
+                minus_dm.append(low_diff)
+            else:
+                minus_dm.append(0)
+            
+            # True Range
+            tr = max(
+                highs[i] - lows[i],
+                abs(highs[i] - closes[i-1]),
+                abs(lows[i] - closes[i-1])
+            )
+            tr_list.append(tr)
+        
+        if len(tr_list) < period:
+            return {'value': 0, 'signal': 'NO_DATA'}
+        
+        # Smooth with EMA
+        def smooth(values, period):
+            result = [np.mean(values[:period])]
+            multiplier = 1 / period
+            for v in values[period:]:
+                result.append(result[-1] + multiplier * (v - result[-1]))
+            return result
+        
+        smoothed_tr = smooth(tr_list, period)
+        smoothed_plus_dm = smooth(plus_dm, period)
+        smoothed_minus_dm = smooth(minus_dm, period)
+        
+        # Calculate +DI and -DI
+        plus_di = []
+        minus_di = []
+        dx = []
+        
+        for i in range(len(smoothed_tr)):
+            if smoothed_tr[i] > 0:
+                pdi = (smoothed_plus_dm[i] / smoothed_tr[i]) * 100
+                mdi = (smoothed_minus_dm[i] / smoothed_tr[i]) * 100
+                plus_di.append(pdi)
+                minus_di.append(mdi)
+                
+                if pdi + mdi > 0:
+                    dx.append(abs(pdi - mdi) / (pdi + mdi) * 100)
+                else:
+                    dx.append(0)
+        
+        if len(dx) < period:
+            return {'value': 0, 'signal': 'NO_DATA'}
+        
+        # Calculate ADX
+        adx = smooth(dx, period)
+        current_adx = adx[-1] if adx else 0
+        prev_adx = adx[-2] if len(adx) > 1 else current_adx
+        
+        # Determine signal
+        if current_adx >= 40:
+            strength = 'VERY_STRONG'
+        elif current_adx >= 25:
+            strength = 'STRONG'
+        elif current_adx >= 20:
+            strength = 'MODERATE'
+        else:
+            strength = 'WEAK'
+        
+        # Trend direction from +DI vs -DI
+        if plus_di and minus_di:
+            if plus_di[-1] > minus_di[-1]:
+                direction = 'BULLISH'
+            else:
+                direction = 'BEARISH'
+        else:
+            direction = 'NEUTRAL'
+        
+        # ADX trend (rising or falling)
+        adx_trend = 'RISING' if current_adx > prev_adx else 'FALLING'
+        
+        return {
+            'value': round(current_adx, 2),
+            'plus_di': round(plus_di[-1], 2) if plus_di else 0,
+            'minus_di': round(minus_di[-1], 2) if minus_di else 0,
+            'strength': strength,
+            'direction': direction,
+            'adx_trend': adx_trend,
+            'signal': f'{strength}_{direction}'
+        }
+    
+    def calc_macd(self, fast: int = 12, slow: int = 26, signal: int = 9) -> Dict:
+        """
+        Calculate MACD with divergence detection
+        
+        MACD Divergence is a powerful reversal signal:
+        - Bullish Divergence: Price makes lower low, MACD makes higher low (BUY)
+        - Bearish Divergence: Price makes higher high, MACD makes lower high (SELL)
+        """
+        if self.df is None or len(self.df) < slow + signal:
+            return {'signal': 'NO_DATA'}
+        
+        closes = self.df['Close'].values
+        
+        # Calculate EMAs
+        ema_fast = self._calc_ema_series(closes, fast)
+        ema_slow = self._calc_ema_series(closes, slow)
+        
+        # MACD Line = Fast EMA - Slow EMA
+        macd_line = [f - s for f, s in zip(ema_fast, ema_slow)]
+        
+        # Signal Line = EMA of MACD
+        signal_line = self._calc_ema_series(np.array(macd_line), signal)
+        
+        # Histogram
+        histogram = [m - s for m, s in zip(macd_line, signal_line)]
+        
+        current_macd = macd_line[-1]
+        current_signal = signal_line[-1]
+        current_hist = histogram[-1]
+        prev_hist = histogram[-2] if len(histogram) > 1 else current_hist
+        
+        # Basic MACD signal
+        if current_macd > current_signal:
+            basic_signal = 'BULLISH'
+        elif current_macd < current_signal:
+            basic_signal = 'BEARISH'
+        else:
+            basic_signal = 'NEUTRAL'
+        
+        # Histogram momentum
+        if current_hist > 0 and current_hist > prev_hist:
+            momentum = 'BULLISH_INCREASING'
+        elif current_hist > 0:
+            momentum = 'BULLISH_DECREASING'
+        elif current_hist < 0 and current_hist < prev_hist:
+            momentum = 'BEARISH_INCREASING'
+        else:
+            momentum = 'BEARISH_DECREASING'
+        
+        # Detect Divergence (last 20 bars)
+        divergence = self._detect_macd_divergence(closes, macd_line, lookback=20)
+        
+        return {
+            'macd': round(current_macd, 4),
+            'signal': round(current_signal, 4),
+            'histogram': round(current_hist, 4),
+            'basic_signal': basic_signal,
+            'momentum': momentum,
+            'divergence': divergence,
+            'crossover': 'BULLISH_CROSS' if current_macd > current_signal and macd_line[-2] <= signal_line[-2] else
+                        'BEARISH_CROSS' if current_macd < current_signal and macd_line[-2] >= signal_line[-2] else None
+        }
+    
+    def _calc_ema_series(self, prices: np.ndarray, period: int) -> List[float]:
+        """Calculate EMA series for entire price array"""
+        if len(prices) < period:
+            return list(prices)
+        
+        multiplier = 2 / (period + 1)
+        ema = [np.mean(prices[:period])]
+        
+        for i in range(period, len(prices)):
+            ema.append((prices[i] - ema[-1]) * multiplier + ema[-1])
+        
+        # Pad beginning
+        result = [ema[0]] * period + ema[1:]
+        return result[:len(prices)]
+    
+    def _detect_macd_divergence(self, prices: np.ndarray, macd_line: List[float], lookback: int = 20) -> Dict:
+        """
+        Detect MACD Divergence - Early reversal signal
+        
+        Bearish Divergence (WARNING!): Price Higher High, MACD Lower High
+        Bullish Divergence: Price Lower Low, MACD Higher Low
+        """
+        if len(prices) < lookback or len(macd_line) < lookback:
+            return {'type': None, 'strength': 0}
+        
+        recent_prices = prices[-lookback:]
+        recent_macd = macd_line[-lookback:]
+        
+        # Find peaks and troughs
+        def find_peaks(data, is_peak=True):
+            peaks = []
+            for i in range(1, len(data) - 1):
+                if is_peak:
+                    if data[i] > data[i-1] and data[i] > data[i+1]:
+                        peaks.append((i, data[i]))
+                else:
+                    if data[i] < data[i-1] and data[i] < data[i+1]:
+                        peaks.append((i, data[i]))
+            return peaks
+        
+        price_highs = find_peaks(recent_prices, is_peak=True)
+        price_lows = find_peaks(recent_prices, is_peak=False)
+        macd_highs = find_peaks(recent_macd, is_peak=True)
+        macd_lows = find_peaks(recent_macd, is_peak=False)
+        
+        divergence = {'type': None, 'strength': 0, 'message': None}
+        
+        # Check Bearish Divergence (Price HH, MACD LH)
+        if len(price_highs) >= 2 and len(macd_highs) >= 2:
+            if price_highs[-1][1] > price_highs[-2][1] and macd_highs[-1][1] < macd_highs[-2][1]:
+                divergence = {
+                    'type': 'BEARISH',
+                    'strength': min(100, abs(price_highs[-1][1] - price_highs[-2][1]) / price_highs[-2][1] * 1000),
+                    'message': 'สัญญาณกลับตัวลง: ราคาสูงขึ้น แต่ MACD อ่อนแอ',
+                    'warning': True
+                }
+        
+        # Check Bullish Divergence (Price LL, MACD HL)
+        if len(price_lows) >= 2 and len(macd_lows) >= 2:
+            if price_lows[-1][1] < price_lows[-2][1] and macd_lows[-1][1] > macd_lows[-2][1]:
+                divergence = {
+                    'type': 'BULLISH',
+                    'strength': min(100, abs(price_lows[-2][1] - price_lows[-1][1]) / price_lows[-2][1] * 1000),
+                    'message': 'สัญญาณกลับตัวขึ้น: ราคาต่ำลง แต่ MACD เริ่มแข็ง',
+                    'warning': False
+                }
+        
+        return divergence
+    
+    def calc_linear_regression(self, period: int = 30) -> Dict:
+        """
+        Calculate Linear Regression Slope for trend prediction
+        
+        Positive slope = Uptrend expected
+        Negative slope = Downtrend expected
+        Steepness indicates trend strength
+        """
+        if self.df is None or len(self.df) < period:
+            return {'slope': 0, 'prediction': 'NEUTRAL'}
+        
+        closes = self.df['Close'].values[-period:]
+        x = np.arange(period)
+        
+        # Linear regression: y = mx + b
+        n = len(x)
+        sum_x = np.sum(x)
+        sum_y = np.sum(closes)
+        sum_xy = np.sum(x * closes)
+        sum_x2 = np.sum(x ** 2)
+        
+        slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x ** 2)
+        intercept = (sum_y - slope * sum_x) / n
+        
+        # Calculate R-squared for confidence
+        y_pred = slope * x + intercept
+        ss_res = np.sum((closes - y_pred) ** 2)
+        ss_tot = np.sum((closes - np.mean(closes)) ** 2)
+        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+        
+        # Normalize slope as percentage per day
+        current_price = closes[-1]
+        slope_pct = (slope / current_price) * 100
+        
+        # 30-day projection
+        projected_price = slope * (period + 30) + intercept
+        projected_change = ((projected_price - current_price) / current_price) * 100
+        
+        # Prediction
+        if slope_pct > 0.5 and r_squared > 0.5:
+            prediction = 'STRONG_BULLISH'
+        elif slope_pct > 0.1:
+            prediction = 'BULLISH'
+        elif slope_pct < -0.5 and r_squared > 0.5:
+            prediction = 'STRONG_BEARISH'
+        elif slope_pct < -0.1:
+            prediction = 'BEARISH'
+        else:
+            prediction = 'NEUTRAL'
+        
+        return {
+            'slope': round(slope, 4),
+            'slope_pct': round(slope_pct, 2),
+            'r_squared': round(r_squared, 4),
+            'confidence': 'HIGH' if r_squared > 0.7 else 'MEDIUM' if r_squared > 0.4 else 'LOW',
+            'prediction': prediction,
+            'projected_30d': round(projected_price, 2),
+            'projected_change_pct': round(projected_change, 2)
+        }
+    
+    def calculate_trend_prediction(self) -> Dict:
+        """
+        Calculate comprehensive 1-month trend prediction
+        
+        Combines:
+        - ADX (trend strength)
+        - MACD divergence (reversal signals)
+        - Linear regression (direction)
+        - RSI (momentum)
+        - EMA alignment
+        
+        Returns prediction with confidence level
+        """
+        if self.df is None or len(self.df) < 50:
+            return {'prediction': 'NO_DATA', 'score': 50}
+        
+        score = 50  # Start neutral
+        warnings = []
+        bullish_factors = []
+        bearish_factors = []
+        
+        # 1. ADX Analysis (weight: 20%)
+        adx = self.calc_adx()
+        if adx.get('value', 0) > 0:
+            if adx['direction'] == 'BULLISH':
+                if adx['strength'] in ['STRONG', 'VERY_STRONG']:
+                    score += 15
+                    bullish_factors.append(f"ADX แข็งแกร่ง ({adx['value']:.0f}) - เทรนด์ขาขึ้นชัดเจน")
+                else:
+                    score += 5
+                    bullish_factors.append(f"ADX ขาขึ้น ({adx['value']:.0f})")
+            elif adx['direction'] == 'BEARISH':
+                if adx['strength'] in ['STRONG', 'VERY_STRONG']:
+                    score -= 15
+                    bearish_factors.append(f"ADX แข็งแกร่ง ({adx['value']:.0f}) - เทรนด์ขาลงชัดเจน")
+                else:
+                    score -= 5
+                    bearish_factors.append(f"ADX ขาลง ({adx['value']:.0f})")
+            
+            # ADX trend warning
+            if adx['adx_trend'] == 'FALLING' and adx['strength'] in ['STRONG', 'VERY_STRONG']:
+                warnings.append("⚠️ ADX ลดลง - เทรนด์เริ่มอ่อนแอ")
+        
+        # 2. MACD Divergence (weight: 25%) - Most important for reversals
+        macd = self.calc_macd()
+        divergence = macd.get('divergence', {})
+        
+        if divergence.get('type') == 'BEARISH':
+            score -= 20
+            bearish_factors.append("MACD Bearish Divergence - สัญญาณเตือนขาลง")
+            warnings.append("🔴 MACD Divergence: ราคาสูงขึ้นแต่โมเมนตัมอ่อน - ระวังกลับตัว!")
+        elif divergence.get('type') == 'BULLISH':
+            score += 20
+            bullish_factors.append("MACD Bullish Divergence - สัญญาณกลับตัวขึ้น")
+        
+        if macd.get('crossover') == 'BEARISH_CROSS':
+            score -= 10
+            bearish_factors.append("MACD ตัดลง")
+            warnings.append("📉 MACD ตัดลง - สัญญาณขาลง")
+        elif macd.get('crossover') == 'BULLISH_CROSS':
+            score += 10
+            bullish_factors.append("MACD ตัดขึ้น")
+        
+        # 3. Linear Regression (weight: 20%)
+        lr = self.calc_linear_regression()
+        if lr.get('prediction') in ['STRONG_BULLISH', 'BULLISH']:
+            conf = 15 if lr['confidence'] == 'HIGH' else 10 if lr['confidence'] == 'MEDIUM' else 5
+            score += conf
+            bullish_factors.append(f"Linear Regression ขาขึ้น (คาด {lr['projected_change_pct']:+.1f}%)")
+        elif lr.get('prediction') in ['STRONG_BEARISH', 'BEARISH']:
+            conf = 15 if lr['confidence'] == 'HIGH' else 10 if lr['confidence'] == 'MEDIUM' else 5
+            score -= conf
+            bearish_factors.append(f"Linear Regression ขาลง (คาด {lr['projected_change_pct']:+.1f}%)")
+            if lr['projected_change_pct'] < -10:
+                warnings.append(f"📊 คาดการณ์ 30 วัน: ลดลง {abs(lr['projected_change_pct']):.1f}%")
+        
+        # 4. RSI (weight: 15%)
+        closes = self.df['Close'].values
+        rsi = self._calc_rsi(closes)
+        
+        if rsi <= 30:
+            score += 10
+            bullish_factors.append(f"RSI Oversold ({rsi:.0f}) - โอกาสกลับตัวขึ้น")
+        elif rsi >= 70:
+            score -= 10
+            bearish_factors.append(f"RSI Overbought ({rsi:.0f}) - โอกาสกลับตัวลง")
+            warnings.append(f"⚠️ RSI สูง ({rsi:.0f}) - ระวังการปรับฐาน")
+        elif rsi >= 60:
+            score -= 5
+            bearish_factors.append(f"RSI สูง ({rsi:.0f})")
+        elif rsi <= 40:
+            score += 5
+            bullish_factors.append(f"RSI ต่ำ ({rsi:.0f})")
+        
+        # 5. EMA Alignment (weight: 20%)
+        ema20 = self._calc_ema(closes, 20)
+        ema50 = self._calc_ema(closes, 50)
+        ema200 = self._calc_ema(closes, 200) if len(closes) >= 200 else self._calc_ema(closes, len(closes))
+        price = closes[-1]
+        
+        if price > ema20 > ema50 > ema200:
+            score += 15
+            bullish_factors.append("EMA เรียงตัวขาขึ้น (Golden Alignment)")
+        elif price < ema20 < ema50 < ema200:
+            score -= 15
+            bearish_factors.append("EMA เรียงตัวขาลง (Death Alignment)")
+            warnings.append("📉 EMA เรียงตัวขาลง - แนวโน้มลบ")
+        elif price < ema20 and ema20 < ema50:
+            score -= 10
+            bearish_factors.append("ราคาต่ำกว่า EMA20 และ EMA50")
+        elif price > ema20 and ema20 > ema50:
+            score += 10
+            bullish_factors.append("ราคาสูงกว่า EMA20 และ EMA50")
+        
+        # Clamp score
+        score = max(0, min(100, score))
+        
+        # Determine prediction
+        if score >= 70:
+            prediction = 'STRONG_BULLISH'
+            prediction_th = 'ขาขึ้นแข็งแกร่ง'
+            outlook = 'คาดว่า 1 เดือนข้างหน้า: ขาขึ้น'
+        elif score >= 55:
+            prediction = 'BULLISH'
+            prediction_th = 'ขาขึ้น'
+            outlook = 'คาดว่า 1 เดือนข้างหน้า: มีแนวโน้มขึ้น'
+        elif score <= 30:
+            prediction = 'STRONG_BEARISH'
+            prediction_th = 'ขาลงแข็งแกร่ง'
+            outlook = 'คาดว่า 1 เดือนข้างหน้า: ขาลง ⚠️'
+        elif score <= 45:
+            prediction = 'BEARISH'
+            prediction_th = 'ขาลง'
+            outlook = 'คาดว่า 1 เดือนข้างหน้า: มีแนวโน้มลง'
+        else:
+            prediction = 'NEUTRAL'
+            prediction_th = 'ทรงตัว'
+            outlook = 'คาดว่า 1 เดือนข้างหน้า: ไม่ชัดเจน รอสัญญาณ'
+        
+        # Confidence based on factor agreement
+        total_factors = len(bullish_factors) + len(bearish_factors)
+        if total_factors > 0:
+            confidence = abs(len(bullish_factors) - len(bearish_factors)) / total_factors
+        else:
+            confidence = 0
+        
+        return {
+            'score': score,
+            'prediction': prediction,
+            'prediction_th': prediction_th,
+            'outlook': outlook,
+            'confidence': round(confidence, 2),
+            'confidence_level': 'HIGH' if confidence > 0.6 else 'MEDIUM' if confidence > 0.3 else 'LOW',
+            'bullish_factors': bullish_factors,
+            'bearish_factors': bearish_factors,
+            'warnings': warnings,
+            'has_warning': len(warnings) > 0,
+            'indicators': {
+                'adx': adx,
+                'macd': macd,
+                'linear_regression': lr,
+                'rsi': round(rsi, 2)
+            }
+        }
+    
     # ==================== Trade Setup Calculation ====================
     
     def calculate_trade_setup(self, ob: Dict, zones: Dict, indicators: Dict) -> Dict:
@@ -1690,6 +2166,32 @@ class SMCCalculator:
             market_sentiment=None  # Will be updated by run_analysis
         )
         
+        # Calculate Trend Prediction (NEW!) - 1 month outlook
+        trend_prediction = self.calculate_trend_prediction()
+        
+        # Add trend warning alerts if any
+        if trend_prediction.get('has_warning'):
+            for warning in trend_prediction.get('warnings', []):
+                alerts.append({
+                    'type': 'trend_warning',
+                    'signal': 'WARNING',
+                    'priority': 'high',
+                    'message': warning,
+                    'level': price,
+                    'distance_pct': 0
+                })
+        
+        # Add bearish prediction alert
+        if trend_prediction.get('prediction') in ['BEARISH', 'STRONG_BEARISH']:
+            alerts.append({
+                'type': 'trend_bearish',
+                'signal': 'SELL',
+                'priority': 'high' if trend_prediction['prediction'] == 'STRONG_BEARISH' else 'medium',
+                'message': f"📉 {trend_prediction['outlook']}",
+                'level': price,
+                'distance_pct': 0
+            })
+        
         return {
             'symbol': self.symbol,
             'current_price': round(price, 2),
@@ -1709,6 +2211,9 @@ class SMCCalculator:
             
             # Position Trading Score (NEW!)
             'position_score': position_score,
+            
+            # Trend Prediction (NEW!) - 1 month outlook
+            'trend_prediction': trend_prediction,
             
             # Trend Analysis
             'trend': trend,
@@ -1747,7 +2252,7 @@ class SMCCalculator:
                 'high_quality': len([o for o in order_blocks if o.get('quality_score', 0) >= 70])
             },
             
-            # Alerts
+            # Alerts (now includes trend warnings)
             'alerts': alerts,
             'alert_count': len(alerts),
             

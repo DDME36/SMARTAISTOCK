@@ -18,16 +18,32 @@ export default function QuickSignalBanner() {
     // Extract top signals from SMC data
     const topSignals: TopSignal[] = []
     let entryCount = 0
+    let warningCount = 0
+    let bullishCount = 0
+    let bearishCount = 0
 
     for (const symbol of watchlist) {
         const stock = smcData?.stocks?.[symbol]
-        if (!stock?.alerts?.length) continue
+        if (!stock) continue
 
-        const hasEntry = stock.alerts.some((a: { type?: string }) =>
-            a.type?.startsWith('ob_entry_')
-        )
+        // Count OB entries
+        if (stock.alerts?.some((a: { type?: string }) => a.type?.startsWith('ob_entry_'))) {
+            entryCount++
+        }
 
-        if (hasEntry) entryCount++
+        // Count warnings from trend prediction (NEW!)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tp = (stock as any).trend_prediction
+        if (tp?.has_warning) {
+            warningCount++
+        }
+
+        // Count trend predictions
+        if (tp?.prediction === 'BULLISH' || tp?.prediction === 'STRONG_BULLISH') {
+            bullishCount++
+        } else if (tp?.prediction === 'BEARISH' || tp?.prediction === 'STRONG_BEARISH') {
+            bearishCount++
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const positionScore = (stock as any).position_score
@@ -42,7 +58,7 @@ export default function QuickSignalBanner() {
                 symbol,
                 action: normalizedAction,
                 confidence: positionScore.score || 50,
-                hasEntry
+                hasEntry: stock.alerts?.some((a: { type?: string }) => a.type?.startsWith('ob_entry_'))
             })
         }
     }
@@ -74,7 +90,7 @@ export default function QuickSignalBanner() {
     }
 
     return (
-        <div className={`quick-signal-banner ${entryCount > 0 ? 'has-entry' : ''}`}>
+        <div className={`quick-signal-banner ${entryCount > 0 ? 'has-entry' : ''} ${warningCount > 0 ? 'has-warning' : ''}`}>
             {/* Main message */}
             <div className="qsb-main">
                 {entryCount > 0 ? (
@@ -84,6 +100,16 @@ export default function QuickSignalBanner() {
                             {language === 'th'
                                 ? `${entryCount} หุ้นเข้าจุด!`
                                 : `${entryCount} Entry Signal${entryCount > 1 ? 's' : ''}!`
+                            }
+                        </span>
+                    </>
+                ) : warningCount > 0 ? (
+                    <>
+                        <AlertTriangle size={18} className="warning-icon" />
+                        <span className="qsb-text qsb-warning-text">
+                            {language === 'th'
+                                ? `⚠️ ${warningCount} หุ้นมีสัญญาณเตือน`
+                                : `⚠️ ${warningCount} Stock${warningCount > 1 ? 's' : ''} with Warnings`
                             }
                         </span>
                     </>
@@ -102,8 +128,23 @@ export default function QuickSignalBanner() {
                     <span className="qsb-count sell">
                         <TrendingDown size={12} /> {sellCount}
                     </span>
+                    {/* Warning count (NEW!) */}
+                    {warningCount > 0 && (
+                        <span className="qsb-count warning">
+                            ⚠️ {warningCount}
+                        </span>
+                    )}
                 </div>
             </div>
+
+            {/* Trend summary (NEW!) */}
+            {(bullishCount > 0 || bearishCount > 0) && (
+                <div className="qsb-trend-summary">
+                    <span className="qsb-trend-label">{language === 'th' ? '1 เดือน:' : '1M:'}</span>
+                    {bullishCount > 0 && <span className="qsb-trend bullish">🟢{bullishCount}</span>}
+                    {bearishCount > 0 && <span className="qsb-trend bearish">🔴{bearishCount}</span>}
+                </div>
+            )}
 
             {/* Top signals preview */}
             {top2.length > 0 && (
@@ -125,3 +166,4 @@ export default function QuickSignalBanner() {
         </div>
     )
 }
+

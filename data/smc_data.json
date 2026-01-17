@@ -1,44 +1,554 @@
 {
-  "generated_at": "2026-01-12T22:54:39.338953",
+  "generated_at": "2026-01-17T13:35:50.922432",
+  "interval": "1d",
+  "trading_style": "position",
+  "market_sentiment": {
+    "score": 46,
+    "recommendation": "HOLD",
+    "message": "Normal conditions, wait for better opportunity",
+    "message_th": "\u0e2a\u0e20\u0e32\u0e27\u0e30\u0e1b\u0e01\u0e15\u0e34 \u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32",
+    "confidence": {
+      "level": "high",
+      "score": 88,
+      "factors": [
+        {
+          "source": "vix",
+          "quality": "high"
+        },
+        {
+          "source": "fear_greed",
+          "quality": "high"
+        },
+        {
+          "source": "breadth",
+          "quality": "medium"
+        },
+        {
+          "source": "pcr",
+          "quality": "estimated"
+        },
+        {
+          "source": "sectors",
+          "quality": "high"
+        },
+        {
+          "source": "ma",
+          "quality": "high"
+        },
+        {
+          "source": "yields",
+          "quality": "high"
+        },
+        {
+          "source": "momentum",
+          "quality": "high"
+        },
+        {
+          "source": "dxy",
+          "quality": "high"
+        },
+        {
+          "source": "gold",
+          "quality": "high"
+        },
+        {
+          "source": "internals",
+          "quality": "medium"
+        },
+        {
+          "source": "institutional",
+          "quality": "medium"
+        }
+      ],
+      "data_sources_count": 12
+    },
+    "indicators": {
+      "fear_greed": {
+        "stock": {
+          "score": 62,
+          "rating": "Greed",
+          "signal": "GREED",
+          "source": "cnn",
+          "previous_close": 61.5142857142857,
+          "previous_1_week": 53.5428571428571,
+          "previous_1_month": 45.4857142857143
+        },
+        "crypto": {
+          "score": 50,
+          "rating": "Neutral",
+          "signal": "NEUTRAL",
+          "source": "alternative.me"
+        },
+        "score": 62,
+        "rating": "Greed",
+        "signal": "GREED",
+        "source": "cnn"
+      },
+      "vix": {
+        "value": 15.86,
+        "change": 0.13,
+        "change_pct": 0.13,
+        "signal": "NEUTRAL",
+        "level": "normal",
+        "trend": "up",
+        "term_structure": {
+          "structure": "steep_contango",
+          "ratio": 0.835,
+          "spot": 15.86,
+          "term": 18.99
+        },
+        "source": "yahoo_finance",
+        "interpretation": "Normal volatility"
+      },
+      "market_breadth": {
+        "bullish": 0,
+        "bearish": 3,
+        "neutral": 4,
+        "ratio": 0.0,
+        "signal": "STRONG_BEARISH",
+        "score": 10,
+        "indices": {
+          "SPY": {
+            "name": "S&P 500",
+            "change_pct": -0.08,
+            "status": "neutral"
+          },
+          "QQQ": {
+            "name": "NASDAQ 100",
+            "change_pct": -0.08,
+            "status": "neutral"
+          },
+          "DIA": {
+            "name": "Dow Jones",
+            "change_pct": -0.18,
+            "status": "bearish"
+          },
+          "IWM": {
+            "name": "Russell 2000",
+            "change_pct": 0.09,
+            "status": "neutral"
+          },
+          "VTI": {
+            "name": "Total Market",
+            "change_pct": -0.06,
+            "status": "neutral"
+          },
+          "MDY": {
+            "name": "Mid Cap",
+            "change_pct": -0.3,
+            "status": "bearish"
+          },
+          "IJR": {
+            "name": "Small Cap",
+            "change_pct": -0.34,
+            "status": "bearish"
+          }
+        },
+        "source": "etf_proxy"
+      },
+      "put_call_ratio": {
+        "ratio": 0.817,
+        "signal": "NEUTRAL",
+        "interpretation": "Normal options activity",
+        "source": "estimated_from_vix",
+        "note": "Estimated - CBOE data unavailable"
+      },
+      "sectors": {
+        "sectors": [
+          {
+            "symbol": "XLRE",
+            "name": "Real Estate",
+            "change_1d": 1.22,
+            "change_5d": 3.91
+          },
+          {
+            "symbol": "XLI",
+            "name": "Industrials",
+            "change_1d": 0.68,
+            "change_5d": 2.29
+          },
+          {
+            "symbol": "XLE",
+            "name": "Energy",
+            "change_1d": 0.17,
+            "change_5d": 2.91
+          },
+          {
+            "symbol": "XLF",
+            "name": "Financials",
+            "change_1d": 0.13,
+            "change_5d": -1.54
+          },
+          {
+            "symbol": "XLK",
+            "name": "Technology",
+            "change_1d": 0.11,
+            "change_5d": -0.8
+          },
+          {
+            "symbol": "XLP",
+            "name": "Consumer Staples",
+            "change_1d": -0.32,
+            "change_5d": 2.41
+          },
+          {
+            "symbol": "XLY",
+            "name": "Consumer Disc.",
+            "change_1d": -0.33,
+            "change_5d": -1.78
+          },
+          {
+            "symbol": "XLU",
+            "name": "Utilities",
+            "change_1d": -0.5,
+            "change_5d": 1.9
+          },
+          {
+            "symbol": "XLB",
+            "name": "Materials",
+            "change_1d": -0.57,
+            "change_5d": 0.33
+          },
+          {
+            "symbol": "XLV",
+            "name": "Healthcare",
+            "change_1d": -0.78,
+            "change_5d": -1.04
+          },
+          {
+            "symbol": "XLC",
+            "name": "Communication",
+            "change_1d": -0.89,
+            "change_5d": -2.02
+          }
+        ],
+        "top_performers": [
+          {
+            "symbol": "XLRE",
+            "name": "Real Estate",
+            "change_1d": 1.22,
+            "change_5d": 3.91
+          },
+          {
+            "symbol": "XLI",
+            "name": "Industrials",
+            "change_1d": 0.68,
+            "change_5d": 2.29
+          },
+          {
+            "symbol": "XLE",
+            "name": "Energy",
+            "change_1d": 0.17,
+            "change_5d": 2.91
+          }
+        ],
+        "bottom_performers": [
+          {
+            "symbol": "XLB",
+            "name": "Materials",
+            "change_1d": -0.57,
+            "change_5d": 0.33
+          },
+          {
+            "symbol": "XLV",
+            "name": "Healthcare",
+            "change_1d": -0.78,
+            "change_5d": -1.04
+          },
+          {
+            "symbol": "XLC",
+            "name": "Communication",
+            "change_1d": -0.89,
+            "change_5d": -2.02
+          }
+        ],
+        "rotation": "RISK_OFF",
+        "signal": "BEARISH"
+      },
+      "moving_averages": {
+        "trend": "STRONG_BULLISH",
+        "ma_type": "EMA",
+        "price": 691.66,
+        "ma20": 688.28,
+        "ma50": 681.0,
+        "ma200": 645.15,
+        "price_vs_ma20": "above",
+        "price_vs_ma50": "above",
+        "price_vs_ma200": "above",
+        "distance_from_ma20": 0.49,
+        "distance_from_ma50": 1.57,
+        "distance_from_ma200": 7.21,
+        "ma50_above_ma200": true,
+        "cross": null,
+        "bullish_signals": 5
+      },
+      "treasury_yields": {
+        "yields": {
+          "spread_10y_3m": 0.57
+        },
+        "spread": 0.57,
+        "inverted": false,
+        "signal": "NEUTRAL",
+        "interpretation": "Normal yield curve",
+        "source": "FRED"
+      },
+      "momentum": {
+        "momentum": "BULLISH",
+        "score": 55,
+        "returns": {
+          "1d": -0.08,
+          "1w": -0.5,
+          "1m": 3.32,
+          "3m": 4.41
+        },
+        "rsi": 52.0,
+        "macd_histogram": -0.044
+      },
+      "dollar_index": {
+        "value": 99.39,
+        "change": 0.07,
+        "signal": "BULLISH",
+        "interpretation": "Dollar neutral"
+      },
+      "gold": {
+        "value": 4588.4,
+        "change_1d": -0.6,
+        "change_1w": -0.35,
+        "signal": "NEUTRAL",
+        "interpretation": "Gold stable"
+      },
+      "economic_calendar": {
+        "upcoming_events": [],
+        "event_impact": "none",
+        "signal": "CLEAR",
+        "message": "No major economic events in next 3 days",
+        "message_th": "\u0e44\u0e21\u0e48\u0e21\u0e35\u0e02\u0e48\u0e32\u0e27\u0e40\u0e28\u0e23\u0e29\u0e10\u0e01\u0e34\u0e08\u0e2a\u0e33\u0e04\u0e31\u0e0d\u0e43\u0e19 3 \u0e27\u0e31\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32",
+        "today": "2026-01-17"
+      },
+      "market_internals": {
+        "tick": {
+          "value": -169,
+          "signal": "NEUTRAL",
+          "interpretation": "TICK at -169 indicates selling pressure"
+        },
+        "trin": {
+          "value": 1.034,
+          "signal": "NEUTRAL",
+          "interpretation": "TRIN at 1.03 indicates bearish internals"
+        },
+        "combined_signal": "NEUTRAL",
+        "source": "proxy_calculation"
+      },
+      "institutional_flow": {
+        "flows": {
+          "SPY": {
+            "name": "S&P 500",
+            "volume_ratio": 1.01,
+            "price_change": -0.08,
+            "flow_score": -0.08
+          },
+          "QQQ": {
+            "name": "NASDAQ",
+            "volume_ratio": 1.13,
+            "price_change": -0.08,
+            "flow_score": -0.09
+          },
+          "IWM": {
+            "name": "Small Cap",
+            "volume_ratio": 1.01,
+            "price_change": 0.09,
+            "flow_score": 0.1
+          },
+          "HYG": {
+            "name": "High Yield Bonds",
+            "volume_ratio": 1.48,
+            "price_change": 0.06,
+            "flow_score": 0.09
+          },
+          "TLT": {
+            "name": "Long-Term Treasuries",
+            "volume_ratio": 1.2,
+            "price_change": -0.58,
+            "flow_score": -0.69
+          }
+        },
+        "risk_on_flow": 0.01,
+        "risk_off_flow": -0.69,
+        "net_flow": 0.7,
+        "signal": "INFLOW",
+        "interpretation": "Institutions buying risk assets"
+      }
+    },
+    "score_breakdown": {
+      "fear_greed": {
+        "score": 35,
+        "weight": "18%"
+      },
+      "vix": {
+        "score": 45,
+        "weight": "12%"
+      },
+      "breadth": {
+        "score": 10,
+        "weight": "12%"
+      },
+      "pcr": {
+        "score": 50,
+        "weight": "10%"
+      },
+      "sectors": {
+        "score": 30,
+        "weight": "8%"
+      },
+      "ma": {
+        "score": 80,
+        "weight": "12%"
+      },
+      "yields": {
+        "score": 55,
+        "weight": "5%"
+      },
+      "momentum": {
+        "score": 55,
+        "weight": "10%"
+      },
+      "dxy": {
+        "score": 65,
+        "weight": "4%"
+      },
+      "institutional": {
+        "score": 65,
+        "weight": "5%"
+      },
+      "internals": {
+        "score": 50,
+        "weight": "4%"
+      }
+    },
+    "version": "3.0",
+    "updated_at": "2026-01-17T13:35:50.670758"
+  },
   "stocks": {
     "AAPL": {
       "symbol": "AAPL",
-      "current_price": 259.5,
-      "interval": "1h",
-      "data_source": "yfinance",
-      "candles_analyzed": 130,
-      "last_updated": "2026-01-12T22:54:39.152983",
+      "current_price": 255.53,
+      "interval": "1d",
+      "data_source": "cache",
+      "candles_analyzed": 251,
+      "last_updated": "2026-01-17T13:35:50.685746",
+      "data_quality": {
+        "bars": 251,
+        "has_ema50": true,
+        "has_ema200": true,
+        "confidence": "high",
+        "note": null
+      },
+      "position_score": {
+        "score": 70,
+        "action": "STRONG_BUY",
+        "action_th": "\u0e41\u0e19\u0e30\u0e19\u0e33\u0e0b\u0e37\u0e49\u0e2d",
+        "confidence": 0.33,
+        "buy_factors": 2,
+        "sell_factors": 1,
+        "reasons": [
+          {
+            "type": "BUY",
+            "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+          },
+          {
+            "type": "BUY",
+            "message": "RSI Oversold (10) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e0b\u0e37\u0e49\u0e2d"
+          },
+          {
+            "type": "SELL",
+            "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
+          }
+        ],
+        "summary": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e17\u0e35\u0e48\u0e14\u0e35! \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 30,
+        "prediction": "STRONG_BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "RSI Oversold (10) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (23)",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -8.6%)",
+          "\u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e01\u0e27\u0e48\u0e32 EMA20 \u0e41\u0e25\u0e30 EMA50"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 22.72,
+            "plus_di": 12.9,
+            "minus_di": 26.83,
+            "strength": "MODERATE",
+            "direction": "BEARISH",
+            "adx_trend": "RISING",
+            "signal": "MODERATE_BEARISH"
+          },
+          "macd": {
+            "macd": -4.2274,
+            "signal": -3.0867,
+            "histogram": -1.1407,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_INCREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.801,
+            "slope_pct": -0.31,
+            "r_squared": 0.8725,
+            "confidence": "HIGH",
+            "prediction": "BEARISH",
+            "projected_30d": 233.54,
+            "projected_change_pct": -8.6
+          },
+          "rsi": 10.48
+        }
+      },
       "trend": {
-        "direction": "bearish",
-        "strength": 0.33,
-        "structure": "LH-LL",
+        "direction": "neutral",
+        "strength": 0.0,
+        "structure": "ranging",
         "hh_count": 1,
-        "hl_count": 1,
+        "hl_count": 2,
         "lh_count": 2,
-        "ll_count": 2
+        "ll_count": 1
       },
       "ema_trend": {
-        "trend": "STRONG_BEARISH",
+        "trend": "BEARISH",
         "signal": "SELL",
-        "strength": 0,
-        "cross": "DEATH_CROSS",
-        "alignment": "Price < EMA20 < EMA50 < EMA200"
+        "strength": 25,
+        "cross": null,
+        "alignment": "Price < EMA20 < EMA50 > EMA200"
       },
       "order_blocks": [
         {
           "type": "bearish",
           "signal": "SELL",
-          "high": 270.98,
-          "low": 270.53,
-          "mid": 270.76,
-          "distance": 11.26,
-          "distance_pct": 4.34,
+          "high": 273.76,
+          "low": 272.69,
+          "mid": 273.23,
+          "distance": 17.7,
+          "distance_pct": 6.92,
           "strength": "weak",
-          "date": "2026-01-02 15:30:00-05:00",
+          "date": "2025-12-29 00:00:00-05:00",
           "mitigated": false,
           "volume": {
-            "value": 2650904,
-            "ratio": 0.69,
+            "value": 23715200,
+            "ratio": 0.53,
             "confirmed": "False",
             "signal": "WEAK"
           },
@@ -46,24 +556,156 @@
           "quality_score": 40,
           "rank": 1,
           "in_zone": "False"
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 286.19,
+          "low": 283.0,
+          "mid": 284.6,
+          "distance": 29.07,
+          "distance_pct": 11.37,
+          "strength": "strong",
+          "date": "2025-12-02 00:00:00-05:00",
+          "mitigated": false,
+          "volume": {
+            "value": 53669500,
+            "ratio": 1.2,
+            "confirmed": "True",
+            "signal": "MODERATE"
+          },
+          "trend_aligned": true,
+          "quality_score": 80,
+          "rank": 2,
+          "in_zone": "False"
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 196.79,
+          "low": 195.23,
+          "mid": 196.01,
+          "distance": 59.52,
+          "distance_pct": 23.29,
+          "strength": "weak",
+          "date": "2025-06-17 00:00:00-04:00",
+          "mitigated": false,
+          "volume": {
+            "value": 38856200,
+            "ratio": 0.87,
+            "confirmed": "False",
+            "signal": "WEAK"
+          },
+          "trend_aligned": false,
+          "quality_score": 30,
+          "rank": 3,
+          "in_zone": "False"
         }
       ],
-      "major_order_blocks": [],
-      "nearest_buy_zone": null,
+      "major_order_blocks": [
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 273.76,
+          "low": 272.69,
+          "mid": 273.23,
+          "distance": 17.7,
+          "distance_pct": 6.92,
+          "strength": "weak",
+          "date": "2025-12-29 00:00:00-05:00",
+          "mitigated": false,
+          "volume": {
+            "value": 23715200,
+            "ratio": 0.53,
+            "confirmed": "False",
+            "signal": "WEAK"
+          },
+          "trend_aligned": true,
+          "quality_score": 40,
+          "rank": 1,
+          "in_zone": "False"
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 286.19,
+          "low": 283.0,
+          "mid": 284.6,
+          "distance": 29.07,
+          "distance_pct": 11.37,
+          "strength": "weak",
+          "date": "2025-12-02 00:00:00-05:00",
+          "mitigated": false,
+          "volume": {
+            "value": 53669500,
+            "ratio": 1.2,
+            "confirmed": "True",
+            "signal": "MODERATE"
+          },
+          "trend_aligned": true,
+          "quality_score": 60,
+          "rank": 2,
+          "in_zone": "False"
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 196.79,
+          "low": 195.23,
+          "mid": 196.01,
+          "distance": 59.52,
+          "distance_pct": 23.29,
+          "strength": "weak",
+          "date": "2025-06-17 00:00:00-04:00",
+          "mitigated": false,
+          "volume": {
+            "value": 38856200,
+            "ratio": 0.87,
+            "confirmed": "False",
+            "signal": "WEAK"
+          },
+          "trend_aligned": false,
+          "quality_score": 30,
+          "rank": 3,
+          "in_zone": "False"
+        }
+      ],
+      "nearest_buy_zone": {
+        "type": "bullish",
+        "signal": "BUY",
+        "high": 196.79,
+        "low": 195.23,
+        "mid": 196.01,
+        "distance": 59.52,
+        "distance_pct": 23.29,
+        "strength": "weak",
+        "date": "2025-06-17 00:00:00-04:00",
+        "mitigated": false,
+        "volume": {
+          "value": 38856200,
+          "ratio": 0.87,
+          "confirmed": "False",
+          "signal": "WEAK"
+        },
+        "trend_aligned": false,
+        "quality_score": 30,
+        "rank": 3,
+        "in_zone": "False"
+      },
       "nearest_sell_zone": {
         "type": "bearish",
         "signal": "SELL",
-        "high": 270.98,
-        "low": 270.53,
-        "mid": 270.76,
-        "distance": 11.26,
-        "distance_pct": 4.34,
+        "high": 273.76,
+        "low": 272.69,
+        "mid": 273.23,
+        "distance": 17.7,
+        "distance_pct": 6.92,
         "strength": "weak",
-        "date": "2026-01-02 15:30:00-05:00",
+        "date": "2025-12-29 00:00:00-05:00",
         "mitigated": false,
         "volume": {
-          "value": 2650904,
-          "ratio": 0.69,
+          "value": 23715200,
+          "ratio": 0.53,
           "confirmed": "False",
           "signal": "WEAK"
         },
@@ -74,39 +716,772 @@
       },
       "fair_value_gaps": [
         {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 266.45,
-          "low": 265.1,
-          "mid": 265.78,
-          "gap_pct": 0.51,
-          "distance": 6.28,
-          "distance_pct": 2.42,
-          "date": "2026-01-06 10:30:00-05:00",
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 261.58,
+          "low": 253.13,
+          "mid": 257.36,
+          "gap_pct": 3.33,
+          "distance": 1.83,
+          "distance_pct": 0.71,
+          "date": "2025-10-21 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 255.38,
+          "low": 248.8,
+          "mid": 252.09,
+          "gap_pct": 2.65,
+          "distance": 3.44,
+          "distance_pct": 1.35,
+          "date": "2025-10-20 00:00:00-04:00",
           "filled": false
         },
         {
           "type": "bearish",
           "signal": "SELL",
-          "high": 268.7,
-          "low": 267.89,
-          "mid": 268.3,
-          "gap_pct": 0.3,
-          "distance": 8.8,
-          "distance_pct": 3.39,
-          "date": "2026-01-05 12:30:00-05:00",
+          "high": 262.12,
+          "low": 259.29,
+          "mid": 260.71,
+          "gap_pct": 1.08,
+          "distance": 5.18,
+          "distance_pct": 2.03,
+          "date": "2026-01-08 00:00:00-05:00",
           "filled": false
         },
         {
           "type": "bearish",
           "signal": "SELL",
-          "high": 272.38,
-          "low": 270.96,
-          "mid": 271.67,
-          "gap_pct": 0.52,
-          "distance": 12.17,
-          "distance_pct": 4.69,
-          "date": "2026-01-02 11:30:00-05:00",
+          "high": 266.14,
+          "low": 263.68,
+          "mid": 264.91,
+          "gap_pct": 0.92,
+          "distance": 9.38,
+          "distance_pct": 3.67,
+          "date": "2026-01-07 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 247.88,
+          "low": 240.97,
+          "mid": 244.42,
+          "gap_pct": 2.87,
+          "distance": 11.11,
+          "distance_pct": 4.35,
+          "date": "2025-09-22 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 269.0,
+          "low": 267.55,
+          "mid": 268.27,
+          "gap_pct": 0.54,
+          "distance": 12.74,
+          "distance_pct": 4.99,
+          "date": "2026-01-06 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 236.09,
+          "low": 234.28,
+          "mid": 235.19,
+          "gap_pct": 0.77,
+          "distance": 20.34,
+          "distance_pct": 7.96,
+          "date": "2025-09-16 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 234.8,
+          "low": 230.23,
+          "mid": 232.51,
+          "gap_pct": 1.99,
+          "distance": 23.02,
+          "distance_pct": 9.01,
+          "date": "2025-09-15 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 283.3,
+          "low": 281.14,
+          "mid": 282.22,
+          "gap_pct": 0.76,
+          "distance": 26.69,
+          "distance_pct": 10.44,
+          "date": "2025-12-05 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 224.54,
+          "low": 220.39,
+          "mid": 222.46,
+          "gap_pct": 1.89,
+          "distance": 33.07,
+          "distance_pct": 12.94,
+          "date": "2025-08-11 00:00:00-04:00",
+          "filled": false
+        }
+      ],
+      "structure_breaks": {
+        "bos": [
+          {
+            "type": "bearish",
+            "level": 255.6999969482,
+            "broken_at": 255.53,
+            "signal": "SELL",
+            "message": "Bearish BOS: Price broke below 255.70"
+          }
+        ],
+        "choch": null
+      },
+      "liquidity_zones": {
+        "equal_highs": [
+          {
+            "level": 276.88,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 8.35,
+            "liquidity": "high",
+            "message": "Equal Highs at $276.88 - Liquidity above"
+          },
+          {
+            "level": 215.55,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 15.65,
+            "liquidity": "high",
+            "message": "Equal Highs at $215.55 - Liquidity above"
+          },
+          {
+            "level": 213.66,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 16.39,
+            "liquidity": "high",
+            "message": "Equal Highs at $213.66 - Liquidity above"
+          }
+        ],
+        "equal_lows": [
+          {
+            "level": 192.82,
+            "type": "support",
+            "signal": "BUY",
+            "distance_pct": 24.54,
+            "liquidity": "high",
+            "message": "Equal Lows at $192.82 - Liquidity below"
+          }
+        ],
+        "nearest_liquidity_above": {
+          "level": 276.88,
+          "type": "resistance",
+          "signal": "SELL",
+          "distance_pct": 8.35,
+          "liquidity": "high",
+          "message": "Equal Highs at $276.88 - Liquidity above"
+        },
+        "nearest_liquidity_below": {
+          "level": 192.82,
+          "type": "support",
+          "signal": "BUY",
+          "distance_pct": 24.54,
+          "liquidity": "high",
+          "message": "Equal Lows at $192.82 - Liquidity below"
+        }
+      },
+      "zones": {
+        "premium": {
+          "high": 288.62,
+          "low": 257.18,
+          "signal": "SELL"
+        },
+        "discount": {
+          "high": 257.18,
+          "low": 225.73,
+          "signal": "BUY"
+        },
+        "equilibrium": 257.18,
+        "current_zone": "discount",
+        "zone_signal": "BUY",
+        "zone_message": "Price in Discount Zone - Look for buys",
+        "fibonacci": {
+          "0.0": 225.73,
+          "0.236": 240.57,
+          "0.382": 249.75,
+          "0.5": 257.18,
+          "0.618": 264.6,
+          "0.786": 275.16,
+          "1.0": 288.62
+        },
+        "range_pct": 27.86
+      },
+      "indicators": {
+        "rsi": {
+          "value": 10.48,
+          "signal": "OVERSOLD"
+        },
+        "atr": {
+          "value": 4.2,
+          "pct": 1.65
+        },
+        "ma20": 266.47,
+        "ma50": 271.49,
+        "price_vs_ma20": "below",
+        "price_vs_ma50": "below",
+        "ema20": 264.85,
+        "ema50": 266.46,
+        "ema200": 246.2,
+        "price_vs_ema20": "below",
+        "price_vs_ema50": "below",
+        "price_vs_ema200": "above",
+        "ema_trend": {
+          "trend": "BEARISH",
+          "signal": "SELL",
+          "strength": 25,
+          "cross": null,
+          "alignment": "Price < EMA20 < EMA50 > EMA200"
+        },
+        "volume": {
+          "current": 72018600,
+          "avg_20": 44602100,
+          "ratio": 1.61,
+          "signal": "HIGH"
+        }
+      },
+      "ob_summary": {
+        "total_buy": 1,
+        "total_sell": 2,
+        "total_fvg": 10,
+        "volume_confirmed": 1,
+        "trend_aligned": 2,
+        "high_quality": 1
+      },
+      "alerts": [
+        {
+          "type": "bos_bearish",
+          "signal": "SELL",
+          "priority": "high",
+          "message": "Bearish BOS: Price broke below 255.70",
+          "level": 255.6999969482,
+          "distance_pct": 0
+        },
+        {
+          "type": "fvg_bullish",
+          "signal": "BUY",
+          "priority": "medium",
+          "message": "FVG BUY at $257.36 (0.7% away)",
+          "level": 257.36,
+          "distance_pct": 0.71
+        },
+        {
+          "type": "fvg_bullish",
+          "signal": "BUY",
+          "priority": "medium",
+          "message": "FVG BUY at $252.09 (1.4% away)",
+          "level": 252.09,
+          "distance_pct": 1.35
+        },
+        {
+          "type": "zone_discount",
+          "signal": "BUY",
+          "priority": "low",
+          "message": "Price in Discount Zone - Look for buys",
+          "level": 257.18,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "high",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+          "level": 255.5299987793,
+          "distance_pct": 0
+        }
+      ],
+      "alert_count": 5,
+      "trade_setups": [
+        {
+          "ob_type": "bearish",
+          "signal": "SELL",
+          "ob_zone": {
+            "high": 286.19,
+            "low": 283.0,
+            "mid": 284.6
+          },
+          "quality_score": 80,
+          "trade_setup": {
+            "direction": "SHORT",
+            "entry": 283.0,
+            "stop_loss": 288.29,
+            "take_profit_1": 257.18,
+            "take_profit_2": 272.42,
+            "take_profit_3": 267.13,
+            "risk": 5.29,
+            "risk_pct": 1.87,
+            "risk_reward": {
+              "tp1": 4.88,
+              "tp2": 2.0,
+              "tp3": 3.0
+            },
+            "recommended_rr": 2.0,
+            "valid": "True"
+          },
+          "confluence": {
+            "score": 64,
+            "max_score": 100,
+            "strength": "MODERATE",
+            "recommendation": "Good setup, manage risk",
+            "factors": [
+              "OB Quality: 24/30",
+              "Trend Neutral: 10/20",
+              "EMA Aligned: 15/15",
+              "RSI Neutral: 5/15",
+              "Zone Suboptimal: 3/10",
+              "BOS Confirmed: 7/10"
+            ]
+          },
+          "recommendation": "TRADE"
+        },
+        {
+          "ob_type": "bearish",
+          "signal": "SELL",
+          "ob_zone": {
+            "high": 273.76,
+            "low": 272.69,
+            "mid": 273.23
+          },
+          "quality_score": 40,
+          "trade_setup": {
+            "direction": "SHORT",
+            "entry": 272.69,
+            "stop_loss": 275.86,
+            "take_profit_1": 257.18,
+            "take_profit_2": 266.35,
+            "take_profit_3": 263.18,
+            "risk": 3.17,
+            "risk_pct": 1.16,
+            "risk_reward": {
+              "tp1": 4.89,
+              "tp2": 2.0,
+              "tp3": 3.0
+            },
+            "recommended_rr": 2.0,
+            "valid": "True"
+          },
+          "confluence": {
+            "score": 52,
+            "max_score": 100,
+            "strength": "WEAK",
+            "recommendation": "Low probability, wait for better",
+            "factors": [
+              "OB Quality: 12/30",
+              "Trend Neutral: 10/20",
+              "EMA Aligned: 15/15",
+              "RSI Neutral: 5/15",
+              "Zone Suboptimal: 3/10",
+              "BOS Confirmed: 7/10"
+            ]
+          },
+          "recommendation": "WAIT"
+        },
+        {
+          "ob_type": "bullish",
+          "signal": "BUY",
+          "ob_zone": {
+            "high": 196.79,
+            "low": 195.23,
+            "mid": 196.01
+          },
+          "quality_score": 30,
+          "trade_setup": {
+            "direction": "LONG",
+            "entry": 196.79,
+            "stop_loss": 193.13,
+            "take_profit_1": 257.18,
+            "take_profit_2": 204.11,
+            "take_profit_3": 207.77,
+            "risk": 3.66,
+            "risk_pct": 1.86,
+            "risk_reward": {
+              "tp1": 16.5,
+              "tp2": 2.0,
+              "tp3": 3.0
+            },
+            "recommended_rr": 2.0,
+            "valid": "True"
+          },
+          "confluence": {
+            "score": 50,
+            "max_score": 100,
+            "strength": "WEAK",
+            "recommendation": "Low probability, wait for better",
+            "factors": [
+              "OB Quality: 9/30",
+              "Trend Neutral: 10/20",
+              "EMA Against: 3/15",
+              "RSI Oversold: 15/15",
+              "Zone Optimal: 10/10",
+              "No Structure: 3/10"
+            ]
+          },
+          "recommendation": "WAIT"
+        }
+      ]
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "current_price": 437.5,
+      "interval": "1d",
+      "data_source": "cache",
+      "candles_analyzed": 251,
+      "last_updated": "2026-01-17T13:35:50.696673",
+      "data_quality": {
+        "bars": 251,
+        "has_ema50": true,
+        "has_ema200": true,
+        "confidence": "high",
+        "note": null
+      },
+      "position_score": {
+        "score": 76,
+        "action": "STRONG_BUY",
+        "action_th": "\u0e41\u0e19\u0e30\u0e19\u0e33\u0e0b\u0e37\u0e49\u0e2d",
+        "confidence": 0.5,
+        "buy_factors": 3,
+        "sell_factors": 1,
+        "reasons": [
+          {
+            "type": "SELL",
+            "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
+          },
+          {
+            "type": "BUY",
+            "message": "\u0e43\u0e01\u0e25\u0e49 Order Block \u0e0b\u0e37\u0e49\u0e2d (0.9% \u0e2b\u0e48\u0e32\u0e07)"
+          },
+          {
+            "type": "BUY",
+            "message": "\u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
+          },
+          {
+            "type": "BUY",
+            "message": "RSI \u0e15\u0e48\u0e33 (31) - \u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08"
+          }
+        ],
+        "summary": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e17\u0e35\u0e48\u0e14\u0e35! \u0e43\u0e01\u0e25\u0e49 Order Block \u0e0b\u0e37\u0e49\u0e2d (0.9% \u0e2b\u0e48\u0e32\u0e07)"
+      },
+      "trend_prediction": {
+        "score": 45,
+        "prediction": "BEARISH",
+        "prediction_th": "\u0e02\u0e32\u0e25\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+        "confidence": 0.33,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "RSI \u0e15\u0e48\u0e33 (31)"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (20)",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -4.5%)"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 19.79,
+            "plus_di": 16.63,
+            "minus_di": 25.13,
+            "strength": "WEAK",
+            "direction": "BEARISH",
+            "adx_trend": "RISING",
+            "signal": "WEAK_BEARISH"
+          },
+          "macd": {
+            "macd": -3.4949,
+            "signal": -0.9553,
+            "histogram": -2.5396,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.8542,
+            "slope_pct": -0.2,
+            "r_squared": 0.167,
+            "confidence": "LOW",
+            "prediction": "BEARISH",
+            "projected_30d": 417.59,
+            "projected_change_pct": -4.55
+          },
+          "rsi": 31.15
+        }
+      },
+      "trend": {
+        "direction": "bullish",
+        "strength": 0.67,
+        "structure": "HH-HL",
+        "hh_count": 3,
+        "hl_count": 2,
+        "lh_count": 0,
+        "ll_count": 1
+      },
+      "ema_trend": {
+        "trend": "NEUTRAL",
+        "signal": "HOLD",
+        "strength": 50,
+        "cross": "GOLDEN_CROSS",
+        "alignment": "Price < EMA20 > EMA50 > EMA200"
+      },
+      "order_blocks": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 435.9,
+          "low": 431.41,
+          "mid": 433.65,
+          "distance": 3.85,
+          "distance_pct": 0.88,
+          "strength": "weak",
+          "date": "2026-01-07 00:00:00-05:00",
+          "mitigated": false,
+          "volume": {
+            "value": 59828800,
+            "ratio": 0.9,
+            "confirmed": "False",
+            "signal": "WEAK"
+          },
+          "trend_aligned": false,
+          "quality_score": 30,
+          "rank": 1,
+          "in_zone": "False"
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 489.88,
+          "low": 472.21,
+          "mid": 481.04,
+          "distance": 43.54,
+          "distance_pct": 9.95,
+          "strength": "weak",
+          "date": "2025-12-16 00:00:00-05:00",
+          "mitigated": false,
+          "volume": {
+            "value": 107608100,
+            "ratio": 1.62,
+            "confirmed": "True",
+            "signal": "MODERATE"
+          },
+          "trend_aligned": false,
+          "quality_score": 50,
+          "rank": 2,
+          "in_zone": "False"
+        }
+      ],
+      "major_order_blocks": [
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 489.88,
+          "low": 472.21,
+          "mid": 481.04,
+          "distance": 43.54,
+          "distance_pct": 9.95,
+          "strength": "weak",
+          "date": "2025-12-16 00:00:00-05:00",
+          "mitigated": false,
+          "volume": {
+            "value": 107608100,
+            "ratio": 1.62,
+            "confirmed": "True",
+            "signal": "MODERATE"
+          },
+          "trend_aligned": false,
+          "quality_score": 50,
+          "rank": 1,
+          "in_zone": "False"
+        }
+      ],
+      "nearest_buy_zone": {
+        "type": "bullish",
+        "signal": "BUY",
+        "high": 435.9,
+        "low": 431.41,
+        "mid": 433.65,
+        "distance": 3.85,
+        "distance_pct": 0.88,
+        "strength": "weak",
+        "date": "2026-01-07 00:00:00-05:00",
+        "mitigated": false,
+        "volume": {
+          "value": 59828800,
+          "ratio": 0.9,
+          "confirmed": "False",
+          "signal": "WEAK"
+        },
+        "trend_aligned": false,
+        "quality_score": 30,
+        "rank": 1,
+        "in_zone": "False"
+      },
+      "nearest_sell_zone": {
+        "type": "bearish",
+        "signal": "SELL",
+        "high": 489.88,
+        "low": 472.21,
+        "mid": 481.04,
+        "distance": 43.54,
+        "distance_pct": 9.95,
+        "strength": "weak",
+        "date": "2025-12-16 00:00:00-05:00",
+        "mitigated": false,
+        "volume": {
+          "value": 107608100,
+          "ratio": 1.62,
+          "confirmed": "True",
+          "signal": "MODERATE"
+        },
+        "trend_aligned": false,
+        "quality_score": 50,
+        "rank": 2,
+        "in_zone": "False"
+      },
+      "fair_value_gaps": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 426.2,
+          "low": 420.48,
+          "mid": 423.34,
+          "gap_pct": 1.36,
+          "distance": 14.16,
+          "distance_pct": 3.24,
+          "date": "2025-11-28 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 459.0,
+          "low": 456.55,
+          "mid": 457.77,
+          "gap_pct": 0.53,
+          "distance": 20.27,
+          "distance_pct": 4.63,
+          "date": "2025-12-31 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 473.82,
+          "low": 463.12,
+          "mid": 468.47,
+          "gap_pct": 2.26,
+          "distance": 30.97,
+          "distance_pct": 7.08,
+          "date": "2025-12-30 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 405.95,
+          "low": 402.8,
+          "mid": 404.38,
+          "gap_pct": 0.78,
+          "distance": 33.12,
+          "distance_pct": 7.57,
+          "date": "2025-11-25 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 476.8,
+          "low": 469.4,
+          "mid": 473.1,
+          "gap_pct": 1.55,
+          "distance": 35.6,
+          "distance_pct": 8.14,
+          "date": "2025-12-29 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 402.43,
+          "low": 368.99,
+          "mid": 385.71,
+          "gap_pct": 9.06,
+          "distance": 51.79,
+          "distance_pct": 11.84,
+          "date": "2025-09-15 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 370.24,
+          "low": 356.33,
+          "mid": 363.28,
+          "gap_pct": 3.9,
+          "distance": 74.22,
+          "distance_pct": 16.96,
+          "date": "2025-09-12 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 344.68,
+          "low": 343.33,
+          "mid": 344.0,
+          "gap_pct": 0.39,
+          "distance": 93.5,
+          "distance_pct": 21.37,
+          "date": "2025-09-05 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 344.84,
+          "low": 338.89,
+          "mid": 341.87,
+          "gap_pct": 1.76,
+          "distance": 95.63,
+          "distance_pct": 21.86,
+          "date": "2025-09-08 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 335.03,
+          "low": 324.9,
+          "mid": 329.96,
+          "gap_pct": 3.12,
+          "distance": 107.54,
+          "distance_pct": 24.58,
+          "date": "2025-08-25 00:00:00-04:00",
           "filled": false
         }
       ],
@@ -117,123 +1492,647 @@
       "liquidity_zones": {
         "equal_highs": [
           {
-            "level": 273.64,
+            "level": 367.52,
             "type": "resistance",
             "signal": "SELL",
-            "distance_pct": 5.45,
+            "distance_pct": 15.99,
             "liquidity": "high",
-            "message": "Equal Highs at $273.64 - Liquidity above"
-          },
-          {
-            "level": 275.79,
-            "type": "resistance",
-            "signal": "SELL",
-            "distance_pct": 6.28,
-            "liquidity": "high",
-            "message": "Equal Highs at $275.79 - Liquidity above"
+            "message": "Equal Highs at $367.52 - Liquidity above"
           }
         ],
         "equal_lows": [
           {
-            "level": 269.73,
+            "level": 325.35,
             "type": "support",
             "signal": "BUY",
-            "distance_pct": 3.94,
+            "distance_pct": 25.63,
             "liquidity": "high",
-            "message": "Equal Lows at $269.73 - Liquidity below"
-          },
-          {
-            "level": 272.09,
-            "type": "support",
-            "signal": "BUY",
-            "distance_pct": 4.85,
-            "liquidity": "high",
-            "message": "Equal Lows at $272.09 - Liquidity below"
+            "message": "Equal Lows at $325.35 - Liquidity below"
           }
         ],
         "nearest_liquidity_above": {
-          "level": 273.64,
+          "level": 367.52,
           "type": "resistance",
           "signal": "SELL",
-          "distance_pct": 5.45,
+          "distance_pct": 15.99,
           "liquidity": "high",
-          "message": "Equal Highs at $273.64 - Liquidity above"
+          "message": "Equal Highs at $367.52 - Liquidity above"
         },
         "nearest_liquidity_below": {
-          "level": 269.73,
+          "level": 325.35,
           "type": "support",
           "signal": "BUY",
-          "distance_pct": 3.94,
+          "distance_pct": 25.63,
           "liquidity": "high",
-          "message": "Equal Lows at $269.73 - Liquidity below"
+          "message": "Equal Lows at $325.35 - Liquidity below"
         }
       },
       "zones": {
         "premium": {
-          "high": 277.82,
-          "low": 266.76,
+          "high": 498.83,
+          "low": 412.21,
           "signal": "SELL"
         },
         "discount": {
-          "high": 266.76,
-          "low": 255.7,
+          "high": 412.21,
+          "low": 325.6,
           "signal": "BUY"
         },
-        "equilibrium": 266.76,
+        "equilibrium": 412.21,
+        "current_zone": "premium",
+        "zone_signal": "SELL",
+        "zone_message": "Price in Premium Zone - Look for sells",
+        "fibonacci": {
+          "0.0": 325.6,
+          "0.236": 366.48,
+          "0.382": 391.77,
+          "0.5": 412.21,
+          "0.618": 432.66,
+          "0.786": 461.76,
+          "1.0": 498.83
+        },
+        "range_pct": 53.2
+      },
+      "indicators": {
+        "rsi": {
+          "value": 31.15,
+          "signal": "NEUTRAL"
+        },
+        "atr": {
+          "value": 13.8,
+          "pct": 3.15
+        },
+        "ma20": 455.48,
+        "ma50": 443.07,
+        "price_vs_ma20": "below",
+        "price_vs_ma50": "below",
+        "ema20": 447.53,
+        "ema50": 443.44,
+        "ema200": 399.68,
+        "price_vs_ema20": "below",
+        "price_vs_ema50": "below",
+        "price_vs_ema200": "above",
+        "ema_trend": {
+          "trend": "NEUTRAL",
+          "signal": "HOLD",
+          "strength": 50,
+          "cross": "GOLDEN_CROSS",
+          "alignment": "Price < EMA20 > EMA50 > EMA200"
+        },
+        "volume": {
+          "current": 60047300,
+          "avg_20": 66358595,
+          "ratio": 0.9,
+          "signal": "NORMAL"
+        }
+      },
+      "ob_summary": {
+        "total_buy": 1,
+        "total_sell": 1,
+        "total_fvg": 10,
+        "volume_confirmed": 1,
+        "trend_aligned": 0,
+        "high_quality": 0
+      },
+      "alerts": [
+        {
+          "type": "ob_near_bullish",
+          "signal": "BUY",
+          "priority": "high",
+          "message": "\u26a0\ufe0f Near BUY Zone #1 at $433.65 (0.9% away)",
+          "level": 433.65,
+          "distance_pct": 0.88
+        },
+        {
+          "type": "zone_premium",
+          "signal": "SELL",
+          "priority": "low",
+          "message": "Price in Premium Zone - Look for sells",
+          "level": 412.21,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_bearish",
+          "signal": "SELL",
+          "priority": "medium",
+          "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e25\u0e07",
+          "level": 437.5,
+          "distance_pct": 0
+        }
+      ],
+      "alert_count": 3,
+      "trade_setups": [
+        {
+          "ob_type": "bullish",
+          "signal": "BUY",
+          "ob_zone": {
+            "high": 435.9,
+            "low": 431.41,
+            "mid": 433.65
+          },
+          "quality_score": 30,
+          "trade_setup": {
+            "direction": "LONG",
+            "entry": 435.9,
+            "stop_loss": 424.51,
+            "take_profit_1": 447.29,
+            "take_profit_2": 458.68,
+            "take_profit_3": 470.07,
+            "risk": 11.39,
+            "risk_pct": 2.61,
+            "risk_reward": {
+              "tp1": 1.0,
+              "tp2": 2.0,
+              "tp3": 3.0
+            },
+            "recommended_rr": 2.0,
+            "valid": "True"
+          },
+          "confluence": {
+            "score": 58,
+            "max_score": 100,
+            "strength": "WEAK",
+            "recommendation": "Low probability, wait for better",
+            "factors": [
+              "OB Quality: 9/30",
+              "Trend Aligned: 20/20",
+              "EMA Neutral: 8/15",
+              "RSI Oversold: 15/15",
+              "Zone Suboptimal: 3/10",
+              "No Structure: 3/10"
+            ]
+          },
+          "recommendation": "WAIT"
+        },
+        {
+          "ob_type": "bearish",
+          "signal": "SELL",
+          "ob_zone": {
+            "high": 489.88,
+            "low": 472.21,
+            "mid": 481.04
+          },
+          "quality_score": 50,
+          "trade_setup": {
+            "direction": "SHORT",
+            "entry": 472.21,
+            "stop_loss": 496.78,
+            "take_profit_1": 412.21,
+            "take_profit_2": 423.07,
+            "take_profit_3": 398.5,
+            "risk": 24.57,
+            "risk_pct": 5.2,
+            "risk_reward": {
+              "tp1": 2.44,
+              "tp2": 2.0,
+              "tp3": 3.0
+            },
+            "recommended_rr": 2.0,
+            "valid": "False"
+          },
+          "confluence": {
+            "score": 46,
+            "max_score": 100,
+            "strength": "WEAK",
+            "recommendation": "Low probability, wait for better",
+            "factors": [
+              "OB Quality: 15/30",
+              "Counter-Trend: 5/20",
+              "EMA Neutral: 8/15",
+              "RSI Neutral: 5/15",
+              "Zone Optimal: 10/10",
+              "No Structure: 3/10"
+            ]
+          },
+          "recommendation": "WAIT"
+        }
+      ]
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "current_price": 186.23,
+      "interval": "1d",
+      "data_source": "cache",
+      "candles_analyzed": 251,
+      "last_updated": "2026-01-17T13:35:50.708306",
+      "data_quality": {
+        "bars": 251,
+        "has_ema50": true,
+        "has_ema200": true,
+        "confidence": "high",
+        "note": null
+      },
+      "position_score": {
+        "score": 60,
+        "action": "BUY",
+        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
+        "confidence": 1.0,
+        "buy_factors": 1,
+        "sell_factors": 0,
+        "reasons": [
+          {
+            "type": "BUY",
+            "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+          }
+        ],
+        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 55,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (12)",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +5.0%)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (Golden Alignment)"
+        ],
+        "bearish_factors": [
+          "MACD Bearish Divergence - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e40\u0e15\u0e37\u0e2d\u0e19\u0e02\u0e32\u0e25\u0e07"
+        ],
+        "warnings": [
+          "\ud83d\udd34 MACD Divergence: \u0e23\u0e32\u0e04\u0e32\u0e2a\u0e39\u0e07\u0e02\u0e36\u0e49\u0e19\u0e41\u0e15\u0e48\u0e42\u0e21\u0e40\u0e21\u0e19\u0e15\u0e31\u0e21\u0e2d\u0e48\u0e2d\u0e19 - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27!"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 11.92,
+            "plus_di": 24.01,
+            "minus_di": 16.52,
+            "strength": "WEAK",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "WEAK_BULLISH"
+          },
+          "macd": {
+            "macd": 0.5962,
+            "signal": 0.7184,
+            "histogram": -0.1222,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_DECREASING",
+            "divergence": {
+              "type": "BEARISH",
+              "strength": 6.673513317327931,
+              "message": "\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e25\u0e07: \u0e23\u0e32\u0e04\u0e32\u0e2a\u0e39\u0e07\u0e02\u0e36\u0e49\u0e19 \u0e41\u0e15\u0e48 MACD \u0e2d\u0e48\u0e2d\u0e19\u0e41\u0e2d",
+              "warning": true
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 0.2515,
+            "slope_pct": 0.14,
+            "r_squared": 0.2037,
+            "confidence": "LOW",
+            "prediction": "BULLISH",
+            "projected_30d": 195.47,
+            "projected_change_pct": 4.96
+          },
+          "rsi": 40.43
+        }
+      },
+      "trend": {
+        "direction": "neutral",
+        "strength": 0.0,
+        "structure": "ranging",
+        "hh_count": 1,
+        "hl_count": 2,
+        "lh_count": 2,
+        "ll_count": 1
+      },
+      "ema_trend": {
+        "trend": "STRONG_BULLISH",
+        "signal": "BUY",
+        "strength": 100,
+        "cross": "GOLDEN_CROSS",
+        "alignment": "Price > EMA20 > EMA50 > EMA200"
+      },
+      "order_blocks": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 98.89,
+          "low": 94.29,
+          "mid": 96.59,
+          "distance": 89.64,
+          "distance_pct": 48.13,
+          "strength": "weak",
+          "date": "2025-04-04 00:00:00-04:00",
+          "mitigated": false,
+          "volume": {
+            "value": 532273800,
+            "ratio": 3.36,
+            "confirmed": "True",
+            "signal": "STRONG"
+          },
+          "trend_aligned": true,
+          "quality_score": 80,
+          "rank": 1,
+          "in_zone": "False"
+        }
+      ],
+      "major_order_blocks": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 98.89,
+          "low": 94.29,
+          "mid": 96.59,
+          "distance": 89.64,
+          "distance_pct": 48.13,
+          "strength": "weak",
+          "date": "2025-04-04 00:00:00-04:00",
+          "mitigated": false,
+          "volume": {
+            "value": 532273800,
+            "ratio": 3.36,
+            "confirmed": "True",
+            "signal": "STRONG"
+          },
+          "trend_aligned": true,
+          "quality_score": 80,
+          "rank": 1,
+          "in_zone": "False"
+        }
+      ],
+      "nearest_buy_zone": {
+        "type": "bullish",
+        "signal": "BUY",
+        "high": 98.89,
+        "low": 94.29,
+        "mid": 96.59,
+        "distance": 89.64,
+        "distance_pct": 48.13,
+        "strength": "weak",
+        "date": "2025-04-04 00:00:00-04:00",
+        "mitigated": false,
+        "volume": {
+          "value": 532273800,
+          "ratio": 3.36,
+          "confirmed": "True",
+          "signal": "STRONG"
+        },
+        "trend_aligned": true,
+        "quality_score": 80,
+        "rank": 1,
+        "in_zone": "False"
+      },
+      "nearest_sell_zone": null,
+      "fair_value_gaps": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 182.35,
+          "low": 176.15,
+          "mid": 179.25,
+          "gap_pct": 3.52,
+          "distance": 6.98,
+          "distance_pct": 3.75,
+          "date": "2025-12-22 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 176.34,
+          "low": 176.13,
+          "mid": 176.24,
+          "gap_pct": 0.12,
+          "distance": 9.99,
+          "distance_pct": 5.37,
+          "date": "2025-12-19 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 205.55,
+          "low": 202.91,
+          "mid": 204.23,
+          "gap_pct": 1.28,
+          "distance": 18.0,
+          "distance_pct": 9.66,
+          "date": "2025-11-05 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 161.59,
+          "low": 160.2,
+          "mid": 160.9,
+          "gap_pct": 0.87,
+          "distance": 25.33,
+          "distance_pct": 13.6,
+          "date": "2025-07-10 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 161.14,
+          "low": 159.29,
+          "mid": 160.22,
+          "gap_pct": 1.16,
+          "distance": 26.01,
+          "distance_pct": 13.97,
+          "date": "2025-07-09 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 157.75,
+          "low": 157.18,
+          "mid": 157.47,
+          "gap_pct": 0.36,
+          "distance": 28.76,
+          "distance_pct": 15.44,
+          "date": "2025-07-03 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 153.98,
+          "low": 147.94,
+          "mid": 150.96,
+          "gap_pct": 4.08,
+          "distance": 35.27,
+          "distance_pct": 18.94,
+          "date": "2025-06-26 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 149.24,
+          "low": 144.76,
+          "mid": 147.0,
+          "gap_pct": 3.09,
+          "distance": 39.23,
+          "distance_pct": 21.06,
+          "date": "2025-06-25 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 139.51,
+          "low": 138.09,
+          "mid": 138.8,
+          "gap_pct": 1.03,
+          "distance": 47.43,
+          "distance_pct": 25.47,
+          "date": "2025-06-04 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 134.77,
+          "low": 132.66,
+          "mid": 133.71,
+          "gap_pct": 1.59,
+          "distance": 52.52,
+          "distance_pct": 28.2,
+          "date": "2025-05-28 00:00:00-04:00",
+          "filled": false
+        }
+      ],
+      "structure_breaks": {
+        "bos": [],
+        "choch": null
+      },
+      "liquidity_zones": {
+        "equal_highs": [
+          {
+            "level": 184.45,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 0.95,
+            "liquidity": "high",
+            "message": "Equal Highs at $184.45 - Liquidity above"
+          },
+          {
+            "level": 195.8,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 5.14,
+            "liquidity": "high",
+            "message": "Equal Highs at $195.80 - Liquidity above"
+          }
+        ],
+        "equal_lows": [
+          {
+            "level": 170.59,
+            "type": "support",
+            "signal": "BUY",
+            "distance_pct": 8.4,
+            "liquidity": "high",
+            "message": "Equal Lows at $170.59 - Liquidity below"
+          },
+          {
+            "level": 168.59,
+            "type": "support",
+            "signal": "BUY",
+            "distance_pct": 9.47,
+            "liquidity": "high",
+            "message": "Equal Lows at $168.59 - Liquidity below"
+          },
+          {
+            "level": 164.31,
+            "type": "support",
+            "signal": "BUY",
+            "distance_pct": 11.77,
+            "liquidity": "high",
+            "message": "Equal Lows at $164.31 - Liquidity below"
+          }
+        ],
+        "nearest_liquidity_above": {
+          "level": 184.45,
+          "type": "resistance",
+          "signal": "SELL",
+          "distance_pct": 0.95,
+          "liquidity": "high",
+          "message": "Equal Highs at $184.45 - Liquidity above"
+        },
+        "nearest_liquidity_below": {
+          "level": 170.59,
+          "type": "support",
+          "signal": "BUY",
+          "distance_pct": 8.4,
+          "liquidity": "high",
+          "message": "Equal Lows at $170.59 - Liquidity below"
+        }
+      },
+      "zones": {
+        "premium": {
+          "high": 212.18,
+          "low": 190.29,
+          "signal": "SELL"
+        },
+        "discount": {
+          "high": 190.29,
+          "low": 168.4,
+          "signal": "BUY"
+        },
+        "equilibrium": 190.29,
         "current_zone": "discount",
         "zone_signal": "BUY",
         "zone_message": "Price in Discount Zone - Look for buys",
         "fibonacci": {
-          "0.0": 255.7,
-          "0.236": 260.92,
-          "0.382": 264.15,
-          "0.5": 266.76,
-          "0.618": 269.37,
-          "0.786": 273.09,
-          "1.0": 277.82
+          "0.0": 168.4,
+          "0.236": 178.73,
+          "0.382": 185.12,
+          "0.5": 190.29,
+          "0.618": 195.46,
+          "0.786": 202.81,
+          "1.0": 212.18
         },
-        "range_pct": 8.65
+        "range_pct": 26.0
       },
       "indicators": {
         "rsi": {
-          "value": 63.8,
+          "value": 40.43,
           "signal": "NEUTRAL"
         },
         "atr": {
-          "value": 1.82,
-          "pct": 0.7
+          "value": 4.86,
+          "pct": 2.61
         },
-        "ma20": 258.89,
-        "ma50": 264.14,
+        "ma20": 185.99,
+        "ma50": 184.55,
         "price_vs_ma20": "above",
-        "price_vs_ma50": "below",
-        "ema20": 259.83,
-        "ema50": 263.18,
-        "ema200": 268.35,
-        "price_vs_ema20": "below",
-        "price_vs_ema50": "below",
-        "price_vs_ema200": "below",
+        "price_vs_ma50": "above",
+        "ema20": 185.42,
+        "ema50": 184.62,
+        "ema200": 169.65,
+        "price_vs_ema20": "above",
+        "price_vs_ema50": "above",
+        "price_vs_ema200": "above",
         "ema_trend": {
-          "trend": "STRONG_BEARISH",
-          "signal": "SELL",
-          "strength": 0,
-          "cross": "DEATH_CROSS",
-          "alignment": "Price < EMA20 < EMA50 < EMA200"
+          "trend": "STRONG_BULLISH",
+          "signal": "BUY",
+          "strength": 100,
+          "cross": "GOLDEN_CROSS",
+          "alignment": "Price > EMA20 > EMA50 > EMA200"
         },
         "volume": {
-          "current": 1522309,
-          "avg_20": 3819986,
-          "ratio": 0.4,
-          "signal": "LOW"
+          "current": 187613900,
+          "avg_20": 158273455,
+          "ratio": 1.19,
+          "signal": "NORMAL"
         }
       },
       "ob_summary": {
-        "total_buy": 0,
-        "total_sell": 1,
-        "total_fvg": 3,
-        "volume_confirmed": 0,
+        "total_buy": 1,
+        "total_sell": 0,
+        "total_fvg": 10,
+        "volume_confirmed": 1,
         "trend_aligned": 1,
-        "high_quality": 0
+        "high_quality": 1
       },
       "alerts": [
         {
@@ -241,32 +2140,502 @@
           "signal": "BUY",
           "priority": "low",
           "message": "Price in Discount Zone - Look for buys",
-          "level": 266.76,
+          "level": 190.29,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\ud83d\udd34 MACD Divergence: \u0e23\u0e32\u0e04\u0e32\u0e2a\u0e39\u0e07\u0e02\u0e36\u0e49\u0e19\u0e41\u0e15\u0e48\u0e42\u0e21\u0e40\u0e21\u0e19\u0e15\u0e31\u0e21\u0e2d\u0e48\u0e2d\u0e19 - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27!",
+          "level": 186.2299957275,
           "distance_pct": 0
         }
       ],
-      "alert_count": 1,
+      "alert_count": 2,
       "trade_setups": [
         {
-          "ob_type": "bearish",
-          "signal": "SELL",
+          "ob_type": "bullish",
+          "signal": "BUY",
           "ob_zone": {
-            "high": 270.98,
-            "low": 270.53,
-            "mid": 270.76
+            "high": 98.89,
+            "low": 94.29,
+            "mid": 96.59
           },
-          "quality_score": 40,
+          "quality_score": 80,
           "trade_setup": {
-            "direction": "SHORT",
-            "entry": 270.53,
-            "stop_loss": 271.89,
-            "take_profit_1": 266.76,
-            "take_profit_2": 267.81,
-            "take_profit_3": 266.45,
-            "risk": 1.36,
-            "risk_pct": 0.5,
+            "direction": "LONG",
+            "entry": 98.89,
+            "stop_loss": 91.86,
+            "take_profit_1": 190.29,
+            "take_profit_2": 112.95,
+            "take_profit_3": 119.98,
+            "risk": 7.03,
+            "risk_pct": 7.11,
             "risk_reward": {
-              "tp1": 2.77,
+              "tp1": 13.0,
+              "tp2": 2.0,
+              "tp3": 3.0
+            },
+            "recommended_rr": 2.0,
+            "valid": "False"
+          },
+          "confluence": {
+            "score": 72,
+            "max_score": 100,
+            "strength": "MODERATE",
+            "recommendation": "Good setup, manage risk",
+            "factors": [
+              "OB Quality: 24/30",
+              "Trend Neutral: 10/20",
+              "EMA Aligned: 15/15",
+              "RSI Favorable: 10/15",
+              "Zone Optimal: 10/10",
+              "No Structure: 3/10"
+            ]
+          },
+          "recommendation": "WAIT"
+        }
+      ]
+    },
+    "GOOGL": {
+      "symbol": "GOOGL",
+      "current_price": 330.0,
+      "interval": "1d",
+      "data_source": "yfinance",
+      "candles_analyzed": 251,
+      "last_updated": "2026-01-17T13:35:50.801421",
+      "data_quality": {
+        "bars": 251,
+        "has_ema50": true,
+        "has_ema200": true,
+        "confidence": "high",
+        "note": null
+      },
+      "position_score": {
+        "score": 43,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
+        "confidence": 0.0,
+        "buy_factors": 2,
+        "sell_factors": 2,
+        "reasons": [
+          {
+            "type": "SELL",
+            "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
+          },
+          {
+            "type": "BUY",
+            "message": "\u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
+          },
+          {
+            "type": "SELL",
+            "message": "RSI Overbought (74) - \u0e04\u0e27\u0e23\u0e17\u0e33\u0e01\u0e33\u0e44\u0e23"
+          },
+          {
+            "type": "BUY",
+            "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e02\u0e36\u0e49\u0e19 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
+          }
+        ],
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
+      },
+      "trend_prediction": {
+        "score": 80,
+        "prediction": "STRONG_BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.5,
+        "confidence_level": "MEDIUM",
+        "bullish_factors": [
+          "ADX \u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 (30) - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19",
+          "Linear Regression \u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e32\u0e14 +5.9%)",
+          "EMA \u0e40\u0e23\u0e35\u0e22\u0e07\u0e15\u0e31\u0e27\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (Golden Alignment)"
+        ],
+        "bearish_factors": [
+          "RSI Overbought (74) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e25\u0e07"
+        ],
+        "warnings": [
+          "\u26a0\ufe0f RSI \u0e2a\u0e39\u0e07 (74) - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e10\u0e32\u0e19"
+        ],
+        "has_warning": true,
+        "indicators": {
+          "adx": {
+            "value": 29.84,
+            "plus_di": 27.94,
+            "minus_di": 14.45,
+            "strength": "STRONG",
+            "direction": "BULLISH",
+            "adx_trend": "RISING",
+            "signal": "STRONG_BULLISH"
+          },
+          "macd": {
+            "macd": 7.4299,
+            "signal": 6.4969,
+            "histogram": 0.9331,
+            "basic_signal": "BULLISH",
+            "momentum": "BULLISH_DECREASING",
+            "divergence": {
+              "type": null,
+              "strength": 0,
+              "message": null
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": 0.7103,
+            "slope_pct": 0.22,
+            "r_squared": 0.4146,
+            "confidence": "MEDIUM",
+            "prediction": "BULLISH",
+            "projected_30d": 349.42,
+            "projected_change_pct": 5.88
+          },
+          "rsi": 73.88
+        }
+      },
+      "trend": {
+        "direction": "bullish",
+        "strength": 0.67,
+        "structure": "HH-HL",
+        "hh_count": 2,
+        "hl_count": 3,
+        "lh_count": 1,
+        "ll_count": 0
+      },
+      "ema_trend": {
+        "trend": "STRONG_BULLISH",
+        "signal": "BUY",
+        "strength": 100,
+        "cross": "GOLDEN_CROSS",
+        "alignment": "Price > EMA20 > EMA50 > EMA200"
+      },
+      "order_blocks": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 177.57,
+          "low": 174.09,
+          "mid": 175.83,
+          "distance": 154.17,
+          "distance_pct": 46.72,
+          "strength": "weak",
+          "date": "2025-07-08 00:00:00-04:00",
+          "mitigated": false,
+          "volume": {
+            "value": 40442500,
+            "ratio": 1.42,
+            "confirmed": "True",
+            "signal": "MODERATE"
+          },
+          "trend_aligned": true,
+          "quality_score": 60,
+          "rank": 1,
+          "in_zone": "False"
+        }
+      ],
+      "major_order_blocks": [],
+      "nearest_buy_zone": {
+        "type": "bullish",
+        "signal": "BUY",
+        "high": 177.57,
+        "low": 174.09,
+        "mid": 175.83,
+        "distance": 154.17,
+        "distance_pct": 46.72,
+        "strength": "weak",
+        "date": "2025-07-08 00:00:00-04:00",
+        "mitigated": false,
+        "volume": {
+          "value": 40442500,
+          "ratio": 1.42,
+          "confirmed": "True",
+          "signal": "MODERATE"
+        },
+        "trend_aligned": true,
+        "quality_score": 60,
+        "rank": 1,
+        "in_zone": "False"
+      },
+      "nearest_sell_zone": null,
+      "fair_value_gaps": [
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 321.5,
+          "low": 320.94,
+          "mid": 321.22,
+          "gap_pct": 0.17,
+          "distance": 8.78,
+          "distance_pct": 2.66,
+          "date": "2026-01-08 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 311.92,
+          "low": 310.13,
+          "mid": 311.03,
+          "gap_pct": 0.58,
+          "distance": 18.97,
+          "distance_pct": 5.75,
+          "date": "2025-12-24 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 309.32,
+          "low": 307.25,
+          "mid": 308.29,
+          "gap_pct": 0.67,
+          "distance": 21.71,
+          "distance_pct": 6.58,
+          "date": "2025-12-23 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 305.3,
+          "low": 303.96,
+          "mid": 304.63,
+          "gap_pct": 0.44,
+          "distance": 25.37,
+          "distance_pct": 7.69,
+          "date": "2025-12-22 00:00:00-05:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 266.33,
+          "low": 261.51,
+          "mid": 263.92,
+          "gap_pct": 1.84,
+          "distance": 66.08,
+          "distance_pct": 20.03,
+          "date": "2025-10-28 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 264.11,
+          "low": 254.87,
+          "mid": 259.49,
+          "gap_pct": 3.62,
+          "distance": 70.51,
+          "distance_pct": 21.37,
+          "date": "2025-10-27 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 233.52,
+          "low": 232.01,
+          "mid": 232.76,
+          "gap_pct": 0.65,
+          "distance": 97.24,
+          "distance_pct": 29.47,
+          "date": "2025-09-08 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 231.54,
+          "low": 230.95,
+          "mid": 231.25,
+          "gap_pct": 0.26,
+          "distance": 98.75,
+          "distance_pct": 29.93,
+          "date": "2025-09-05 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 224.44,
+          "low": 214.32,
+          "mid": 219.38,
+          "gap_pct": 4.72,
+          "distance": 110.62,
+          "distance_pct": 33.52,
+          "date": "2025-09-03 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 225.76,
+          "low": 211.35,
+          "mid": 218.56,
+          "gap_pct": 6.82,
+          "distance": 111.44,
+          "distance_pct": 33.77,
+          "date": "2025-09-04 00:00:00-04:00",
+          "filled": false
+        }
+      ],
+      "structure_breaks": {
+        "bos": [
+          {
+            "type": "bullish",
+            "level": 328.6150374741804,
+            "broken_at": 330.0,
+            "signal": "BUY",
+            "message": "Bullish BOS: Price broke above 328.62"
+          }
+        ],
+        "choch": null
+      },
+      "liquidity_zones": {
+        "equal_highs": [
+          {
+            "level": 180.89,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 45.18,
+            "liquidity": "high",
+            "message": "Equal Highs at $180.89 - Liquidity above"
+          },
+          {
+            "level": 165.29,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 49.91,
+            "liquidity": "high",
+            "message": "Equal Highs at $165.29 - Liquidity above"
+          }
+        ],
+        "equal_lows": [],
+        "nearest_liquidity_above": {
+          "level": 180.89,
+          "type": "resistance",
+          "signal": "SELL",
+          "distance_pct": 45.18,
+          "liquidity": "high",
+          "message": "Equal Highs at $180.89 - Liquidity above"
+        },
+        "nearest_liquidity_below": null
+      },
+      "zones": {
+        "premium": {
+          "high": 328.62,
+          "low": 282.15,
+          "signal": "SELL"
+        },
+        "discount": {
+          "high": 282.15,
+          "low": 235.69,
+          "signal": "BUY"
+        },
+        "equilibrium": 282.15,
+        "current_zone": "premium",
+        "zone_signal": "SELL",
+        "zone_message": "Price in Premium Zone - Look for sells",
+        "fibonacci": {
+          "0.0": 235.69,
+          "0.236": 257.62,
+          "0.382": 271.18,
+          "0.5": 282.15,
+          "0.618": 293.12,
+          "0.786": 308.73,
+          "1.0": 328.62
+        },
+        "range_pct": 39.43
+      },
+      "indicators": {
+        "rsi": {
+          "value": 73.88,
+          "signal": "OVERBOUGHT"
+        },
+        "atr": {
+          "value": 7.18,
+          "pct": 2.18
+        },
+        "ma20": 319.51,
+        "ma50": 309.27,
+        "price_vs_ma20": "above",
+        "price_vs_ma50": "above",
+        "ema20": 322.1,
+        "ema50": 306.4,
+        "ema200": 248.72,
+        "price_vs_ema20": "above",
+        "price_vs_ema50": "above",
+        "price_vs_ema200": "above",
+        "ema_trend": {
+          "trend": "STRONG_BULLISH",
+          "signal": "BUY",
+          "strength": 100,
+          "cross": "GOLDEN_CROSS",
+          "alignment": "Price > EMA20 > EMA50 > EMA200"
+        },
+        "volume": {
+          "current": 40250800,
+          "avg_20": 28551935,
+          "ratio": 1.41,
+          "signal": "NORMAL"
+        }
+      },
+      "ob_summary": {
+        "total_buy": 1,
+        "total_sell": 0,
+        "total_fvg": 10,
+        "volume_confirmed": 1,
+        "trend_aligned": 1,
+        "high_quality": 0
+      },
+      "alerts": [
+        {
+          "type": "bos_bullish",
+          "signal": "BUY",
+          "priority": "high",
+          "message": "Bullish BOS: Price broke above 328.62",
+          "level": 328.6150374741804,
+          "distance_pct": 0
+        },
+        {
+          "type": "zone_premium",
+          "signal": "SELL",
+          "priority": "low",
+          "message": "Price in Premium Zone - Look for sells",
+          "level": 282.15,
+          "distance_pct": 0
+        },
+        {
+          "type": "trend_warning",
+          "signal": "WARNING",
+          "priority": "high",
+          "message": "\u26a0\ufe0f RSI \u0e2a\u0e39\u0e07 (74) - \u0e23\u0e30\u0e27\u0e31\u0e07\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e10\u0e32\u0e19",
+          "level": 330.0,
+          "distance_pct": 0
+        }
+      ],
+      "alert_count": 3,
+      "trade_setups": [
+        {
+          "ob_type": "bullish",
+          "signal": "BUY",
+          "ob_zone": {
+            "high": 177.57,
+            "low": 174.09,
+            "mid": 175.83
+          },
+          "quality_score": 60,
+          "trade_setup": {
+            "direction": "LONG",
+            "entry": 177.57,
+            "stop_loss": 170.5,
+            "take_profit_1": 282.15,
+            "take_profit_2": 191.71,
+            "take_profit_3": 198.78,
+            "risk": 7.07,
+            "risk_pct": 3.98,
+            "risk_reward": {
+              "tp1": 14.79,
               "tp2": 2.0,
               "tp3": 3.0
             },
@@ -279,536 +2648,113 @@
             "strength": "MODERATE",
             "recommendation": "Good setup, manage risk",
             "factors": [
-              "OB Quality: 12/30",
+              "OB Quality: 18/30",
               "Trend Aligned: 20/20",
               "EMA Aligned: 15/15",
-              "RSI Overbought: 15/15",
-              "Zone Suboptimal: 3/10",
-              "No Structure: 3/10"
-            ]
-          },
-          "recommendation": "TRADE"
-        }
-      ]
-    },
-    "TSLA": {
-      "symbol": "TSLA",
-      "current_price": 448.57,
-      "interval": "1h",
-      "data_source": "yfinance",
-      "candles_analyzed": 130,
-      "last_updated": "2026-01-12T22:54:39.244502",
-      "trend": {
-        "direction": "bearish",
-        "strength": 0.67,
-        "structure": "LH-LL",
-        "hh_count": 0,
-        "hl_count": 1,
-        "lh_count": 3,
-        "ll_count": 2
-      },
-      "ema_trend": {
-        "trend": "BEARISH",
-        "signal": "SELL",
-        "strength": 25,
-        "cross": "DEATH_CROSS",
-        "alignment": "Price > EMA20 < EMA50 < EMA200"
-      },
-      "order_blocks": [
-        {
-          "type": "bullish",
-          "signal": "BUY",
-          "high": 436.16,
-          "low": 431.42,
-          "mid": 433.79,
-          "distance": 14.78,
-          "distance_pct": 3.29,
-          "strength": "moderate",
-          "date": "2026-01-07 15:30:00-05:00",
-          "mitigated": false,
-          "volume": {
-            "value": 4503032,
-            "ratio": 0.74,
-            "confirmed": "False",
-            "signal": "WEAK"
-          },
-          "trend_aligned": false,
-          "quality_score": 30,
-          "rank": 1,
-          "in_zone": "False"
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 486.87,
-          "low": 483.92,
-          "mid": 485.4,
-          "distance": 36.83,
-          "distance_pct": 8.21,
-          "strength": "weak",
-          "date": "2025-12-23 14:30:00-05:00",
-          "mitigated": false,
-          "volume": {
-            "value": 5346981,
-            "ratio": 0.88,
-            "confirmed": "False",
-            "signal": "WEAK"
-          },
-          "trend_aligned": false,
-          "quality_score": 30,
-          "rank": 2,
-          "in_zone": "False"
-        }
-      ],
-      "major_order_blocks": [
-        {
-          "type": "bullish",
-          "signal": "BUY",
-          "high": 436.16,
-          "low": 431.42,
-          "mid": 433.79,
-          "distance": 14.78,
-          "distance_pct": 3.29,
-          "strength": "weak",
-          "date": "2026-01-07 15:30:00-05:00",
-          "mitigated": false,
-          "volume": {
-            "value": 4503032,
-            "ratio": 0.74,
-            "confirmed": "False",
-            "signal": "WEAK"
-          },
-          "trend_aligned": false,
-          "quality_score": 20,
-          "rank": 1,
-          "in_zone": "False"
-        }
-      ],
-      "nearest_buy_zone": {
-        "type": "bullish",
-        "signal": "BUY",
-        "high": 436.16,
-        "low": 431.42,
-        "mid": 433.79,
-        "distance": 14.78,
-        "distance_pct": 3.29,
-        "strength": "moderate",
-        "date": "2026-01-07 15:30:00-05:00",
-        "mitigated": false,
-        "volume": {
-          "value": 4503032,
-          "ratio": 0.74,
-          "confirmed": "False",
-          "signal": "WEAK"
-        },
-        "trend_aligned": false,
-        "quality_score": 30,
-        "rank": 1,
-        "in_zone": "False"
-      },
-      "nearest_sell_zone": {
-        "type": "bearish",
-        "signal": "SELL",
-        "high": 486.87,
-        "low": 483.92,
-        "mid": 485.4,
-        "distance": 36.83,
-        "distance_pct": 8.21,
-        "strength": "weak",
-        "date": "2025-12-23 14:30:00-05:00",
-        "mitigated": false,
-        "volume": {
-          "value": 5346981,
-          "ratio": 0.88,
-          "confirmed": "False",
-          "signal": "WEAK"
-        },
-        "trend_aligned": false,
-        "quality_score": 30,
-        "rank": 2,
-        "in_zone": "False"
-      },
-      "fair_value_gaps": [
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 453.85,
-          "low": 444.27,
-          "mid": 449.06,
-          "gap_pct": 2.11,
-          "distance": 0.49,
-          "distance_pct": 0.11,
-          "date": "2026-01-06 09:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 450.86,
-          "low": 439.35,
-          "mid": 445.1,
-          "gap_pct": 2.55,
-          "distance": 3.47,
-          "distance_pct": 0.77,
-          "date": "2026-01-06 10:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bullish",
-          "signal": "BUY",
-          "high": 440.65,
-          "low": 436.25,
-          "mid": 438.45,
-          "gap_pct": 1.01,
-          "distance": 10.12,
-          "distance_pct": 2.26,
-          "date": "2026-01-09 10:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 465.87,
-          "low": 464.38,
-          "mid": 465.12,
-          "gap_pct": 0.32,
-          "distance": 16.55,
-          "distance_pct": 3.69,
-          "date": "2025-12-29 13:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 474.98,
-          "low": 467.81,
-          "mid": 471.4,
-          "gap_pct": 1.51,
-          "distance": 22.82,
-          "distance_pct": 5.09,
-          "date": "2025-12-29 10:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 477.75,
-          "low": 469.4,
-          "mid": 473.57,
-          "gap_pct": 1.75,
-          "distance": 25.0,
-          "distance_pct": 5.57,
-          "date": "2025-12-29 09:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 481.14,
-          "low": 479.41,
-          "mid": 480.28,
-          "gap_pct": 0.36,
-          "distance": 31.71,
-          "distance_pct": 7.07,
-          "date": "2025-12-26 10:30:00-05:00",
-          "filled": false
-        },
-        {
-          "type": "bearish",
-          "signal": "SELL",
-          "high": 492.87,
-          "low": 489.59,
-          "mid": 491.23,
-          "gap_pct": 0.67,
-          "distance": 42.66,
-          "distance_pct": 9.51,
-          "date": "2025-12-22 15:30:00-05:00",
-          "filled": false
-        }
-      ],
-      "structure_breaks": {
-        "bos": [
-          {
-            "type": "bullish",
-            "level": 438.3699951171875,
-            "broken_at": 448.57,
-            "signal": "BUY",
-            "message": "Bullish BOS: Price broke above 438.37"
-          }
-        ],
-        "choch": {
-          "type": "bullish",
-          "level": 438.3699951171875,
-          "signal": "BUY",
-          "message": "Bullish CHoCH: Potential trend reversal to upside"
-        }
-      },
-      "liquidity_zones": {
-        "equal_highs": [
-          {
-            "level": 457.94,
-            "type": "resistance",
-            "signal": "SELL",
-            "distance_pct": 2.09,
-            "liquidity": "high",
-            "message": "Equal Highs at $457.94 - Liquidity above"
-          },
-          {
-            "level": 490.25,
-            "type": "resistance",
-            "signal": "SELL",
-            "distance_pct": 9.29,
-            "liquidity": "high",
-            "message": "Equal Highs at $490.25 - Liquidity above"
-          }
-        ],
-        "equal_lows": [
-          {
-            "level": 466.01,
-            "type": "support",
-            "signal": "BUY",
-            "distance_pct": 3.89,
-            "liquidity": "high",
-            "message": "Equal Lows at $466.01 - Liquidity below"
-          },
-          {
-            "level": 429.59,
-            "type": "support",
-            "signal": "BUY",
-            "distance_pct": 4.23,
-            "liquidity": "high",
-            "message": "Equal Lows at $429.59 - Liquidity below"
-          },
-          {
-            "level": 474.29,
-            "type": "support",
-            "signal": "BUY",
-            "distance_pct": 5.73,
-            "liquidity": "high",
-            "message": "Equal Lows at $474.29 - Liquidity below"
-          }
-        ],
-        "nearest_liquidity_above": {
-          "level": 457.94,
-          "type": "resistance",
-          "signal": "SELL",
-          "distance_pct": 2.09,
-          "liquidity": "high",
-          "message": "Equal Highs at $457.94 - Liquidity above"
-        },
-        "nearest_liquidity_below": {
-          "level": 466.01,
-          "type": "support",
-          "signal": "BUY",
-          "distance_pct": 3.89,
-          "liquidity": "high",
-          "message": "Equal Lows at $466.01 - Liquidity below"
-        }
-      },
-      "zones": {
-        "premium": {
-          "high": 498.82,
-          "low": 461.59,
-          "signal": "SELL"
-        },
-        "discount": {
-          "high": 461.59,
-          "low": 424.36,
-          "signal": "BUY"
-        },
-        "equilibrium": 461.59,
-        "current_zone": "discount",
-        "zone_signal": "BUY",
-        "zone_message": "Price in Discount Zone - Look for buys",
-        "fibonacci": {
-          "0.0": 424.36,
-          "0.236": 441.94,
-          "0.382": 452.81,
-          "0.5": 461.59,
-          "0.618": 470.38,
-          "0.786": 482.89,
-          "1.0": 498.82
-        },
-        "range_pct": 17.55
-      },
-      "indicators": {
-        "rsi": {
-          "value": 77.51,
-          "signal": "OVERBOUGHT"
-        },
-        "atr": {
-          "value": 4.19,
-          "pct": 0.94
-        },
-        "ma20": 439.79,
-        "ma50": 442.36,
-        "price_vs_ma20": "above",
-        "price_vs_ma50": "above",
-        "ema20": 442.42,
-        "ema50": 445.34,
-        "ema200": 453.18,
-        "price_vs_ema20": "above",
-        "price_vs_ema50": "above",
-        "price_vs_ema200": "below",
-        "ema_trend": {
-          "trend": "BEARISH",
-          "signal": "SELL",
-          "strength": 25,
-          "cross": "DEATH_CROSS",
-          "alignment": "Price > EMA20 < EMA50 < EMA200"
-        },
-        "volume": {
-          "current": 2606830,
-          "avg_20": 6098846,
-          "ratio": 0.43,
-          "signal": "LOW"
-        }
-      },
-      "ob_summary": {
-        "total_buy": 1,
-        "total_sell": 1,
-        "total_fvg": 8,
-        "volume_confirmed": 0,
-        "trend_aligned": 0,
-        "high_quality": 0
-      },
-      "alerts": [
-        {
-          "type": "choch_bullish",
-          "signal": "BUY",
-          "priority": "critical",
-          "message": "Bullish CHoCH: Potential trend reversal to upside",
-          "level": 438.3699951171875,
-          "distance_pct": 0
-        },
-        {
-          "type": "bos_bullish",
-          "signal": "BUY",
-          "priority": "high",
-          "message": "Bullish BOS: Price broke above 438.37",
-          "level": 438.3699951171875,
-          "distance_pct": 0
-        },
-        {
-          "type": "fvg_bearish",
-          "signal": "SELL",
-          "priority": "medium",
-          "message": "FVG SELL at $449.06 (0.1% away)",
-          "level": 449.06,
-          "distance_pct": 0.11
-        },
-        {
-          "type": "fvg_bearish",
-          "signal": "SELL",
-          "priority": "medium",
-          "message": "FVG SELL at $445.10 (0.8% away)",
-          "level": 445.1,
-          "distance_pct": 0.77
-        },
-        {
-          "type": "zone_discount",
-          "signal": "BUY",
-          "priority": "low",
-          "message": "Price in Discount Zone - Look for buys",
-          "level": 461.59,
-          "distance_pct": 0
-        }
-      ],
-      "alert_count": 5,
-      "trade_setups": [
-        {
-          "ob_type": "bearish",
-          "signal": "SELL",
-          "ob_zone": {
-            "high": 486.87,
-            "low": 483.92,
-            "mid": 485.4
-          },
-          "quality_score": 30,
-          "trade_setup": {
-            "direction": "SHORT",
-            "entry": 483.92,
-            "stop_loss": 488.96,
-            "take_profit_1": 461.59,
-            "take_profit_2": 473.83,
-            "take_profit_3": 468.78,
-            "risk": 5.05,
-            "risk_pct": 1.04,
-            "risk_reward": {
-              "tp1": 4.43,
-              "tp2": 2.0,
-              "tp3": 3.0
-            },
-            "recommended_rr": 2.0,
-            "valid": "True"
-          },
-          "confluence": {
-            "score": 65,
-            "max_score": 100,
-            "strength": "MODERATE",
-            "recommendation": "Good setup, manage risk",
-            "factors": [
-              "OB Quality: 9/30",
-              "Trend Aligned: 20/20",
-              "EMA Aligned: 15/15",
-              "RSI Overbought: 15/15",
-              "Zone Suboptimal: 3/10",
-              "No Structure: 3/10"
-            ]
-          },
-          "recommendation": "TRADE"
-        },
-        {
-          "ob_type": "bullish",
-          "signal": "BUY",
-          "ob_zone": {
-            "high": 436.16,
-            "low": 431.42,
-            "mid": 433.79
-          },
-          "quality_score": 30,
-          "trade_setup": {
-            "direction": "LONG",
-            "entry": 436.16,
-            "stop_loss": 429.32,
-            "take_profit_1": 461.59,
-            "take_profit_2": 449.83,
-            "take_profit_3": 456.67,
-            "risk": 6.84,
-            "risk_pct": 1.57,
-            "risk_reward": {
-              "tp1": 3.72,
-              "tp2": 2.0,
-              "tp3": 3.0
-            },
-            "recommended_rr": 2.0,
-            "valid": "True"
-          },
-          "confluence": {
-            "score": 42,
-            "max_score": 100,
-            "strength": "WEAK",
-            "recommendation": "Low probability, wait for better",
-            "factors": [
-              "OB Quality: 9/30",
-              "Counter-Trend: 5/20",
-              "EMA Against: 3/15",
               "RSI Neutral: 5/15",
-              "Zone Optimal: 10/10",
-              "CHoCH Confirmed: 10/10"
+              "Zone Suboptimal: 3/10",
+              "BOS Confirmed: 7/10"
             ]
           },
-          "recommendation": "WAIT"
+          "recommendation": "TRADE"
         }
       ]
     },
-    "NVDA": {
-      "symbol": "NVDA",
-      "current_price": 184.23,
-      "interval": "1h",
+    "MSFT": {
+      "symbol": "MSFT",
+      "current_price": 459.86,
+      "interval": "1d",
       "data_source": "yfinance",
-      "candles_analyzed": 130,
-      "last_updated": "2026-01-12T22:54:39.338953",
+      "candles_analyzed": 251,
+      "last_updated": "2026-01-17T13:35:50.921922",
+      "data_quality": {
+        "bars": 251,
+        "has_ema50": true,
+        "has_ema200": true,
+        "confidence": "high",
+        "note": null
+      },
+      "position_score": {
+        "score": 59,
+        "action": "BUY",
+        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
+        "confidence": 0.0,
+        "buy_factors": 2,
+        "sell_factors": 2,
+        "reasons": [
+          {
+            "type": "BUY",
+            "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+          },
+          {
+            "type": "SELL",
+            "message": "\u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
+          },
+          {
+            "type": "BUY",
+            "message": "RSI Oversold (26) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e0b\u0e37\u0e49\u0e2d"
+          },
+          {
+            "type": "SELL",
+            "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
+          }
+        ],
+        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+      },
+      "trend_prediction": {
+        "score": 60,
+        "prediction": "BULLISH",
+        "prediction_th": "\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19",
+        "outlook": "\u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e21\u0e35\u0e41\u0e19\u0e27\u0e42\u0e19\u0e49\u0e21\u0e02\u0e36\u0e49\u0e19",
+        "confidence": 0.2,
+        "confidence_level": "LOW",
+        "bullish_factors": [
+          "MACD Bullish Divergence - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19",
+          "RSI Oversold (26) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19"
+        ],
+        "bearish_factors": [
+          "ADX \u0e02\u0e32\u0e25\u0e07 (20)",
+          "Linear Regression \u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e32\u0e14 -1.7%)",
+          "\u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e01\u0e27\u0e48\u0e32 EMA20 \u0e41\u0e25\u0e30 EMA50"
+        ],
+        "warnings": [],
+        "has_warning": false,
+        "indicators": {
+          "adx": {
+            "value": 20.04,
+            "plus_di": 15.05,
+            "minus_di": 32.12,
+            "strength": "MODERATE",
+            "direction": "BEARISH",
+            "adx_trend": "RISING",
+            "signal": "MODERATE_BEARISH"
+          },
+          "macd": {
+            "macd": -6.4948,
+            "signal": -4.418,
+            "histogram": -2.0767,
+            "basic_signal": "BEARISH",
+            "momentum": "BEARISH_INCREASING",
+            "divergence": {
+              "type": "BULLISH",
+              "strength": 44.86411567765226,
+              "message": "\u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e02\u0e36\u0e49\u0e19: \u0e23\u0e32\u0e04\u0e32\u0e15\u0e48\u0e33\u0e25\u0e07 \u0e41\u0e15\u0e48 MACD \u0e40\u0e23\u0e34\u0e48\u0e21\u0e41\u0e02\u0e47\u0e07",
+              "warning": false
+            },
+            "crossover": null
+          },
+          "linear_regression": {
+            "slope": -0.6012,
+            "slope_pct": -0.13,
+            "r_squared": 0.355,
+            "confidence": "LOW",
+            "prediction": "BEARISH",
+            "projected_30d": 451.96,
+            "projected_change_pct": -1.72
+          },
+          "rsi": 26.23
+        }
+      },
       "trend": {
         "direction": "bearish",
         "strength": 0.33,
@@ -825,236 +2771,264 @@
         "cross": null,
         "alignment": "Price < EMA20 < EMA50 > EMA200"
       },
-      "order_blocks": [
-        {
-          "type": "bullish",
-          "signal": "BUY",
-          "high": 184.74,
-          "low": 184.15,
-          "mid": 184.44,
-          "distance": 0.22,
-          "distance_pct": 0.12,
-          "strength": "weak",
-          "date": "2026-01-08 13:30:00-05:00",
-          "mitigated": false,
-          "volume": {
-            "value": 10808506,
-            "ratio": 0.74,
-            "confirmed": "False",
-            "signal": "WEAK"
-          },
-          "trend_aligned": false,
-          "quality_score": 20,
-          "rank": 1,
-          "in_zone": "True"
-        }
-      ],
+      "order_blocks": [],
       "major_order_blocks": [],
-      "nearest_buy_zone": {
-        "type": "bullish",
-        "signal": "BUY",
-        "high": 184.74,
-        "low": 184.15,
-        "mid": 184.44,
-        "distance": 0.22,
-        "distance_pct": 0.12,
-        "strength": "weak",
-        "date": "2026-01-08 13:30:00-05:00",
-        "mitigated": false,
-        "volume": {
-          "value": 10808506,
-          "ratio": 0.74,
-          "confirmed": "False",
-          "signal": "WEAK"
-        },
-        "trend_aligned": false,
-        "quality_score": 20,
-        "rank": 1,
-        "in_zone": "True"
-      },
+      "nearest_buy_zone": null,
       "nearest_sell_zone": null,
       "fair_value_gaps": [
         {
-          "type": "bullish",
-          "signal": "BUY",
-          "high": 182.67,
-          "low": 181.45,
-          "mid": 182.06,
-          "gap_pct": 0.67,
-          "distance": 2.17,
-          "distance_pct": 1.18,
-          "date": "2025-12-22 10:30:00-05:00",
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 465.95,
+          "low": 464.25,
+          "mid": 465.1,
+          "gap_pct": 0.36,
+          "distance": 5.24,
+          "distance_pct": 1.14,
+          "date": "2026-01-15 00:00:00-05:00",
           "filled": false
         },
         {
           "type": "bullish",
           "signal": "BUY",
-          "high": 182.35,
-          "low": 180.98,
-          "mid": 181.67,
-          "gap_pct": 0.76,
-          "distance": 2.56,
-          "distance_pct": 1.39,
-          "date": "2025-12-22 09:30:00-05:00",
+          "high": 455.33,
+          "low": 452.1,
+          "mid": 453.71,
+          "gap_pct": 0.71,
+          "distance": 6.15,
+          "distance_pct": 1.34,
+          "date": "2025-05-28 00:00:00-04:00",
           "filled": false
         },
         {
           "type": "bearish",
           "signal": "SELL",
-          "high": 188.77,
-          "low": 186.95,
-          "mid": 187.86,
-          "gap_pct": 0.97,
-          "distance": 3.63,
-          "distance_pct": 1.97,
-          "date": "2026-01-08 10:30:00-05:00",
+          "high": 475.68,
+          "low": 468.2,
+          "mid": 471.94,
+          "gap_pct": 1.57,
+          "distance": 12.08,
+          "distance_pct": 2.63,
+          "date": "2026-01-14 00:00:00-05:00",
           "filled": false
         },
         {
           "type": "bullish",
           "signal": "BUY",
-          "high": 178.35,
-          "low": 174.96,
-          "mid": 176.66,
-          "gap_pct": 1.94,
-          "distance": 7.57,
-          "distance_pct": 4.11,
-          "date": "2025-12-19 10:30:00-05:00",
+          "high": 442.99,
+          "low": 438.39,
+          "mid": 440.69,
+          "gap_pct": 1.05,
+          "distance": 19.17,
+          "distance_pct": 4.17,
+          "date": "2025-05-13 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 503.97,
+          "low": 494.26,
+          "mid": 499.12,
+          "gap_pct": 1.93,
+          "distance": 39.26,
+          "distance_pct": 8.54,
+          "date": "2025-11-19 00:00:00-05:00",
           "filled": false
         },
         {
           "type": "bullish",
           "signal": "BUY",
-          "high": 176.35,
-          "low": 174.9,
-          "mid": 175.62,
-          "gap_pct": 0.83,
-          "distance": 8.6,
-          "distance_pct": 4.67,
-          "date": "2025-12-19 09:30:00-05:00",
+          "high": 427.7,
+          "low": 394.54,
+          "mid": 411.12,
+          "gap_pct": 8.4,
+          "distance": 48.74,
+          "distance_pct": 10.6,
+          "date": "2025-05-02 00:00:00-04:00",
           "filled": false
         },
         {
           "type": "bullish",
           "signal": "BUY",
-          "high": 174.76,
-          "low": 171.82,
-          "mid": 173.29,
-          "gap_pct": 1.71,
-          "distance": 10.94,
-          "distance_pct": 5.94,
-          "date": "2025-12-18 10:30:00-05:00",
+          "high": 422.63,
+          "low": 392.99,
+          "mid": 407.81,
+          "gap_pct": 7.54,
+          "distance": 52.05,
+          "distance_pct": 11.32,
+          "date": "2025-05-01 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 535.73,
+          "low": 528.33,
+          "mid": 532.03,
+          "gap_pct": 1.38,
+          "distance": 72.17,
+          "distance_pct": 15.69,
+          "date": "2025-10-31 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bearish",
+          "signal": "SELL",
+          "high": 539.76,
+          "low": 533.97,
+          "mid": 536.87,
+          "gap_pct": 1.07,
+          "distance": 77.01,
+          "distance_pct": 16.75,
+          "date": "2025-10-30 00:00:00-04:00",
+          "filled": false
+        },
+        {
+          "type": "bullish",
+          "signal": "BUY",
+          "high": 382.55,
+          "low": 378.36,
+          "mid": 380.46,
+          "gap_pct": 1.11,
+          "distance": 79.4,
+          "distance_pct": 17.27,
+          "date": "2025-04-25 00:00:00-04:00",
           "filled": false
         }
       ],
       "structure_breaks": {
-        "bos": [],
+        "bos": [
+          {
+            "type": "bearish",
+            "level": 469.5,
+            "broken_at": 459.86,
+            "signal": "SELL",
+            "message": "Bearish BOS: Price broke below 469.50"
+          }
+        ],
         "choch": null
       },
       "liquidity_zones": {
         "equal_highs": [
           {
-            "level": 178.31,
+            "level": 489.65,
             "type": "resistance",
             "signal": "SELL",
-            "distance_pct": 3.22,
+            "distance_pct": 6.48,
             "liquidity": "high",
-            "message": "Equal Highs at $178.31 - Liquidity above"
+            "message": "Equal Highs at $489.65 - Liquidity above"
           },
           {
-            "level": 190.96,
+            "level": 393.4,
             "type": "resistance",
             "signal": "SELL",
-            "distance_pct": 3.65,
+            "distance_pct": 14.45,
             "liquidity": "high",
-            "message": "Equal Highs at $190.96 - Liquidity above"
+            "message": "Equal Highs at $393.40 - Liquidity above"
           },
           {
-            "level": 192.81,
+            "level": 530.44,
             "type": "resistance",
             "signal": "SELL",
-            "distance_pct": 4.66,
+            "distance_pct": 15.35,
             "liquidity": "high",
-            "message": "Equal Highs at $192.81 - Liquidity above"
+            "message": "Equal Highs at $530.44 - Liquidity above"
+          },
+          {
+            "level": 553.09,
+            "type": "resistance",
+            "signal": "SELL",
+            "distance_pct": 20.27,
+            "liquidity": "high",
+            "message": "Equal Highs at $553.09 - Liquidity above"
           }
         ],
         "equal_lows": [
           {
-            "level": 186.25,
+            "level": 470.87,
             "type": "support",
             "signal": "BUY",
-            "distance_pct": 1.1,
+            "distance_pct": 2.39,
             "liquidity": "high",
-            "message": "Equal Lows at $186.25 - Liquidity below"
+            "message": "Equal Lows at $470.87 - Liquidity below"
           },
           {
-            "level": 174.76,
+            "level": 491.89,
             "type": "support",
             "signal": "BUY",
-            "distance_pct": 5.14,
+            "distance_pct": 6.97,
             "liquidity": "high",
-            "message": "Equal Lows at $174.76 - Liquidity below"
+            "message": "Equal Lows at $491.89 - Liquidity below"
+          },
+          {
+            "level": 504.58,
+            "type": "support",
+            "signal": "BUY",
+            "distance_pct": 9.72,
+            "liquidity": "high",
+            "message": "Equal Lows at $504.58 - Liquidity below"
           }
         ],
         "nearest_liquidity_above": {
-          "level": 178.31,
+          "level": 489.65,
           "type": "resistance",
           "signal": "SELL",
-          "distance_pct": 3.22,
+          "distance_pct": 6.48,
           "liquidity": "high",
-          "message": "Equal Highs at $178.31 - Liquidity above"
+          "message": "Equal Highs at $489.65 - Liquidity above"
         },
         "nearest_liquidity_below": {
-          "level": 186.25,
+          "level": 470.87,
           "type": "support",
           "signal": "BUY",
-          "distance_pct": 1.1,
+          "distance_pct": 2.39,
           "liquidity": "high",
-          "message": "Equal Lows at $186.25 - Liquidity below"
+          "message": "Equal Lows at $470.87 - Liquidity below"
         }
       },
       "zones": {
         "premium": {
-          "high": 193.63,
-          "low": 188.65,
+          "high": 552.69,
+          "low": 508.79,
           "signal": "SELL"
         },
         "discount": {
-          "high": 188.65,
-          "low": 183.67,
+          "high": 508.79,
+          "low": 464.89,
           "signal": "BUY"
         },
-        "equilibrium": 188.65,
+        "equilibrium": 508.79,
         "current_zone": "discount",
         "zone_signal": "BUY",
         "zone_message": "Price in Discount Zone - Look for buys",
         "fibonacci": {
-          "0.0": 183.67,
-          "0.236": 186.02,
-          "0.382": 187.47,
-          "0.5": 188.65,
-          "0.618": 189.83,
-          "0.786": 191.5,
-          "1.0": 193.63
+          "0.0": 464.89,
+          "0.236": 485.61,
+          "0.382": 498.43,
+          "0.5": 508.79,
+          "0.618": 519.15,
+          "0.786": 533.9,
+          "1.0": 552.69
         },
-        "range_pct": 5.42
+        "range_pct": 18.89
       },
       "indicators": {
         "rsi": {
-          "value": 44.81,
-          "signal": "NEUTRAL"
+          "value": 26.23,
+          "signal": "OVERSOLD"
         },
         "atr": {
-          "value": 1.23,
-          "pct": 0.67
+          "value": 8.24,
+          "pct": 1.79
         },
-        "ma20": 185.86,
-        "ma50": 187.59,
+        "ma20": 478.23,
+        "ma50": 484.63,
         "price_vs_ma20": "below",
         "price_vs_ma50": "below",
-        "ema20": 185.77,
-        "ema50": 186.6,
-        "ema200": 184.62,
+        "ema20": 474.95,
+        "ema50": 484.59,
+        "ema200": 479.89,
         "price_vs_ema20": "below",
         "price_vs_ema50": "below",
         "price_vs_ema200": "below",
@@ -1066,113 +3040,146 @@
           "alignment": "Price < EMA20 < EMA50 > EMA200"
         },
         "volume": {
-          "current": 6114980,
-          "avg_20": 14535201,
-          "ratio": 0.42,
-          "signal": "LOW"
+          "current": 33795700,
+          "avg_20": 22977135,
+          "ratio": 1.47,
+          "signal": "NORMAL"
         }
       },
       "ob_summary": {
-        "total_buy": 1,
+        "total_buy": 0,
         "total_sell": 0,
-        "total_fvg": 6,
+        "total_fvg": 10,
         "volume_confirmed": 0,
         "trend_aligned": 0,
         "high_quality": 0
       },
       "alerts": [
         {
-          "type": "ob_entry_bullish",
-          "signal": "BUY",
-          "priority": "critical",
-          "message": "\ud83c\udfaf Price entered BUY Order Block! ($184.15-$184.74) - Buy signal",
-          "level": 184.44,
-          "distance_pct": 0,
-          "ob_type": "bullish",
-          "ob_high": 184.74,
-          "ob_low": 184.15,
-          "quality_score": 20,
-          "volume_confirmed": "False",
-          "trend_aligned": false
-        },
-        {
-          "type": "fvg_bullish",
-          "signal": "BUY",
-          "priority": "medium",
-          "message": "FVG BUY at $182.06 (1.2% away)",
-          "level": 182.06,
-          "distance_pct": 1.18
-        },
-        {
-          "type": "fvg_bullish",
-          "signal": "BUY",
-          "priority": "medium",
-          "message": "FVG BUY at $181.67 (1.4% away)",
-          "level": 181.67,
-          "distance_pct": 1.39
+          "type": "bos_bearish",
+          "signal": "SELL",
+          "priority": "high",
+          "message": "Bearish BOS: Price broke below 469.50",
+          "level": 469.5,
+          "distance_pct": 0
         },
         {
           "type": "fvg_bearish",
           "signal": "SELL",
           "priority": "medium",
-          "message": "FVG SELL at $187.86 (2.0% away)",
-          "level": 187.86,
-          "distance_pct": 1.97
+          "message": "FVG SELL at $465.10 (1.1% away)",
+          "level": 465.1,
+          "distance_pct": 1.14
+        },
+        {
+          "type": "fvg_bullish",
+          "signal": "BUY",
+          "priority": "medium",
+          "message": "FVG BUY at $453.71 (1.3% away)",
+          "level": 453.71,
+          "distance_pct": 1.34
         },
         {
           "type": "zone_discount",
           "signal": "BUY",
           "priority": "low",
           "message": "Price in Discount Zone - Look for buys",
-          "level": 188.65,
+          "level": 508.79,
           "distance_pct": 0
         }
       ],
-      "alert_count": 5,
-      "trade_setups": [
+      "alert_count": 4,
+      "trade_setups": []
+    }
+  },
+  "summary": {
+    "total_stocks": 5,
+    "total_alerts": 17,
+    "market_bias": {
+      "bullish": 2,
+      "bearish": 1,
+      "neutral": 2
+    },
+    "sentiment_score": 46,
+    "recommendation": "HOLD",
+    "top_buy_opportunities": [
+      {
+        "symbol": "GOOGL",
+        "message": "Bullish BOS: Price broke above 328.62",
+        "distance_pct": 0
+      },
+      {
+        "symbol": "TSLA",
+        "message": "\u26a0\ufe0f Near BUY Zone #1 at $433.65 (0.9% away)",
+        "distance_pct": 0.88
+      }
+    ],
+    "top_sell_opportunities": [
+      {
+        "symbol": "AAPL",
+        "message": "Bearish BOS: Price broke below 255.70",
+        "distance_pct": 0
+      },
+      {
+        "symbol": "AAPL",
+        "message": "\ud83d\udcc9 \u0e04\u0e32\u0e14\u0e27\u0e48\u0e32 1 \u0e40\u0e14\u0e37\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e2b\u0e19\u0e49\u0e32: \u0e02\u0e32\u0e25\u0e07 \u26a0\ufe0f",
+        "distance_pct": 0
+      },
+      {
+        "symbol": "MSFT",
+        "message": "Bearish BOS: Price broke below 469.50",
+        "distance_pct": 0
+      }
+    ],
+    "position_trading": {
+      "strong_buy_opportunities": [
         {
-          "ob_type": "bullish",
-          "signal": "BUY",
-          "ob_zone": {
-            "high": 184.74,
-            "low": 184.15,
-            "mid": 184.44
-          },
-          "quality_score": 20,
-          "trade_setup": {
-            "direction": "LONG",
-            "entry": 184.74,
-            "stop_loss": 183.54,
-            "take_profit_1": 188.65,
-            "take_profit_2": 187.15,
-            "take_profit_3": 188.36,
-            "risk": 1.21,
-            "risk_pct": 0.65,
-            "risk_reward": {
-              "tp1": 3.24,
-              "tp2": 2.0,
-              "tp3": 3.0
-            },
-            "recommended_rr": 2.0,
-            "valid": "True"
-          },
-          "confluence": {
-            "score": 37,
-            "max_score": 100,
-            "strength": "AVOID",
-            "recommendation": "Do not trade this setup",
-            "factors": [
-              "OB Quality: 6/30",
-              "Counter-Trend: 5/20",
-              "EMA Against: 3/15",
-              "RSI Favorable: 10/15",
-              "Zone Optimal: 10/10",
-              "No Structure: 3/10"
-            ]
-          },
-          "recommendation": "WAIT"
+          "symbol": "TSLA",
+          "score": 76,
+          "action": "STRONG_BUY",
+          "summary": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e17\u0e35\u0e48\u0e14\u0e35! \u0e43\u0e01\u0e25\u0e49 Order Block \u0e0b\u0e37\u0e49\u0e2d (0.9% \u0e2b\u0e48\u0e32\u0e07)",
+          "price": 437.5,
+          "zone": "premium"
+        },
+        {
+          "symbol": "AAPL",
+          "score": 70,
+          "action": "STRONG_BUY",
+          "summary": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e17\u0e35\u0e48\u0e14\u0e35! \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
+          "price": 255.53,
+          "zone": "discount"
         }
-      ]
+      ],
+      "buy_opportunities": [
+        {
+          "symbol": "NVDA",
+          "score": 60,
+          "action": "BUY",
+          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
+          "price": 186.23,
+          "zone": "discount"
+        },
+        {
+          "symbol": "MSFT",
+          "score": 59,
+          "action": "BUY",
+          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
+          "price": 459.86,
+          "zone": "discount"
+        }
+      ],
+      "take_profit_signals": [],
+      "caution_signals": [
+        {
+          "symbol": "GOOGL",
+          "score": 43,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)",
+          "price": 330.0,
+          "zone": "premium"
+        }
+      ],
+      "total_actionable": 5
     }
   }
 }

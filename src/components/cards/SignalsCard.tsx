@@ -45,8 +45,12 @@ export default function SignalsCard() {
   // Translate alert messages
   const translateMessage = (alert: Alert): string => {
     const type = alert.type || ''
-    
+
     if (language === 'th') {
+      // Trend warnings (NEW!)
+      if (type === 'trend_warning') return alert.message
+      if (type === 'trend_bearish') return alert.message
+
       if (type.startsWith('ob_entry_')) return `ราคาเข้าโซนแนวรับ/ต้าน`
       if (type.startsWith('ob_near_')) return `ใกล้โซน ${alert.signal === 'BUY' ? 'ซื้อ' : 'ขาย'} (${alert.distance_pct?.toFixed(1)}%)`
       if (type.includes('choch')) return type.includes('bullish') ? 'สัญญาณกลับตัวขึ้น' : 'สัญญาณกลับตัวลง'
@@ -55,8 +59,10 @@ export default function SignalsCard() {
       if (type === 'zone_premium') return 'อยู่ในโซนราคาสูง'
       if (type === 'zone_discount') return 'อยู่ในโซนราคาถูก'
     }
-    
+
     // English
+    if (type === 'trend_warning') return alert.message
+    if (type === 'trend_bearish') return alert.message
     if (type.startsWith('ob_entry_')) return `Price entered Order Block`
     if (type.startsWith('ob_near_')) return `Near ${alert.signal} Zone (${alert.distance_pct?.toFixed(1)}%)`
     if (type.includes('choch')) return type.includes('bullish') ? 'CHoCH: Reversal up' : 'CHoCH: Reversal down'
@@ -64,7 +70,7 @@ export default function SignalsCard() {
     if (type.includes('fvg')) return `FVG ${alert.signal}`
     if (type === 'zone_premium') return 'In Premium Zone'
     if (type === 'zone_discount') return 'In Discount Zone'
-    
+
     return alert.message
   }
 
@@ -73,27 +79,32 @@ export default function SignalsCard() {
     return alert.type?.startsWith('ob_entry_') || alert.priority === 'critical'
   }
 
+  // Check if alert is a warning (NEW!)
+  const isWarningAlert = (alert: Alert): boolean => {
+    return alert.type === 'trend_warning' || alert.type === 'trend_bearish' || alert.priority === 'high'
+  }
+
   // Collect all alerts with quality data
   const alerts: Alert[] = []
-  
+
   for (const symbol of watchlist) {
     const stock = smcData?.stocks?.[symbol]
     if (stock?.alerts?.length) {
       const orderBlocks = stock.order_blocks || []
-      
+
       // Check if this symbol has an OB entry alert (highest priority)
       const hasOBEntry = stock.alerts.some((a: { type?: string }) => a.type?.startsWith('ob_entry_'))
-      
+
       for (const alert of stock.alerts) {
         // Skip zone alerts if we already have OB entry for this symbol
         if (hasOBEntry && (alert.type === 'zone_premium' || alert.type === 'zone_discount')) {
           continue
         }
-        
+
         let qualityScore = 50
         let volumeConfirmed = false
         let trendAligned = false
-        
+
         if (alert.type?.includes('ob_')) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const matchingOB = orderBlocks.find((ob: any) => ob.in_zone || ob.signal === alert.signal)
@@ -103,7 +114,7 @@ export default function SignalsCard() {
             trendAligned = matchingOB.trend_aligned || false
           }
         }
-        
+
         alerts.push({
           symbol,
           message: alert.message,
@@ -120,7 +131,7 @@ export default function SignalsCard() {
         })
       }
     }
-    
+
     const onDemand = onDemandSMC[symbol]
     if (onDemand?.alerts?.length) {
       for (const alert of onDemand.alerts) {
@@ -150,12 +161,12 @@ export default function SignalsCard() {
   // Desktop: always show up to 6
   const initialMobileCount = 3
   const desktopCount = 6
-  
+
   // Calculate display count
-  const displayCount = isMobile 
+  const displayCount = isMobile
     ? (showAll ? alerts.length : initialMobileCount)
     : desktopCount
-  
+
   // Has more only on mobile when not showing all
   const remainingCount = alerts.length - initialMobileCount
   const hasMore = isMobile && !showAll && remainingCount > 0
@@ -163,7 +174,7 @@ export default function SignalsCard() {
   return (
     <article className="card">
       <div className="card-title">{t('recent_signals')}</div>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {alerts.length === 0 ? (
           <div style={{ padding: 20, textAlign: 'center', opacity: 0.5, fontSize: 12 }}>
@@ -173,11 +184,28 @@ export default function SignalsCard() {
           <>
             {alerts.slice(0, displayCount).map((alert, i) => {
               const isCritical = isCriticalAlert(alert)
+              const isWarning = isWarningAlert(alert)
               const isSell = alert.signal === 'SELL'
               const translatedMessage = translateMessage(alert)
               const isOB = isOBAlert(alert.type)
               const qualityInfo = isOB ? getQualityInfo(alert.qualityScore || 50, language) : null
-              
+
+              // Warning alerts (NEW!) - Trend warnings display prominently
+              if (isWarning && !isCritical) {
+                return (
+                  <div key={i} className="signal-warning-alert">
+                    <span className="signal-warning-icon">⚠️</span>
+                    <div className="signal-warning-text">
+                      <span className="signal-warning-symbol">{alert.symbol}</span>
+                      <span className="signal-warning-message">{translatedMessage}</span>
+                    </div>
+                    <span className="signal-warning-badge">
+                      {language === 'th' ? 'เตือน' : 'Warning'}
+                    </span>
+                  </div>
+                )
+              }
+
               if (isCritical) {
                 return (
                   <div key={i} className={`ob-entry-alert ${isSell ? 'sell' : ''}`}>
@@ -207,7 +235,7 @@ export default function SignalsCard() {
                   </div>
                 )
               }
-              
+
               return (
                 <div key={i} style={{ padding: 8, borderBottom: '1px solid var(--glass-border)' }}>
                   <span className={`badge ${alert.signal === 'BUY' ? 'badge-bull' : 'badge-bear'}`}>
@@ -219,10 +247,10 @@ export default function SignalsCard() {
                 </div>
               )
             })}
-            
+
             {/* Show more button on mobile */}
             {isMobile && hasMore && (
-              <button 
+              <button
                 className="show-more-btn"
                 onClick={() => setShowAll(!showAll)}
               >
@@ -230,10 +258,10 @@ export default function SignalsCard() {
                 <ChevronDown size={14} />
               </button>
             )}
-            
+
             {/* Show less button when expanded */}
             {isMobile && showAll && alerts.length > initialMobileCount && (
-              <button 
+              <button
                 className="show-more-btn"
                 onClick={() => setShowAll(false)}
               >
