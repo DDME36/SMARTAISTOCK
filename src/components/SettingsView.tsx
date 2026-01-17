@@ -1,26 +1,44 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2, ChevronDown, ChevronUp, Settings2 } from 'lucide-react'
+import { Download, Globe, Bell, BellOff, Trash2, RefreshCw, Check, Info, Shield, LogOut, User, Loader2, ChevronDown, ChevronUp, Settings2, Smartphone, Send } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { subscribeToPush, isPushSubscribed } from '@/lib/notifications'
+import { subscribeToPush, isPushSubscribed, testNotification } from '@/lib/notifications'
 import ConfirmDialog from './ConfirmDialog'
 import AlertSettingsCard from './AlertSettingsCard'
+
+// Check if running as installed PWA
+function isRunningAsPWA(): boolean {
+  if (typeof window === 'undefined') return false
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    // @ts-expect-error iOS Safari
+    window.navigator.standalone === true
+}
+
+// Check if iOS
+function isIOS(): boolean {
+  if (typeof window === 'undefined') return false
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+}
 
 export default function SettingsView() {
   const { watchlist, language, setLanguage, showToast } = useStore()
   const { user, logout } = useAuthStore()
   const { t } = useTranslation()
-  
+
   const [notificationStatus, setNotificationStatus] = useState<'granted' | 'denied' | 'default'>('default')
   const [pushSubscribed, setPushSubscribed] = useState(false)
   const [subscribing, setSubscribing] = useState(false)
+  const [testingSending, setTestingSending] = useState(false)
   const [clearing, setClearing] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [isPWA, setIsPWA] = useState(false)
+  const [isiOSDevice, setIsiOSDevice] = useState(false)
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -28,6 +46,9 @@ export default function SettingsView() {
     }
     // Check if already subscribed to push
     isPushSubscribed().then(setPushSubscribed)
+    // Check PWA and iOS
+    setIsPWA(isRunningAsPWA())
+    setIsiOSDevice(isIOS())
   }, [])
 
   const handleNotificationToggle = async () => {
@@ -44,27 +65,27 @@ export default function SettingsView() {
     }
 
     setSubscribing(true)
-    
+
     try {
       // Request permission if not granted yet
       if (notificationStatus !== 'granted') {
         const permission = await Notification.requestPermission()
         setNotificationStatus(permission)
-        
+
         if (permission === 'denied') {
           showToast(t('browser_settings_hint'))
           return
         }
-        
+
         if (permission !== 'granted') {
           showToast('Permission not granted')
           return
         }
       }
-      
+
       // Permission granted - try to subscribe
       const success = await subscribeToPush()
-      
+
       if (success) {
         setPushSubscribed(true)
         showToast(t('notifications_enabled'))
@@ -78,6 +99,25 @@ export default function SettingsView() {
       showToast('Failed to enable notifications')
     } finally {
       setSubscribing(false)
+    }
+  }
+
+  const handleTestNotification = async () => {
+    setTestingSending(true)
+    try {
+      const success = await testNotification(
+        '🔔 Test Notification',
+        language === 'th' ? 'การแจ้งเตือนใช้งานได้!' : 'Notifications are working!'
+      )
+      if (success) {
+        showToast(language === 'th' ? 'ส่งทดสอบสำเร็จ!' : 'Test sent!')
+      } else {
+        showToast(language === 'th' ? 'ส่งไม่สำเร็จ' : 'Test failed')
+      }
+    } catch {
+      showToast('Test failed')
+    } finally {
+      setTestingSending(false)
     }
   }
 
@@ -99,19 +139,19 @@ export default function SettingsView() {
   const clearAllData = async () => {
     setShowClearConfirm(false)
     setClearing(true)
-    
+
     // Clear localStorage
     localStorage.clear()
-    
+
     // Clear caches
     if ('caches' in window) {
       const keys = await caches.keys()
       await Promise.all(keys.map(key => caches.delete(key)))
     }
-    
+
     setClearing(false)
     showToast(t('cleared_data'))
-    
+
     // Reload page
     setTimeout(() => window.location.reload(), 500)
   }
@@ -166,7 +206,7 @@ export default function SettingsView() {
           </div>
         </div>
         <div className="language-toggle">
-          <button 
+          <button
             className={`lang-btn ${language === 'en' ? 'active' : ''}`}
             onClick={() => setLanguage('en')}
           >
@@ -174,7 +214,7 @@ export default function SettingsView() {
             <span className="lang-name">English</span>
             {language === 'en' && <Check size={16} className="lang-check" />}
           </button>
-          <button 
+          <button
             className={`lang-btn ${language === 'th' ? 'active' : ''}`}
             onClick={() => setLanguage('th')}
           >
@@ -194,10 +234,25 @@ export default function SettingsView() {
             <p>{t('get_alerts_ob')}</p>
           </div>
         </div>
-        <button 
+
+        {/* iOS PWA Installation Guide */}
+        {isiOSDevice && !isPWA && (
+          <div className="ios-pwa-guide">
+            <Smartphone size={16} />
+            <div>
+              <strong>{language === 'th' ? 'สำหรับ iOS' : 'For iOS'}</strong>
+              <p>{language === 'th'
+                ? 'กดปุ่ม Share (⎋) แล้วเลือก "Add to Home Screen" เพื่อรับแจ้งเตือน'
+                : 'Tap Share (⎋) then "Add to Home Screen" to enable notifications'
+              }</p>
+            </div>
+          </div>
+        )}
+
+        <button
           className={`notification-toggle ${notificationStatus === 'granted' && pushSubscribed ? 'enabled' : ''}`}
           onClick={handleNotificationToggle}
-          disabled={subscribing}
+          disabled={subscribing || (isiOSDevice && !isPWA)}
         >
           {subscribing ? (
             <>
@@ -224,8 +279,20 @@ export default function SettingsView() {
             </>
           )}
         </button>
-        
-        
+
+        {/* Test Notification Button */}
+        {notificationStatus === 'granted' && (
+          <button
+            className="action-btn"
+            onClick={handleTestNotification}
+            disabled={testingSending}
+            style={{ marginTop: 8, width: '100%' }}
+          >
+            {testingSending ? <Loader2 size={16} className="icon-spin" /> : <Send size={16} />}
+            <span>{language === 'th' ? 'ทดสอบแจ้งเตือน' : 'Test Notification'}</span>
+          </button>
+        )}
+
         {notificationStatus === 'denied' && (
           <p className="settings-hint">
             <Info size={14} /> {t('browser_settings_hint')}
@@ -236,13 +303,18 @@ export default function SettingsView() {
             <Info size={14} /> {t('notification_subscribed_hint')}
           </p>
         )}
+        {isiOSDevice && isPWA && (
+          <p className="settings-hint" style={{ marginTop: 8, color: 'var(--accent-success)' }}>
+            <Check size={14} /> {language === 'th' ? 'ติดตั้ง PWA แล้ว - พร้อมรับแจ้งเตือน!' : 'PWA installed - Ready for notifications!'}
+          </p>
+        )}
       </div>
 
       {/* Alert Settings - Always show for configuring alert preferences */}
       <AlertSettingsCard />
 
       {/* Advanced Settings Toggle */}
-      <button 
+      <button
         className="settings-advanced-toggle"
         onClick={() => setShowAdvanced(!showAdvanced)}
       >
@@ -305,12 +377,12 @@ export default function SettingsView() {
           <svg viewBox="0 0 100 100" width="32" height="32">
             <defs>
               <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#6E56CF"/>
-                <stop offset="100%" stopColor="#27D796"/>
+                <stop offset="0%" stopColor="#6E56CF" />
+                <stop offset="100%" stopColor="#27D796" />
               </linearGradient>
             </defs>
-            <path d="M25 70 L40 45 L55 55 L75 25" stroke="url(#logoGrad)" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="75" cy="25" r="10" fill="#27D796"/>
+            <path d="M25 70 L40 45 L55 55 L75 25" stroke="url(#logoGrad)" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="75" cy="25" r="10" fill="#27D796" />
           </svg>
         </div>
         <div className="app-details">

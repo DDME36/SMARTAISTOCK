@@ -13,6 +13,7 @@ import WatchlistCard from './cards/WatchlistCard'
 import SignalsCard from './cards/SignalsCard'
 import QuickStatsCard from './cards/QuickStatsCard'
 import PriceTargetCard from './cards/PriceTargetCard'
+import QuickSignalBanner from './QuickSignalBanner'
 
 // Floating Refresh Button for Mobile - uses Portal to escape parent transforms
 function MobileRefreshButton() {
@@ -34,10 +35,10 @@ function MobileRefreshButton() {
     if (refreshing) return
     setRefreshing(true)
     showToast(t('refreshing'))
-    
+
     // Trigger a page-wide refresh event
     window.dispatchEvent(new CustomEvent('dashboard-refresh'))
-    
+
     // Wait a bit then stop
     setTimeout(() => {
       setRefreshing(false)
@@ -50,7 +51,7 @@ function MobileRefreshButton() {
 
   // Use portal to render at document.body level - escapes any parent transforms
   return createPortal(
-    <button 
+    <button
       className={`mobile-refresh-fab ${refreshing ? 'refreshing' : ''}`}
       onClick={handleRefresh}
       disabled={refreshing}
@@ -101,14 +102,14 @@ function SMCUpdateInfo() {
   const { smcData, isLoading } = useStore()
   const { language } = useTranslation()
   const [now, setNow] = useState(new Date())
-  
+
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
     return () => clearInterval(timer)
   }, [])
-  
+
   if (!smcData?.generated_at) return null
-  
+
   let generatedAt: Date
   const genAt = smcData.generated_at
   if (genAt.endsWith('Z') || genAt.includes('+') || genAt.includes('-', 10)) {
@@ -116,9 +117,9 @@ function SMCUpdateInfo() {
   } else {
     generatedAt = new Date(genAt + 'Z')
   }
-  
+
   const diffMins = Math.round((now.getTime() - generatedAt.getTime()) / 60000)
-  
+
   const etNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
   const hour = etNow.getHours()
   const minute = etNow.getMinutes()
@@ -128,25 +129,25 @@ function SMCUpdateInfo() {
   const marketClose = 16 * 60
   const isWeekday = day >= 1 && day <= 5
   const isMarketHours = isWeekday && timeInMins >= marketOpen && timeInMins <= marketClose
-  
+
   const getTimeUntilMarketOpen = () => {
     let daysToAdd = 0
     if (day === 0) daysToAdd = 1
     else if (day === 6) daysToAdd = 2
     else if (timeInMins >= marketClose) daysToAdd = day === 5 ? 3 : 1
-    
+
     let minsUntilOpen = 0
     if (daysToAdd > 0) {
       minsUntilOpen = daysToAdd * 24 * 60 - timeInMins + marketOpen
     } else if (timeInMins < marketOpen) {
       minsUntilOpen = marketOpen - timeInMins
     }
-    
+
     if (minsUntilOpen <= 0) return null
-    
+
     const hours = Math.floor(minsUntilOpen / 60)
     const mins = minsUntilOpen % 60
-    
+
     if (hours >= 24) {
       const days = Math.floor(hours / 24)
       const remainingHours = hours % 24
@@ -156,18 +157,18 @@ function SMCUpdateInfo() {
     }
     return `${mins}m`
   }
-  
-  const timeStr = generatedAt.toLocaleTimeString('th-TH', { 
-    hour: '2-digit', 
+
+  const timeStr = generatedAt.toLocaleTimeString('th-TH', {
+    hour: '2-digit',
     minute: '2-digit',
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
   })
-  
+
   let diffText = ''
   if (diffMins < 60) diffText = `${diffMins}m`
   else if (diffMins < 1440) diffText = `${Math.round(diffMins / 60)}h`
   else diffText = `${Math.round(diffMins / 1440)}d`
-  
+
   let nextText = ''
   if (isMarketHours) {
     const minsToNext = 15 - (minute % 15)
@@ -180,11 +181,11 @@ function SMCUpdateInfo() {
       nextText = language === 'th' ? 'ตลาดปิด' : 'Closed'
     }
   }
-  
+
   // Fresh = < 20 mins, Stale = > 30 mins during market hours
   const isFresh = diffMins < 20
   const isStale = isMarketHours && diffMins > 30
-  
+
   return (
     <div className={`smc-update-info ${isLoading ? 'loading' : ''}`}>
       <div className="smc-update-time">
@@ -216,6 +217,7 @@ export default function Dashboard() {
   return (
     <main>
       <NotificationBanner />
+      <QuickSignalBanner />
       <div className={`bento-grid ${mounted ? 'animate-in' : ''}`}>
         <SentimentCard />
         <AddSymbolCard />

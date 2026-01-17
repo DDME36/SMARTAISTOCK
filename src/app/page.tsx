@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '@/store/useStore'
 import { useAuthStore } from '@/store/useAuthStore'
-import { getThemeByTime } from '@/lib/utils'
+import { getThemeByTime, isMarketOpen } from '@/lib/utils'
+import { SMC_REFRESH_INTERVAL } from '@/lib/constants'
 import { registerServiceWorker } from '@/lib/notifications'
 import Header from '@/components/Header'
 import Dashboard from '@/components/Dashboard'
@@ -21,13 +22,13 @@ import AuthScreen from '@/components/AuthScreen'
 // Page transition wrapper component
 function PageTransition({ children, viewKey }: { children: React.ReactNode; viewKey: string }) {
   const [isVisible, setIsVisible] = useState(false)
-  
+
   useEffect(() => {
     setIsVisible(false)
     const timer = setTimeout(() => setIsVisible(true), 50)
     return () => clearTimeout(timer)
   }, [viewKey])
-  
+
   return (
     <div className={`page-transition ${isVisible ? 'visible' : ''}`}>
       {children}
@@ -44,7 +45,7 @@ export default function Home() {
   // Handle initial URL and browser back/forward
   useEffect(() => {
     setMounted(true)
-    
+
     // Read initial URL on mount
     const params = new URLSearchParams(window.location.search)
     const viewFromUrl = params.get('view') as typeof activeView | null
@@ -52,7 +53,7 @@ export default function Home() {
     if (viewFromUrl && validViews.includes(viewFromUrl)) {
       setActiveView(viewFromUrl)
     }
-    
+
     // Handle browser back/forward buttons
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search)
@@ -63,7 +64,7 @@ export default function Home() {
         setActiveView('dashboard')
       }
     }
-    
+
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [setActiveView])
@@ -78,19 +79,19 @@ export default function Home() {
     const currentTheme = getThemeByTime()
     setTheme(currentTheme)
     document.body.className = currentTheme
-    
+
     // Register Service Worker for PWA (skip on Safari to avoid issues)
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
     if (!isSafari) {
       registerServiceWorker()
     }
-    
+
     // Fetch SMC data - try API first (gets latest from GitHub), fallback to static
     const fetchData = async () => {
       try {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000)
-        
+
         // Try API endpoint first (fetches from GitHub raw - bypasses Vercel cache)
         const apiRes = await fetch('/api/smc-data?t=' + Date.now(), {
           signal: controller.signal,
@@ -100,9 +101,9 @@ export default function Home() {
             'Pragma': 'no-cache'
           }
         })
-        
+
         clearTimeout(timeoutId)
-        
+
         if (apiRes.ok) {
           const data = await apiRes.json()
           if (data && data.stocks) {
@@ -111,13 +112,13 @@ export default function Home() {
             return
           }
         }
-        
+
         // Fallback to static file if API fails
         console.log('API failed, trying static file...')
         const staticRes = await fetch('/data/smc_data.json?t=' + Date.now(), {
           cache: 'no-store'
         })
-        
+
         if (staticRes.ok) {
           const data = await staticRes.json()
           if (data && data.stocks) {
@@ -134,30 +135,38 @@ export default function Home() {
             const data = await res.json()
             setSmcData(data)
           }
-        } catch {}
+        } catch { }
       } finally {
         setIsLoading(false)
       }
     }
-    
+
     // Set max loading time
     const maxLoadTimer = setTimeout(() => setIsLoading(false), 3000)
-    
+
     fetchData()
-    
-    // Refresh every 2 minutes
-    const interval = setInterval(fetchData, 120000)
-    
+
+    // Smart refresh: 5 min during market hours, 10 min when closed
+    const getRefreshInterval = () => isMarketOpen() ? SMC_REFRESH_INTERVAL : SMC_REFRESH_INTERVAL * 2
+    let interval = setInterval(fetchData, getRefreshInterval())
+
+    // Adjust interval when market opens/closes
+    const intervalChecker = setInterval(() => {
+      clearInterval(interval)
+      interval = setInterval(fetchData, getRefreshInterval())
+    }, 60000) // Check every minute
+
     // Update theme every hour
     const themeInterval = setInterval(() => {
       const newTheme = getThemeByTime()
       setTheme(newTheme)
       document.body.className = newTheme
     }, 3600000)
-    
+
     return () => {
       clearTimeout(maxLoadTimer)
       clearInterval(interval)
+      clearInterval(intervalChecker)
       clearInterval(themeInterval)
     }
   }, []) // Empty deps - run once on mount
@@ -181,12 +190,12 @@ export default function Home() {
   return (
     <>
       <ConnectionStatus />
-      
+
       <div className="app-wrapper">
         <Header />
-        
+
         <NoDataBanner />
-        
+
         <PageTransition viewKey={activeView}>
           {activeView === 'dashboard' && <Dashboard />}
           {activeView === 'watchlist' && <WatchlistView />}
@@ -194,7 +203,7 @@ export default function Home() {
           {activeView === 'settings' && <SettingsView />}
         </PageTransition>
       </div>
-      
+
       <BottomNav />
       <Toast />
       <PWAInstallBanner />

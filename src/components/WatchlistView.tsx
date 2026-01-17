@@ -1,19 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { X, TrendingUp, TrendingDown, Minus, Search, SortAsc, RefreshCw } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useLivePrices } from '@/hooks/useLivePrices'
 import { formatPrice } from '@/lib/utils'
+import { SEARCH_DEBOUNCE_MS } from '@/lib/constants'
 import ConfirmDialog from './ConfirmDialog'
 
 type SortType = 'name' | 'price' | 'trend'
+
+// Custom hook for debounced value
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+
+  return debouncedValue
+}
 
 export default function WatchlistView() {
   const { watchlist, smcData, removeSymbol, showToast } = useStore()
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS)
   const [sortBy, setSortBy] = useState<SortType>('name')
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const { prices: livePrices, loading, refresh } = useLivePrices(watchlist)
@@ -40,10 +54,10 @@ export default function WatchlistView() {
   // Count meaningful alerts (filter out redundant zone alerts if OB entry exists)
   const countAlerts = (alerts: Array<{ type?: string; signal?: string }> | undefined): number => {
     if (!alerts || alerts.length === 0) return 0
-    
+
     // Check if there's an OB entry alert (highest priority)
     const hasOBEntry = alerts.some(a => a.type?.startsWith('ob_entry_'))
-    
+
     // Filter out zone_premium/zone_discount if we have OB entry (they're redundant)
     const meaningfulAlerts = alerts.filter(a => {
       if (hasOBEntry && (a.type === 'zone_premium' || a.type === 'zone_discount')) {
@@ -51,29 +65,32 @@ export default function WatchlistView() {
       }
       return true
     })
-    
+
     return meaningfulAlerts.length
   }
 
   // Get stock data (SMC or live) - ALWAYS prefer live price
-  const getStockData = (symbol: string) => {
+  const getStockData = useCallback((symbol: string) => {
     const smcStock = smcData?.stocks?.[symbol]
     const livePrice = livePrices[symbol]
 
     // Get name from API response
     const name = livePrice?.name || symbol
     const exchange = livePrice?.exchange || 'US'
-    
+
     // ALWAYS prefer live price over SMC cached price
     const price = livePrice?.price || smcStock?.current_price || null
     const change = livePrice?.change
 
     if (smcStock) {
       // Use change value to determine color direction
-      const colorDir = change !== undefined 
+      const colorDir = change !== undefined
         ? (change > 0 ? 'up' : change < 0 ? 'down' : 'flat')
         : (getTrendDirection(smcStock.trend) === 'bullish' ? 'up' : getTrendDirection(smcStock.trend) === 'bearish' ? 'down' : 'flat')
-      
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const positionScore = (smcStock as any).position_score
+
       return {
         price,
         change,
@@ -83,7 +100,9 @@ export default function WatchlistView() {
         sellZones: smcStock.ob_summary?.total_sell || 0,
         alertCount: countAlerts(smcStock.alerts),
         name,
-        exchange
+        exchange,
+        positionAction: positionScore?.action || null,
+        positionConfidence: positionScore?.score || null
       }
     }
 
@@ -98,7 +117,9 @@ export default function WatchlistView() {
         sellZones: 0,
         alertCount: 0,
         name,
-        exchange
+        exchange,
+        positionAction: null,
+        positionConfidence: null
       }
     }
 
@@ -111,32 +132,47 @@ export default function WatchlistView() {
       sellZones: 0,
       alertCount: 0,
       name,
-      exchange
+      exchange,
+      positionAction: null,
+      positionConfidence: null
     }
-  }
+  }, [smcData, livePrices])
 
-  // Filter and sort
-  let filteredList = watchlist.filter(symbol =>
-    symbol.toLowerCase().includes(search.toLowerCase()) ||
-    (livePrices[symbol]?.name || '').toLowerCase().includes(search.toLowerCase())
-  )
+  // Memoize all stock data
+  const stockDataMap = useMemo(() => {
+    const map: Record<string, ReturnType<typeof getStockData>> = {}
+    watchlist.forEach(symbol => {
+      map[symbol] = getStockData(symbol)
+    })
+    return map
+  }, [watchlist, getStockData])
 
-  // Sort
-  filteredList = [...filteredList].sort((a, b) => {
-    if (sortBy === 'name') return a.localeCompare(b)
-    if (sortBy === 'price') {
-      const priceA = getStockData(a).price || 0
-      const priceB = getStockData(b).price || 0
-      return priceB - priceA
-    }
-    if (sortBy === 'trend') {
-      const trendOrder: Record<string, number> = { bullish: 0, up: 0, neutral: 1, flat: 1, bearish: 2, down: 2 }
-      const trendA = getStockData(a).trend
-      const trendB = getStockData(b).trend
-      return (trendOrder[trendA] || 1) - (trendOrder[trendB] || 1)
-    }
-    return 0
-  })
+  // Memoized filtered and sorted list
+  const filteredList = useMemo(() => {
+    // Filter using debounced search
+    const filtered = watchlist.filter(symbol => {
+      const data = stockDataMap[symbol]
+      return symbol.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        (data?.name || '').toLowerCase().includes(debouncedSearch.toLowerCase())
+    })
+
+    // Sort
+    return [...filtered].sort((a, b) => {
+      if (sortBy === 'name') return a.localeCompare(b)
+      if (sortBy === 'price') {
+        const priceA = stockDataMap[a]?.price || 0
+        const priceB = stockDataMap[b]?.price || 0
+        return priceB - priceA
+      }
+      if (sortBy === 'trend') {
+        const trendOrder: Record<string, number> = { bullish: 0, up: 0, neutral: 1, flat: 1, bearish: 2, down: 2 }
+        const trendA = stockDataMap[a]?.trend || 'neutral'
+        const trendB = stockDataMap[b]?.trend || 'neutral'
+        return (trendOrder[trendA] || 1) - (trendOrder[trendB] || 1)
+      }
+      return 0
+    })
+  }, [watchlist, stockDataMap, debouncedSearch, sortBy])
 
   const getTrendIcon = (trend: string) => {
     if (trend === 'bullish' || trend === 'up') return <TrendingUp size={14} style={{ color: 'var(--accent-success)' }} />
@@ -185,8 +221,8 @@ export default function WatchlistView() {
       {/* Stats */}
       <div className="watchlist-stats">
         <span>{filteredList.length} {t('of')} {watchlist.length} {t('stocks')}</span>
-        <button 
-          onClick={refresh} 
+        <button
+          onClick={refresh}
           disabled={loading}
           className="refresh-btn"
           title="Refresh prices"
@@ -209,8 +245,25 @@ export default function WatchlistView() {
         ) : (
           <div className="watchlist-items">
             {filteredList.map(symbol => {
-              const { price, change, trend, hasAnalysis, buyZones, sellZones, alertCount, name, exchange } = getStockData(symbol)
+              const data = stockDataMap[symbol]
+              const { price, change, trend, hasAnalysis, buyZones, sellZones, alertCount, name, exchange, positionAction, positionConfidence } = data || {}
               const logoUrl = `https://assets.parqet.com/logos/symbol/${symbol}?format=png`
+
+              // Determine signal type for badge
+              const getSignalBadge = () => {
+                if (!positionAction) return null
+                const action = positionAction.toUpperCase()
+                if (action === 'STRONG_BUY' || action === 'BUY') {
+                  return <span className="wl-signal-badge buy">BUY {positionConfidence}%</span>
+                }
+                if (action === 'STRONG_SELL' || action === 'SELL') {
+                  return <span className="wl-signal-badge sell">SELL {positionConfidence}%</span>
+                }
+                if (action === 'HOLD') {
+                  return <span className="wl-signal-badge hold">HOLD</span>
+                }
+                return null
+              }
 
               return (
                 <div key={symbol} className="wl-view-item">
@@ -236,6 +289,7 @@ export default function WatchlistView() {
                       <div className="wl-view-top">
                         <span className="wl-view-symbol">{symbol}</span>
                         {getTrendIcon(trend)}
+                        {getSignalBadge()}
                       </div>
                       <div className="wl-view-name">{name}</div>
                       <div className="wl-view-meta">

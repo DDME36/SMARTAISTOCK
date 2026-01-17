@@ -31,3 +31,8 @@ export const MAX_WATCHLIST_SIZE = 50
 
 // UI Settings
 export const ANIMATION_DELAY = 80 // ms between card animations
+export const SEARCH_DEBOUNCE_MS = 300 // debounce for search input
+
+// Retry Settings
+export const MAX_RETRY_COUNT = 3 // max retries for failed requests
+export const RETRY_BASE_DELAY = 1000 // base delay for exponential backoff (ms)
