@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-19T17:47:18.872490",
+  "generated_at": "2026-01-19T18:27:47.346400",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
@@ -9,7 +9,7 @@
     "message_th": "\u0e2a\u0e20\u0e32\u0e27\u0e30\u0e1b\u0e01\u0e15\u0e34 \u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32",
     "confidence": {
       "level": "high",
-      "score": 88,
+      "score": 85,
       "factors": [
         {
           "source": "vix",
@@ -37,7 +37,7 @@
         },
         {
           "source": "yields",
-          "quality": "high"
+          "quality": "medium"
         },
         {
           "source": "momentum",
@@ -284,13 +284,15 @@
       },
       "treasury_yields": {
         "yields": {
-          "spread_10y_3m": 0.57
+          "10Y": 4.231,
+          "5Y": 3.828,
+          "3M": 3.557
         },
-        "spread": 0.57,
+        "spread": 0.674,
         "inverted": false,
         "signal": "NEUTRAL",
         "interpretation": "Normal yield curve",
-        "source": "FRED"
+        "source": "yahoo_finance"
       },
       "momentum": {
         "momentum": "BULLISH",
@@ -305,17 +307,17 @@
         "macd_histogram": -0.044
       },
       "dollar_index": {
-        "value": 99.05,
-        "change": -0.35,
+        "value": 99.01,
+        "change": -0.38,
         "signal": "BULLISH",
         "interpretation": "Dollar neutral"
       },
       "gold": {
-        "value": 4677.5,
-        "change_1d": 1.94,
-        "change_1w": 1.92,
+        "value": 4682.3,
+        "change_1d": 2.05,
+        "change_1w": 2.03,
         "signal": "CAUTIOUS",
-        "interpretation": "Gold stable"
+        "interpretation": "Gold rising = flight to safety"
       },
       "economic_calendar": {
         "upcoming_events": [],
@@ -426,7 +428,7 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-01-19T17:47:18.729069"
+    "updated_at": "2026-01-19T18:27:47.196293"
   },
   "stocks": {
     "AAPL": {
@@ -435,7 +437,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.739047",
+      "last_updated": "2026-01-19T18:27:47.206588",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1154,7 +1156,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.747568",
+      "last_updated": "2026-01-19T18:27:47.215352",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1632,7 +1634,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-01-19T17:47:18.758412",
+      "last_updated": "2026-01-19T18:27:47.226828",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -2168,7 +2170,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.767306",
+      "last_updated": "2026-01-19T18:27:47.236112",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2797,7 +2799,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.774942",
+      "last_updated": "2026-01-19T18:27:47.244222",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3294,7 +3296,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.785147",
+      "last_updated": "2026-01-19T18:27:47.254837",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4043,7 +4045,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.792655",
+      "last_updated": "2026-01-19T18:27:47.262794",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4540,7 +4542,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.803480",
+      "last_updated": "2026-01-19T18:27:47.274115",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5274,7 +5276,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.812567",
+      "last_updated": "2026-01-19T18:27:47.283660",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5885,7 +5887,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.820867",
+      "last_updated": "2026-01-19T18:27:47.292446",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6402,7 +6404,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.828796",
+      "last_updated": "2026-01-19T18:27:47.300648",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6899,7 +6901,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.839539",
+      "last_updated": "2026-01-19T18:27:47.311832",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7607,7 +7609,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.847091",
+      "last_updated": "2026-01-19T18:27:47.319818",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8077,7 +8079,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.855614",
+      "last_updated": "2026-01-19T18:27:47.328786",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8711,7 +8713,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.864594",
+      "last_updated": "2026-01-19T18:27:47.338225",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -9242,7 +9244,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T17:47:18.872288",
+      "last_updated": "2026-01-19T18:27:47.346176",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
