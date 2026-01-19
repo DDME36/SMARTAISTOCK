@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-19T18:27:47.346400",
+  "generated_at": "2026-01-19T18:56:14.737973",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
@@ -9,7 +9,7 @@
     "message_th": "\u0e2a\u0e20\u0e32\u0e27\u0e30\u0e1b\u0e01\u0e15\u0e34 \u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32",
     "confidence": {
       "level": "high",
-      "score": 85,
+      "score": 88,
       "factors": [
         {
           "source": "vix",
@@ -37,7 +37,7 @@
         },
         {
           "source": "yields",
-          "quality": "medium"
+          "quality": "high"
         },
         {
           "source": "momentum",
@@ -284,15 +284,13 @@
       },
       "treasury_yields": {
         "yields": {
-          "10Y": 4.231,
-          "5Y": 3.828,
-          "3M": 3.557
+          "spread_10y_3m": 0.57
         },
-        "spread": 0.674,
+        "spread": 0.57,
         "inverted": false,
         "signal": "NEUTRAL",
         "interpretation": "Normal yield curve",
-        "source": "yahoo_finance"
+        "source": "FRED"
       },
       "momentum": {
         "momentum": "BULLISH",
@@ -307,13 +305,13 @@
         "macd_histogram": -0.044
       },
       "dollar_index": {
-        "value": 99.01,
-        "change": -0.38,
+        "value": 99.04,
+        "change": -0.36,
         "signal": "BULLISH",
         "interpretation": "Dollar neutral"
       },
       "gold": {
-        "value": 4682.3,
+        "value": 4682.5,
         "change_1d": 2.05,
         "change_1w": 2.03,
         "signal": "CAUTIOUS",
@@ -329,14 +327,14 @@
       },
       "market_internals": {
         "tick": {
-          "value": -169,
+          "value": -177,
           "signal": "NEUTRAL",
-          "interpretation": "TICK at -169 indicates selling pressure"
+          "interpretation": "TICK at -177 indicates selling pressure"
         },
         "trin": {
-          "value": 1.034,
+          "value": 1.035,
           "signal": "NEUTRAL",
-          "interpretation": "TRIN at 1.03 indicates bearish internals"
+          "interpretation": "TRIN at 1.04 indicates bearish internals"
         },
         "combined_signal": "NEUTRAL",
         "source": "proxy_calculation"
@@ -428,7 +426,7 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-01-19T18:27:47.196293"
+    "updated_at": "2026-01-19T18:56:14.594046"
   },
   "stocks": {
     "AAPL": {
@@ -437,7 +435,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.206588",
+      "last_updated": "2026-01-19T18:56:14.604065",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1156,7 +1154,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.215352",
+      "last_updated": "2026-01-19T18:56:14.612587",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1634,7 +1632,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-01-19T18:27:47.226828",
+      "last_updated": "2026-01-19T18:56:14.623586",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -2170,7 +2168,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.236112",
+      "last_updated": "2026-01-19T18:56:14.632667",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2799,7 +2797,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.244222",
+      "last_updated": "2026-01-19T18:56:14.640336",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3296,7 +3294,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.254837",
+      "last_updated": "2026-01-19T18:56:14.650611",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4045,7 +4043,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.262794",
+      "last_updated": "2026-01-19T18:56:14.658141",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4542,7 +4540,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.274115",
+      "last_updated": "2026-01-19T18:56:14.668990",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5276,7 +5274,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.283660",
+      "last_updated": "2026-01-19T18:56:14.678037",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5887,7 +5885,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.292446",
+      "last_updated": "2026-01-19T18:56:14.686324",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6404,7 +6402,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.300648",
+      "last_updated": "2026-01-19T18:56:14.694259",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6901,7 +6899,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.311832",
+      "last_updated": "2026-01-19T18:56:14.705104",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7609,7 +7607,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.319818",
+      "last_updated": "2026-01-19T18:56:14.712815",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8079,7 +8077,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.328786",
+      "last_updated": "2026-01-19T18:56:14.721293",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8713,7 +8711,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.338225",
+      "last_updated": "2026-01-19T18:56:14.730202",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -9244,7 +9242,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-19T18:27:47.346176",
+      "last_updated": "2026-01-19T18:56:14.737805",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
