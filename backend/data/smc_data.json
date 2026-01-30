@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-30T15:30:19.308172",
+  "generated_at": "2026-01-30T16:02:01.203785",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
@@ -65,7 +65,7 @@
     "indicators": {
       "fear_greed": {
         "stock": {
-          "score": 58,
+          "score": 57,
           "rating": "Greed",
           "signal": "NEUTRAL",
           "source": "cnn",
@@ -79,23 +79,23 @@
           "signal": "EXTREME_FEAR",
           "source": "alternative.me"
         },
-        "score": 58,
+        "score": 57,
         "rating": "Greed",
         "signal": "NEUTRAL",
         "source": "cnn"
       },
       "vix": {
-        "value": 17.0,
-        "change": 0.71,
-        "change_pct": 0.71,
+        "value": 16.71,
+        "change": -1.01,
+        "change_pct": -1.01,
         "signal": "NEUTRAL",
         "level": "normal",
-        "trend": "up",
+        "trend": "down",
         "term_structure": {
           "structure": "steep_contango",
-          "ratio": 0.866,
-          "spot": 17.0,
-          "term": 19.63
+          "ratio": 0.857,
+          "spot": 16.71,
+          "term": 19.5
         },
         "source": "yahoo_finance",
         "interpretation": "Normal volatility"
@@ -110,44 +110,44 @@
         "indices": {
           "SPY": {
             "name": "S&P 500",
-            "change_pct": -0.41,
+            "change_pct": -0.3,
             "status": "bearish"
           },
           "QQQ": {
             "name": "NASDAQ 100",
-            "change_pct": -0.8,
+            "change_pct": -0.58,
             "status": "bearish"
           },
           "DIA": {
             "name": "Dow Jones",
-            "change_pct": -0.38,
+            "change_pct": -0.5,
             "status": "bearish"
           },
           "IWM": {
             "name": "Russell 2000",
-            "change_pct": -1.46,
+            "change_pct": -1.29,
             "status": "bearish"
           },
           "VTI": {
             "name": "Total Market",
-            "change_pct": -0.56,
+            "change_pct": -0.44,
             "status": "bearish"
           },
           "MDY": {
             "name": "Mid Cap",
-            "change_pct": -1.01,
+            "change_pct": -0.88,
             "status": "bearish"
           },
           "IJR": {
             "name": "Small Cap",
-            "change_pct": -1.08,
+            "change_pct": -0.94,
             "status": "bearish"
           }
         },
         "source": "etf_proxy"
       },
       "put_call_ratio": {
-        "ratio": 0.84,
+        "ratio": 0.834,
         "signal": "NEUTRAL",
         "interpretation": "Normal options activity",
         "source": "estimated_from_vix",
@@ -158,126 +158,126 @@
           {
             "symbol": "XLP",
             "name": "Consumer Staples",
-            "change_1d": 0.35,
-            "change_5d": -0.44
+            "change_1d": 0.54,
+            "change_5d": -0.25
           },
           {
             "symbol": "XLY",
             "name": "Consumer Disc.",
-            "change_1d": 0.24,
-            "change_5d": -0.68
-          },
-          {
-            "symbol": "XLC",
-            "name": "Communication",
-            "change_1d": -0.13,
-            "change_5d": 1.59
-          },
-          {
-            "symbol": "XLF",
-            "name": "Financials",
-            "change_1d": -0.18,
-            "change_5d": 0.08
-          },
-          {
-            "symbol": "XLV",
-            "name": "Healthcare",
-            "change_1d": -0.29,
-            "change_5d": -2.99
+            "change_1d": 0.36,
+            "change_5d": -0.57
           },
           {
             "symbol": "XLE",
             "name": "Energy",
-            "change_1d": -0.41,
-            "change_5d": 2.2
+            "change_1d": 0.27,
+            "change_5d": 2.9
+          },
+          {
+            "symbol": "XLC",
+            "name": "Communication",
+            "change_1d": -0.14,
+            "change_5d": 1.57
+          },
+          {
+            "symbol": "XLV",
+            "name": "Healthcare",
+            "change_1d": -0.16,
+            "change_5d": -2.87
+          },
+          {
+            "symbol": "XLF",
+            "name": "Financials",
+            "change_1d": -0.46,
+            "change_5d": -0.2
           },
           {
             "symbol": "XLI",
             "name": "Industrials",
-            "change_1d": -0.52,
-            "change_5d": 0.37
+            "change_1d": -0.47,
+            "change_5d": 0.43
           },
           {
             "symbol": "XLU",
             "name": "Utilities",
-            "change_1d": -0.53,
-            "change_5d": 0.54
+            "change_1d": -0.69,
+            "change_5d": 0.38
           },
           {
             "symbol": "XLRE",
             "name": "Real Estate",
-            "change_1d": -0.75,
-            "change_5d": -0.39
-          },
-          {
-            "symbol": "XLB",
-            "name": "Materials",
-            "change_1d": -1.14,
-            "change_5d": -1.2
+            "change_1d": -0.71,
+            "change_5d": -0.35
           },
           {
             "symbol": "XLK",
             "name": "Technology",
-            "change_1d": -1.2,
-            "change_5d": -0.66
+            "change_1d": -0.89,
+            "change_5d": -0.36
+          },
+          {
+            "symbol": "XLB",
+            "name": "Materials",
+            "change_1d": -1.09,
+            "change_5d": -1.15
           }
         ],
         "top_performers": [
           {
             "symbol": "XLP",
             "name": "Consumer Staples",
-            "change_1d": 0.35,
-            "change_5d": -0.44
+            "change_1d": 0.54,
+            "change_5d": -0.25
           },
           {
             "symbol": "XLY",
             "name": "Consumer Disc.",
-            "change_1d": 0.24,
-            "change_5d": -0.68
+            "change_1d": 0.36,
+            "change_5d": -0.57
           },
           {
-            "symbol": "XLC",
-            "name": "Communication",
-            "change_1d": -0.13,
-            "change_5d": 1.59
+            "symbol": "XLE",
+            "name": "Energy",
+            "change_1d": 0.27,
+            "change_5d": 2.9
           }
         ],
         "bottom_performers": [
           {
             "symbol": "XLRE",
             "name": "Real Estate",
-            "change_1d": -0.75,
-            "change_5d": -0.39
-          },
-          {
-            "symbol": "XLB",
-            "name": "Materials",
-            "change_1d": -1.14,
-            "change_5d": -1.2
+            "change_1d": -0.71,
+            "change_5d": -0.35
           },
           {
             "symbol": "XLK",
             "name": "Technology",
-            "change_1d": -1.2,
-            "change_5d": -0.66
+            "change_1d": -0.89,
+            "change_5d": -0.36
+          },
+          {
+            "symbol": "XLB",
+            "name": "Materials",
+            "change_1d": -1.09,
+            "change_5d": -1.15
           }
         ],
-        "rotation": "RISK_ON",
-        "signal": "BULLISH"
+        "rotation": "MIXED",
+        "signal": "NEUTRAL"
       },
       "moving_averages": {
         "trend": "STRONG_BULLISH",
         "ma_type": "EMA",
-        "price": 691.01,
-        "ma20": 689.88,
-        "ma50": 683.84,
+        "price": 691.98,
+        "ma20": 689.98,
+        "ma50": 683.88,
         "ma200": 649.58,
         "price_vs_ma20": "above",
         "price_vs_ma50": "above",
         "price_vs_ma200": "above",
-        "distance_from_ma20": 0.16,
-        "distance_from_ma50": 1.05,
-        "distance_from_ma200": 6.38,
+        "distance_from_ma20": 0.29,
+        "distance_from_ma50": 1.18,
+        "distance_from_ma200": 6.53,
         "ma50_above_ma200": true,
         "cross": null,
         "bullish_signals": 5
@@ -293,16 +293,16 @@
         "source": "FRED"
       },
       "momentum": {
-        "momentum": "NEUTRAL",
-        "score": 50,
+        "momentum": "BULLISH",
+        "score": 65,
         "returns": {
-          "1d": -0.44,
-          "1w": -0.25,
-          "1m": 1.33,
-          "3m": 1.94
+          "1d": -0.3,
+          "1w": -0.11,
+          "1m": 1.48,
+          "3m": 2.09
         },
-        "rsi": 46.6,
-        "macd_histogram": -0.03
+        "rsi": 47.6,
+        "macd_histogram": 0.033
       },
       "dollar_index": {
         "value": 96.78,
@@ -311,9 +311,9 @@
         "interpretation": "Dollar neutral"
       },
       "gold": {
-        "value": 5072.2,
-        "change_1d": -4.63,
-        "change_1w": -0.15,
+        "value": 5093.1,
+        "change_1d": -4.24,
+        "change_1w": 0.26,
         "signal": "NEUTRAL",
         "interpretation": "Gold stable"
       },
@@ -327,14 +327,14 @@
       },
       "market_internals": {
         "tick": {
-          "value": -156,
+          "value": -69,
           "signal": "NEUTRAL",
-          "interpretation": "TICK at -156 indicates selling pressure"
+          "interpretation": "TICK at -69 indicates selling pressure"
         },
         "trin": {
-          "value": 1.031,
+          "value": 1.014,
           "signal": "NEUTRAL",
-          "interpretation": "TRIN at 1.03 indicates bearish internals"
+          "interpretation": "TRIN at 1.01 indicates bearish internals"
         },
         "combined_signal": "NEUTRAL",
         "source": "proxy_calculation"
@@ -343,38 +343,38 @@
         "flows": {
           "SPY": {
             "name": "S&P 500",
-            "volume_ratio": 0.27,
-            "price_change": -0.41,
-            "flow_score": -0.11
+            "volume_ratio": 0.34,
+            "price_change": -0.3,
+            "flow_score": -0.1
           },
           "QQQ": {
             "name": "NASDAQ",
-            "volume_ratio": 0.32,
-            "price_change": -0.8,
+            "volume_ratio": 0.44,
+            "price_change": -0.58,
             "flow_score": -0.26
           },
           "IWM": {
             "name": "Small Cap",
-            "volume_ratio": 0.4,
-            "price_change": -1.46,
-            "flow_score": -0.59
+            "volume_ratio": 0.52,
+            "price_change": -1.29,
+            "flow_score": -0.68
           },
           "HYG": {
             "name": "High Yield Bonds",
-            "volume_ratio": 0.37,
+            "volume_ratio": 0.54,
             "price_change": -0.06,
-            "flow_score": -0.02
+            "flow_score": -0.03
           },
           "TLT": {
             "name": "Long-Term Treasuries",
-            "volume_ratio": 0.26,
-            "price_change": -0.29,
-            "flow_score": -0.07
+            "volume_ratio": 0.31,
+            "price_change": -0.33,
+            "flow_score": -0.1
           }
         },
-        "risk_on_flow": -0.98,
-        "risk_off_flow": -0.07,
-        "net_flow": -0.9,
+        "risk_on_flow": -1.07,
+        "risk_off_flow": -0.1,
+        "net_flow": -0.97,
         "signal": "OUTFLOW",
         "interpretation": "Institutions moving to safety"
       }
@@ -397,7 +397,7 @@
         "weight": "10%"
       },
       "sectors": {
-        "score": 70,
+        "score": 50,
         "weight": "8%"
       },
       "ma": {
@@ -409,7 +409,7 @@
         "weight": "5%"
       },
       "momentum": {
-        "score": 50,
+        "score": 65,
         "weight": "10%"
       },
       "dxy": {
@@ -426,7 +426,7 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-01-30T15:30:19.155414"
+    "updated_at": "2026-01-30T16:02:01.027965"
   },
   "stocks": {
     "AAPL": {
@@ -435,7 +435,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.166225",
+      "last_updated": "2026-01-30T16:02:01.040300",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1154,7 +1154,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.175454",
+      "last_updated": "2026-01-30T16:02:01.050953",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1632,7 +1632,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-01-30T15:30:19.186799",
+      "last_updated": "2026-01-30T16:02:01.064175",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -2168,7 +2168,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.196255",
+      "last_updated": "2026-01-30T16:02:01.075089",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2797,7 +2797,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.204638",
+      "last_updated": "2026-01-30T16:02:01.084623",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3294,7 +3294,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.215659",
+      "last_updated": "2026-01-30T16:02:01.097318",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4043,7 +4043,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.224311",
+      "last_updated": "2026-01-30T16:02:01.107073",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4540,7 +4540,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.235620",
+      "last_updated": "2026-01-30T16:02:01.120361",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5274,7 +5274,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.245459",
+      "last_updated": "2026-01-30T16:02:01.131576",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5885,7 +5885,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.253435",
+      "last_updated": "2026-01-30T16:02:01.140775",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6402,7 +6402,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.261990",
+      "last_updated": "2026-01-30T16:02:01.150408",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6899,7 +6899,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.273653",
+      "last_updated": "2026-01-30T16:02:01.163643",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7607,7 +7607,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.281794",
+      "last_updated": "2026-01-30T16:02:01.172835",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8077,7 +8077,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.290709",
+      "last_updated": "2026-01-30T16:02:01.183230",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8711,7 +8711,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.299905",
+      "last_updated": "2026-01-30T16:02:01.194263",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -9242,7 +9242,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-01-30T15:30:19.307964",
+      "last_updated": "2026-01-30T16:02:01.203572",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
