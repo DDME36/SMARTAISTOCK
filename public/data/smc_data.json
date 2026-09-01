@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-01T00:21:03.467948",
+  "generated_at": "2026-09-01T17:54:02.533223",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
-    "score": 46,
-    "recommendation": "HOLD",
-    "message": "Normal conditions, wait for better opportunity",
-    "message_th": "\u0e2a\u0e20\u0e32\u0e27\u0e30\u0e1b\u0e01\u0e15\u0e34 \u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32",
+    "score": 42,
+    "recommendation": "CAUTIOUS",
+    "message": "Caution! Market has risks",
+    "message_th": "\u0e23\u0e30\u0e27\u0e31\u0e07! \u0e15\u0e25\u0e32\u0e14\u0e21\u0e35\u0e04\u0e27\u0e32\u0e21\u0e40\u0e2a\u0e35\u0e48\u0e22\u0e07",
     "confidence": {
       "level": "high",
       "score": 92,
@@ -65,12 +65,12 @@
     "indicators": {
       "fear_greed": {
         "stock": {
-          "score": 49,
+          "score": 45,
           "rating": "Neutral",
           "signal": "NEUTRAL",
           "source": "cnn",
-          "previous_close": 54.4285714285714,
-          "previous_1_week": 56.0857142857143,
+          "previous_close": 49.7142857142857,
+          "previous_1_week": 56.7714285714286,
           "previous_1_month": 45.2285714285714
         },
         "crypto": {
@@ -79,76 +79,76 @@
           "signal": "GREED",
           "source": "alternative.me"
         },
-        "score": 49,
+        "score": 45,
         "rating": "Neutral",
         "signal": "NEUTRAL",
         "source": "cnn"
       },
       "vix": {
-        "value": 14.92,
-        "change": 3.4,
-        "change_pct": 3.4,
-        "signal": "BULLISH",
-        "level": "low",
+        "value": 15.95,
+        "change": 6.9,
+        "change_pct": 6.9,
+        "signal": "NEUTRAL",
+        "level": "normal",
         "trend": "up",
         "term_structure": {
           "structure": "steep_contango",
-          "ratio": 0.851,
-          "spot": 14.92,
-          "term": 17.53
+          "ratio": 0.88,
+          "spot": 15.95,
+          "term": 18.13
         },
         "source": "yahoo_finance",
-        "interpretation": "Market calm, investors confident"
+        "interpretation": "Normal volatility"
       },
       "market_breadth": {
         "bullish": 0,
-        "bearish": 6,
-        "neutral": 1,
+        "bearish": 7,
+        "neutral": 0,
         "ratio": 0.0,
         "signal": "STRONG_BEARISH",
         "score": 10,
         "indices": {
           "SPY": {
             "name": "S&P 500",
-            "change_pct": -0.3,
+            "change_pct": -0.72,
             "status": "bearish"
           },
           "QQQ": {
             "name": "NASDAQ 100",
-            "change_pct": 0.05,
-            "status": "neutral"
+            "change_pct": -1.27,
+            "status": "bearish"
           },
           "DIA": {
             "name": "Dow Jones",
-            "change_pct": -0.65,
+            "change_pct": -0.76,
             "status": "bearish"
           },
           "IWM": {
             "name": "Russell 2000",
-            "change_pct": -0.62,
+            "change_pct": -1.08,
             "status": "bearish"
           },
           "VTI": {
             "name": "Total Market",
-            "change_pct": -0.32,
+            "change_pct": -0.78,
             "status": "bearish"
           },
           "MDY": {
             "name": "Mid Cap",
-            "change_pct": -0.5,
+            "change_pct": -1.01,
             "status": "bearish"
           },
           "IJR": {
             "name": "Small Cap",
-            "change_pct": -0.73,
+            "change_pct": -1.11,
             "status": "bearish"
           }
         },
         "source": "etf_proxy"
       },
       "put_call_ratio": {
-        "ratio": 0.62,
-        "equity_pcr": 0.62,
+        "ratio": 0.7,
+        "equity_pcr": 0.7,
         "total_pcr": 0.84,
         "signal": "GREED",
         "interpretation": "More calls than puts = optimism",
@@ -159,129 +159,129 @@
           {
             "symbol": "XLE",
             "name": "Energy",
-            "change_1d": 2.04,
-            "change_5d": 3.06
-          },
-          {
-            "symbol": "XLK",
-            "name": "Technology",
-            "change_1d": 0.44,
-            "change_5d": 2.62
+            "change_1d": 1.17,
+            "change_5d": 3.65
           },
           {
             "symbol": "XLV",
             "name": "Healthcare",
-            "change_1d": -0.36,
-            "change_5d": -2.71
-          },
-          {
-            "symbol": "XLY",
-            "name": "Consumer Disc.",
-            "change_1d": -0.53,
-            "change_5d": -1.15
+            "change_1d": 0.57,
+            "change_5d": -1.17
           },
           {
             "symbol": "XLP",
             "name": "Consumer Staples",
-            "change_1d": -0.55,
-            "change_5d": -1.78
-          },
-          {
-            "symbol": "XLF",
-            "name": "Financials",
-            "change_1d": -0.67,
-            "change_5d": -1.03
-          },
-          {
-            "symbol": "XLRE",
-            "name": "Real Estate",
-            "change_1d": -0.83,
-            "change_5d": -2.76
-          },
-          {
-            "symbol": "XLB",
-            "name": "Materials",
-            "change_1d": -0.92,
-            "change_5d": -1.66
-          },
-          {
-            "symbol": "XLI",
-            "name": "Industrials",
-            "change_1d": -1.13,
-            "change_5d": -1.83
+            "change_1d": 0.54,
+            "change_5d": -0.97
           },
           {
             "symbol": "XLU",
             "name": "Utilities",
-            "change_1d": -1.17,
-            "change_5d": -2.49
+            "change_1d": 0.28,
+            "change_5d": -2.67
+          },
+          {
+            "symbol": "XLRE",
+            "name": "Real Estate",
+            "change_1d": -0.06,
+            "change_5d": -2.23
           },
           {
             "symbol": "XLC",
             "name": "Communication",
-            "change_1d": -1.35,
-            "change_5d": -1.52
+            "change_1d": -0.27,
+            "change_5d": -1.29
+          },
+          {
+            "symbol": "XLF",
+            "name": "Financials",
+            "change_1d": -0.71,
+            "change_5d": -1.65
+          },
+          {
+            "symbol": "XLB",
+            "name": "Materials",
+            "change_1d": -0.93,
+            "change_5d": -2.74
+          },
+          {
+            "symbol": "XLI",
+            "name": "Industrials",
+            "change_1d": -1.46,
+            "change_5d": -4.31
+          },
+          {
+            "symbol": "XLK",
+            "name": "Technology",
+            "change_1d": -1.63,
+            "change_5d": 0.34
+          },
+          {
+            "symbol": "XLY",
+            "name": "Consumer Disc.",
+            "change_1d": -1.64,
+            "change_5d": -2.12
           }
         ],
         "top_performers": [
           {
             "symbol": "XLE",
             "name": "Energy",
-            "change_1d": 2.04,
-            "change_5d": 3.06
-          },
-          {
-            "symbol": "XLK",
-            "name": "Technology",
-            "change_1d": 0.44,
-            "change_5d": 2.62
+            "change_1d": 1.17,
+            "change_5d": 3.65
           },
           {
             "symbol": "XLV",
             "name": "Healthcare",
-            "change_1d": -0.36,
-            "change_5d": -2.71
+            "change_1d": 0.57,
+            "change_5d": -1.17
+          },
+          {
+            "symbol": "XLP",
+            "name": "Consumer Staples",
+            "change_1d": 0.54,
+            "change_5d": -0.97
           }
         ],
         "bottom_performers": [
           {
             "symbol": "XLI",
             "name": "Industrials",
-            "change_1d": -1.13,
-            "change_5d": -1.83
+            "change_1d": -1.46,
+            "change_5d": -4.31
           },
           {
-            "symbol": "XLU",
-            "name": "Utilities",
-            "change_1d": -1.17,
-            "change_5d": -2.49
+            "symbol": "XLK",
+            "name": "Technology",
+            "change_1d": -1.63,
+            "change_5d": 0.34
           },
           {
-            "symbol": "XLC",
-            "name": "Communication",
-            "change_1d": -1.35,
-            "change_5d": -1.52
+            "symbol": "XLY",
+            "name": "Consumer Disc.",
+            "change_1d": -1.64,
+            "change_5d": -2.12
           }
         ],
-        "rotation": "MIXED",
-        "signal": "NEUTRAL"
+        "rotation": "RISK_OFF",
+        "signal": "BEARISH"
       },
       "moving_averages": {
-        "trend": "STRONG_BULLISH",
+        "trend": "BULLISH",
         "ma_type": "EMA",
-        "price": 767.05,
-        "ma20": 765.38,
-        "ma50": 755.75,
-        "ma200": 715.51,
-        "price_vs_ma20": "above",
+        "price": 761.51,
+        "ma20": 765.01,
+        "ma50": 755.98,
+        "ma200": 715.96,
+        "price_vs_ma20": "below",
         "price_vs_ma50": "above",
         "price_vs_ma200": "above",
-        "distance_from_ma20": 0.22,
-        "distance_from_ma50": 1.5,
-        "distance_from_ma200": 7.2,
+        "distance_from_ma20": -0.46,
+        "distance_from_ma50": 0.73,
+        "distance_from_ma200": 6.36,
         "ma50_above_ma200": true,
         "cross": null,
-        "bullish_signals": 5
+        "bullish_signals": 4
       },
       "treasury_yields": {
         "yields": {
@@ -295,26 +295,26 @@
       },
       "momentum": {
         "momentum": "NEUTRAL",
-        "score": 50,
+        "score": 45,
         "returns": {
-          "1d": -0.3,
-          "1w": 0.15,
-          "1m": 1.24,
-          "3m": 1.38
+          "1d": -0.72,
+          "1w": -0.6,
+          "1m": -1.27,
+          "3m": 0.65
         },
-        "rsi": 45.9,
-        "macd_histogram": -0.949
+        "rsi": 38.2,
+        "macd_histogram": -1.348
       },
       "dollar_index": {
-        "value": 99.38,
-        "change": -0.32,
+        "value": 99.7,
+        "change": 0.27,
         "signal": "BULLISH",
         "interpretation": "Dollar neutral"
       },
       "gold": {
-        "value": 4505.9,
-        "change_1d": 0.62,
-        "change_1w": -2.85,
+        "value": 4391.4,
+        "change_1d": -0.9,
+        "change_1w": -4.5,
         "signal": "RISK_ON",
         "interpretation": "Gold stable"
       },
@@ -328,14 +328,14 @@
       },
       "market_internals": {
         "tick": {
-          "value": -34,
+          "value": -78,
           "signal": "NEUTRAL",
-          "interpretation": "TICK at -34 indicates selling pressure"
+          "interpretation": "TICK at -78 indicates selling pressure"
         },
         "trin": {
-          "value": 1.007,
+          "value": 1.016,
           "signal": "NEUTRAL",
-          "interpretation": "TRIN at 1.01 indicates bearish internals"
+          "interpretation": "TRIN at 1.02 indicates bearish internals"
         },
         "combined_signal": "NEUTRAL",
         "source": "proxy_calculation"
@@ -344,39 +344,39 @@
         "flows": {
           "SPY": {
             "name": "S&P 500",
-            "volume_ratio": 1.16,
-            "price_change": -0.3,
-            "flow_score": -0.35
+            "volume_ratio": 0.62,
+            "price_change": -0.72,
+            "flow_score": -0.44
           },
           "QQQ": {
             "name": "NASDAQ",
-            "volume_ratio": 1.15,
-            "price_change": 0.05,
-            "flow_score": 0.05
+            "volume_ratio": 0.75,
+            "price_change": -1.27,
+            "flow_score": -0.95
           },
           "IWM": {
             "name": "Small Cap",
-            "volume_ratio": 1.32,
-            "price_change": -0.62,
-            "flow_score": -0.81
+            "volume_ratio": 0.93,
+            "price_change": -1.08,
+            "flow_score": -1.01
           },
           "HYG": {
             "name": "High Yield Bonds",
-            "volume_ratio": 1.12,
-            "price_change": 0.09,
-            "flow_score": 0.1
+            "volume_ratio": 0.92,
+            "price_change": -0.8,
+            "flow_score": -0.73
           },
           "TLT": {
             "name": "Long-Term Treasuries",
-            "volume_ratio": 1.23,
-            "price_change": -0.43,
-            "flow_score": -0.53
+            "volume_ratio": 0.69,
+            "price_change": -0.79,
+            "flow_score": -0.55
           }
         },
-        "risk_on_flow": -1.01,
-        "risk_off_flow": -0.53,
-        "net_flow": -0.47,
-        "signal": "NEUTRAL",
+        "risk_on_flow": -3.13,
+        "risk_off_flow": -0.55,
+        "net_flow": -2.58,
+        "signal": "STRONG_OUTFLOW",
         "interpretation": "Institutions moving to safety"
       }
     },
@@ -386,7 +386,7 @@
         "weight": "18%"
       },
       "vix": {
-        "score": 35,
+        "score": 45,
         "weight": "12%"
       },
       "breadth": {
@@ -398,11 +398,11 @@
         "weight": "10%"
       },
       "sectors": {
-        "score": 50,
+        "score": 30,
         "weight": "8%"
       },
       "ma": {
-        "score": 80,
+        "score": 65,
         "weight": "12%"
       },
       "yields": {
@@ -410,7 +410,7 @@
         "weight": "5%"
       },
       "momentum": {
-        "score": 50,
+        "score": 45,
         "weight": "10%"
       },
       "dxy": {
@@ -418,7 +418,7 @@
         "weight": "4%"
       },
       "institutional": {
-        "score": 50,
+        "score": 20,
         "weight": "5%"
       },
       "internals": {
@@ -427,7 +427,7 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-09-01T00:21:03.372452"
+    "updated_at": "2026-09-01T17:54:02.407776"
   },
   "stocks": {
     "AAPL": {
@@ -436,7 +436,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.379440",
+      "last_updated": "2026-09-01T17:54:02.416377",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -445,12 +445,12 @@
         "note": null
       },
       "position_score": {
-        "score": 56,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 0.0,
-        "buy_factors": 3,
-        "sell_factors": 3,
+        "score": 43,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
+        "confidence": 0.33,
+        "buy_factors": 2,
+        "sell_factors": 4,
         "reasons": [
           {
             "type": "SELL",
@@ -473,11 +473,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
       },
       "trend_prediction": {
         "score": 30,
@@ -1159,7 +1159,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.385204",
+      "last_updated": "2026-09-01T17:54:02.423642",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1168,12 +1168,12 @@
         "note": null
       },
       "position_score": {
-        "score": 54,
-        "action": "HOLD",
-        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "score": 41,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.33,
-        "buy_factors": 2,
-        "sell_factors": 1,
+        "buy_factors": 1,
+        "sell_factors": 2,
         "reasons": [
           {
             "type": "BUY",
@@ -1184,11 +1184,11 @@
             "message": "\u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
       },
       "trend_prediction": {
         "score": 60,
@@ -1641,7 +1641,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-09-01T00:21:03.392361",
+      "last_updated": "2026-09-01T17:54:02.433079",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -1650,12 +1650,12 @@
         "note": null
       },
       "position_score": {
-        "score": 48,
-        "action": "HOLD",
-        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "score": 35,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.2,
-        "buy_factors": 3,
-        "sell_factors": 2,
+        "buy_factors": 2,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "SELL",
@@ -1674,11 +1674,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e02\u0e36\u0e49\u0e19 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
       },
       "trend_prediction": {
         "score": 65,
@@ -2181,7 +2181,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.398243",
+      "last_updated": "2026-09-01T17:54:02.440761",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2190,23 +2190,23 @@
         "note": null
       },
       "position_score": {
-        "score": 65,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 1.0,
-        "buy_factors": 2,
-        "sell_factors": 0,
+        "score": 52,
+        "action": "HOLD",
+        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "confidence": 0.0,
+        "buy_factors": 1,
+        "sell_factors": 1,
         "reasons": [
           {
             "type": "BUY",
             "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
       },
       "trend_prediction": {
         "score": 45,
@@ -2814,7 +2814,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.403327",
+      "last_updated": "2026-09-01T17:54:02.447400",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2823,12 +2823,12 @@
         "note": null
       },
       "position_score": {
-        "score": 45,
+        "score": 32,
         "action": "SELL",
         "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.2,
-        "buy_factors": 3,
-        "sell_factors": 2,
+        "buy_factors": 2,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "SELL",
@@ -2847,8 +2847,8 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e02\u0e36\u0e49\u0e19 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
         "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
@@ -3315,7 +3315,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.410183",
+      "last_updated": "2026-09-01T17:54:02.456051",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3324,12 +3324,12 @@
         "note": null
       },
       "position_score": {
-        "score": 55,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
+        "score": 42,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.14,
-        "buy_factors": 4,
-        "sell_factors": 3,
+        "buy_factors": 3,
+        "sell_factors": 4,
         "reasons": [
           {
             "type": "BUY",
@@ -3356,11 +3356,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
       },
       "trend_prediction": {
         "score": 55,
@@ -4068,7 +4068,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.415253",
+      "last_updated": "2026-09-01T17:54:02.462515",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4077,12 +4077,12 @@
         "note": null
       },
       "position_score": {
-        "score": 69,
+        "score": 56,
         "action": "BUY",
         "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 0.33,
-        "buy_factors": 4,
-        "sell_factors": 2,
+        "confidence": 0.0,
+        "buy_factors": 3,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "BUY",
@@ -4105,8 +4105,8 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
         "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
@@ -4569,7 +4569,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.422502",
+      "last_updated": "2026-09-01T17:54:02.471555",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4578,12 +4578,12 @@
         "note": null
       },
       "position_score": {
-        "score": 40,
-        "action": "SELL",
-        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
+        "score": 27,
+        "action": "STRONG_SELL",
+        "action_th": "\u0e41\u0e19\u0e30\u0e19\u0e33\u0e02\u0e32\u0e22/\u0e17\u0e33\u0e01\u0e33\u0e44\u0e23",
         "confidence": 0.2,
-        "buy_factors": 3,
-        "sell_factors": 2,
+        "buy_factors": 2,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "BUY",
@@ -4602,11 +4602,11 @@
             "message": "RSI \u0e15\u0e48\u0e33 (38) - \u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07"
+        "summary": "\u0e04\u0e27\u0e23\u0e17\u0e33\u0e01\u0e33\u0e44\u0e23! \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07"
       },
       "trend_prediction": {
         "score": 45,
@@ -5307,7 +5307,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.428536",
+      "last_updated": "2026-09-01T17:54:02.479276",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5316,12 +5316,12 @@
         "note": null
       },
       "position_score": {
-        "score": 64,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 0.33,
-        "buy_factors": 4,
-        "sell_factors": 2,
+        "score": 51,
+        "action": "HOLD",
+        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "confidence": 0.0,
+        "buy_factors": 3,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "BUY",
@@ -5344,11 +5344,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e02\u0e36\u0e49\u0e19 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
       },
       "trend_prediction": {
         "score": 55,
@@ -5922,7 +5922,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.433561",
+      "last_updated": "2026-09-01T17:54:02.485731",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5931,12 +5931,12 @@
         "note": null
       },
       "position_score": {
-        "score": 58,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
+        "score": 45,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.2,
-        "buy_factors": 3,
-        "sell_factors": 2,
+        "buy_factors": 2,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "BUY",
@@ -5955,11 +5955,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e25\u0e07 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 CHoCH \u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e25\u0e07 - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27"
       },
       "trend_prediction": {
         "score": 35,
@@ -6443,7 +6443,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.438771",
+      "last_updated": "2026-09-01T17:54:02.492452",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6452,23 +6452,23 @@
         "note": null
       },
       "position_score": {
-        "score": 65,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 1.0,
-        "buy_factors": 2,
-        "sell_factors": 0,
+        "score": 52,
+        "action": "HOLD",
+        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "confidence": 0.0,
+        "buy_factors": 1,
+        "sell_factors": 1,
         "reasons": [
           {
             "type": "BUY",
             "message": "\u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)"
+        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
       },
       "trend_prediction": {
         "score": 65,
@@ -6944,7 +6944,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.445803",
+      "last_updated": "2026-09-01T17:54:02.501455",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6953,12 +6953,12 @@
         "note": null
       },
       "position_score": {
-        "score": 51,
-        "action": "HOLD",
-        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "score": 38,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.2,
-        "buy_factors": 3,
-        "sell_factors": 2,
+        "buy_factors": 2,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "BUY",
@@ -6977,11 +6977,11 @@
             "message": "RSI \u0e2a\u0e39\u0e07 (64) - \u0e23\u0e30\u0e27\u0e31\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07"
       },
       "trend_prediction": {
         "score": 50,
@@ -7656,7 +7656,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.450895",
+      "last_updated": "2026-09-01T17:54:02.507948",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7665,12 +7665,12 @@
         "note": null
       },
       "position_score": {
-        "score": 52,
-        "action": "HOLD",
-        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "score": 39,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.33,
-        "buy_factors": 2,
-        "sell_factors": 1,
+        "buy_factors": 1,
+        "sell_factors": 2,
         "reasons": [
           {
             "type": "BUY",
@@ -7681,11 +7681,11 @@
             "message": "\u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
       },
       "trend_prediction": {
         "score": 40,
@@ -8130,7 +8130,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.456542",
+      "last_updated": "2026-09-01T17:54:02.515297",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8139,12 +8139,12 @@
         "note": null
       },
       "position_score": {
-        "score": 61,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 0.5,
-        "buy_factors": 3,
-        "sell_factors": 1,
+        "score": 48,
+        "action": "HOLD",
+        "action_th": "\u0e23\u0e2d\u0e14\u0e39",
+        "confidence": 0.0,
+        "buy_factors": 2,
+        "sell_factors": 2,
         "reasons": [
           {
             "type": "SELL",
@@ -8159,11 +8159,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e02\u0e36\u0e49\u0e19 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
+        "summary": "\u0e23\u0e2d\u0e08\u0e31\u0e07\u0e2b\u0e27\u0e30\u0e17\u0e35\u0e48\u0e14\u0e35\u0e01\u0e27\u0e48\u0e32\u0e19\u0e35\u0e49"
       },
       "trend_prediction": {
         "score": 90,
@@ -8768,7 +8768,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.462599",
+      "last_updated": "2026-09-01T17:54:02.526291",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8777,12 +8777,12 @@
         "note": null
       },
       "position_score": {
-        "score": 56,
-        "action": "BUY",
-        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
+        "score": 43,
+        "action": "SELL",
+        "action_th": "\u0e1e\u0e34\u0e08\u0e32\u0e23\u0e13\u0e32\u0e02\u0e32\u0e22",
         "confidence": 0.2,
-        "buy_factors": 3,
-        "sell_factors": 2,
+        "buy_factors": 2,
+        "sell_factors": 3,
         "reasons": [
           {
             "type": "SELL",
@@ -8801,11 +8801,11 @@
             "message": "BOS \u0e17\u0e30\u0e25\u0e38\u0e02\u0e36\u0e49\u0e19 - \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e15\u0e48\u0e2d\u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)"
+        "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)"
       },
       "trend_prediction": {
         "score": 90,
@@ -9303,7 +9303,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-09-01T00:21:03.467805",
+      "last_updated": "2026-09-01T17:54:02.533030",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -9312,12 +9312,12 @@
         "note": null
       },
       "position_score": {
-        "score": 73,
-        "action": "STRONG_BUY",
-        "action_th": "\u0e41\u0e19\u0e30\u0e19\u0e33\u0e0b\u0e37\u0e49\u0e2d",
-        "confidence": 0.5,
-        "buy_factors": 3,
-        "sell_factors": 1,
+        "score": 60,
+        "action": "BUY",
+        "action_th": "\u0e19\u0e48\u0e32\u0e0b\u0e37\u0e49\u0e2d",
+        "confidence": 0.0,
+        "buy_factors": 2,
+        "sell_factors": 2,
         "reasons": [
           {
             "type": "SELL",
@@ -9332,11 +9332,11 @@
             "message": "RSI Oversold (30) - \u0e42\u0e2d\u0e01\u0e32\u0e2a\u0e0b\u0e37\u0e49\u0e2d"
           },
           {
-            "type": "BUY",
-            "message": "VIX \u0e15\u0e48\u0e33 (14.9) - \u0e15\u0e25\u0e32\u0e14\u0e2a\u0e07\u0e1a"
+            "type": "SELL",
+            "message": "\u0e15\u0e25\u0e32\u0e14\u0e04\u0e48\u0e2d\u0e19\u0e02\u0e49\u0e32\u0e07\u0e41\u0e22\u0e48 (Sentiment 42/100)"
           }
         ],
-        "summary": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e17\u0e35\u0e48\u0e14\u0e35! \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
+        "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)"
       },
       "trend_prediction": {
         "score": 50,
@@ -9771,8 +9771,8 @@
       "bearish": 5,
       "neutral": 4
     },
-    "sentiment_score": 46,
-    "recommendation": "HOLD",
+    "sentiment_score": 42,
+    "recommendation": "CAUTIOUS",
     "top_buy_opportunities": [
       {
         "symbol": "BTC-USD",
@@ -9828,107 +9828,107 @@
       }
     ],
     "position_trading": {
-      "strong_buy_opportunities": [
-        {
-          "symbol": "TSLA",
-          "score": 73,
-          "action": "STRONG_BUY",
-          "summary": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e17\u0e35\u0e48\u0e14\u0e35! \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)",
-          "price": 447.2,
-          "zone": "premium"
-        }
-      ],
+      "strong_buy_opportunities": [],
       "buy_opportunities": [
         {
+          "symbol": "TSLA",
+          "score": 60,
+          "action": "BUY",
+          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)",
+          "price": 447.2,
+          "zone": "premium"
+        },
+        {
           "symbol": "HIMS",
-          "score": 69,
+          "score": 56,
           "action": "BUY",
           "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
           "price": 32.2,
           "zone": "discount"
-        },
+        }
+      ],
+      "take_profit_signals": [
         {
-          "symbol": "ENVX",
-          "score": 65,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
-          "price": 8.02,
+          "symbol": "IONQ",
+          "score": 27,
+          "action": "STRONG_SELL",
+          "summary": "\u0e04\u0e27\u0e23\u0e17\u0e33\u0e01\u0e33\u0e44\u0e23! \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07",
+          "price": 48.94,
           "zone": "discount"
-        },
+        }
+      ],
+      "caution_signals": [
         {
-          "symbol": "NVDA",
-          "score": 65,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
-          "price": 185.81,
-          "zone": "discount"
-        },
-        {
-          "symbol": "IREN",
-          "score": 64,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
-          "price": 52.99,
-          "zone": "discount"
-        },
-        {
-          "symbol": "RDW",
-          "score": 61,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)",
-          "price": 10.14,
+          "symbol": "EOSE",
+          "score": 32,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)",
+          "price": 16.82,
           "zone": "premium"
         },
         {
-          "symbol": "META",
-          "score": 58,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
-          "price": 631.09,
+          "symbol": "BTC-USD",
+          "score": 35,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)",
+          "price": 95287.38,
+          "zone": "premium"
+        },
+        {
+          "symbol": "PRME",
+          "score": 38,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07",
+          "price": 4.16,
+          "zone": "discount"
+        },
+        {
+          "symbol": "RBLX",
+          "score": 39,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 67%)",
+          "price": 84.8,
+          "zone": "discount"
+        },
+        {
+          "symbol": "ACHR",
+          "score": 41,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)",
+          "price": 8.47,
+          "zone": "discount"
+        },
+        {
+          "symbol": "GRAB",
+          "score": 42,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e25\u0e07 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)",
+          "price": 4.79,
           "zone": "discount"
         },
         {
           "symbol": "AAPL",
-          "score": 56,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)",
+          "score": 43,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)",
           "price": 261.05,
           "zone": "premium"
         },
         {
           "symbol": "RKLB",
-          "score": 56,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e40\u0e17\u0e23\u0e19\u0e14\u0e4c\u0e02\u0e32\u0e02\u0e36\u0e49\u0e19 (\u0e04\u0e27\u0e32\u0e21\u0e41\u0e02\u0e47\u0e07\u0e41\u0e01\u0e23\u0e48\u0e07 33%)",
+          "score": 43,
+          "action": "SELL",
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)",
           "price": 86.58,
           "zone": "premium"
         },
         {
-          "symbol": "GRAB",
-          "score": 55,
-          "action": "BUY",
-          "summary": "\u0e19\u0e48\u0e32\u0e2a\u0e19\u0e43\u0e08 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Discount (50%)",
-          "price": 4.79,
-          "zone": "discount"
-        }
-      ],
-      "take_profit_signals": [],
-      "caution_signals": [
-        {
-          "symbol": "IONQ",
-          "score": 40,
-          "action": "SELL",
-          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19 Order Block \u0e02\u0e32\u0e22 - \u0e04\u0e27\u0e23\u0e23\u0e30\u0e27\u0e31\u0e07",
-          "price": 48.94,
-          "zone": "discount"
-        },
-        {
-          "symbol": "EOSE",
+          "symbol": "META",
           "score": 45,
           "action": "SELL",
-          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 \u0e23\u0e32\u0e04\u0e32\u0e2d\u0e22\u0e39\u0e48\u0e43\u0e19\u0e42\u0e0b\u0e19 Premium (50%)",
-          "price": 16.82,
-          "zone": "premium"
+          "summary": "\u0e23\u0e30\u0e27\u0e31\u0e07 CHoCH \u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27\u0e25\u0e07 - \u0e2a\u0e31\u0e0d\u0e0d\u0e32\u0e13\u0e01\u0e25\u0e31\u0e1a\u0e15\u0e31\u0e27",
+          "price": 631.09,
+          "zone": "discount"
         }
       ],
       "total_actionable": 12
