@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T00:18:23.377625",
+  "generated_at": "2026-10-08T00:41:06.733047",
   "interval": "1d",
   "trading_style": "position",
   "market_sentiment": {
@@ -9,7 +9,7 @@
     "message_th": "\u0e23\u0e30\u0e27\u0e31\u0e07! \u0e15\u0e25\u0e32\u0e14\u0e21\u0e35\u0e04\u0e27\u0e32\u0e21\u0e40\u0e2a\u0e35\u0e48\u0e22\u0e07",
     "confidence": {
       "level": "high",
-      "score": 88,
+      "score": 92,
       "factors": [
         {
           "source": "vix",
@@ -53,7 +53,7 @@
         },
         {
           "source": "internals",
-          "quality": "low"
+          "quality": "medium"
         },
         {
           "source": "institutional",
@@ -306,15 +306,15 @@
         "macd_histogram": 0.85
       },
       "dollar_index": {
-        "value": 102.23,
-        "change": 0.39,
+        "value": 102.24,
+        "change": 0.4,
         "signal": "NEUTRAL",
         "interpretation": "Dollar neutral"
       },
       "gold": {
-        "value": 4132.6,
-        "change_1d": -1.3,
-        "change_1w": -1.66,
+        "value": 4131.3,
+        "change_1d": -1.33,
+        "change_1w": -1.69,
         "signal": "NEUTRAL",
         "interpretation": "Gold stable"
       },
@@ -328,15 +328,17 @@
       },
       "market_internals": {
         "tick": {
-          "value": 0,
-          "signal": "NEUTRAL"
+          "value": 82,
+          "signal": "NEUTRAL",
+          "interpretation": "TICK at 82 indicates buying pressure"
         },
         "trin": {
-          "value": 1.0,
-          "signal": "NEUTRAL"
+          "value": 0.983,
+          "signal": "NEUTRAL",
+          "interpretation": "TRIN at 0.98 indicates bullish internals"
         },
         "combined_signal": "NEUTRAL",
-        "source": "default"
+        "source": "proxy_calculation"
       },
       "institutional_flow": {
         "flows": {
@@ -425,7 +427,7 @@
       }
     },
     "version": "3.0",
-    "updated_at": "2026-10-08T00:18:23.238150"
+    "updated_at": "2026-10-08T00:41:06.557121"
   },
   "stocks": {
     "AAPL": {
@@ -434,7 +436,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.248300",
+      "last_updated": "2026-10-08T00:41:06.569557",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1157,7 +1159,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.256820",
+      "last_updated": "2026-10-08T00:41:06.580080",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -1639,7 +1641,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 366,
-      "last_updated": "2026-10-08T00:18:23.267315",
+      "last_updated": "2026-10-08T00:41:06.593090",
       "data_quality": {
         "bars": 366,
         "has_ema50": true,
@@ -2179,7 +2181,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.276007",
+      "last_updated": "2026-10-08T00:41:06.603920",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -2812,7 +2814,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.283526",
+      "last_updated": "2026-10-08T00:41:06.613213",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -3313,7 +3315,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.293596",
+      "last_updated": "2026-10-08T00:41:06.625962",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4066,7 +4068,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.300985",
+      "last_updated": "2026-10-08T00:41:06.635162",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -4567,7 +4569,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.311397",
+      "last_updated": "2026-10-08T00:41:06.648622",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5305,7 +5307,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.320187",
+      "last_updated": "2026-10-08T00:41:06.660000",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -5920,7 +5922,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.327518",
+      "last_updated": "2026-10-08T00:41:06.669373",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6441,7 +6443,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.335376",
+      "last_updated": "2026-10-08T00:41:06.679282",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -6942,7 +6944,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.345728",
+      "last_updated": "2026-10-08T00:41:06.692667",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -7654,7 +7656,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.353137",
+      "last_updated": "2026-10-08T00:41:06.702054",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8128,7 +8130,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.361824",
+      "last_updated": "2026-10-08T00:41:06.712431",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -8766,7 +8768,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.369953",
+      "last_updated": "2026-10-08T00:41:06.723199",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
@@ -9301,7 +9303,7 @@
       "interval": "1d",
       "data_source": "cache",
       "candles_analyzed": 251,
-      "last_updated": "2026-10-08T00:18:23.377413",
+      "last_updated": "2026-10-08T00:41:06.732779",
       "data_quality": {
         "bars": 251,
         "has_ema50": true,
